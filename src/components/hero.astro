@@ -1,0 +1,54 @@
+---
+import { Picture } from "astro:assets";
+import heroImage from "@assets/linear_accel.png";
+import Link from "@components/ui/link.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<main class="max-w-screen-xl mx-auto px-5 pt-8 pb-8 md:pt-12 md:pb-24">
+  <div class="grid lg:grid-cols-2 place-items-center gap-8">
+    
+    <div class="py-6 md:order-1 flex justify-center w-full">
+      <div class="max-w-[280px] md:max-w-md lg:max-w-full"> <Picture
+          src={heroImage}
+          alt="Лінійний прискорювач Elekta Versa HD"
+          widths={[200, 400, 600]}
+          sizes="(max-width: 800px) 100vw, 620px"
+          loading="eager"
+          format="avif"
+          class="h-auto w-full object-contain" 
+        />
+      </div>
+    </div>
+
+    <div class="text-center lg:text-left">
+      <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
+        Відділення променевої терапії
+      </h1>
+      <p class="text-lg mt-4 text-slate-600 max-w-xl mx-auto lg:mx-0">
+        Високоточне опромінення IMRT та VMAT на лінійних прискорювачах Elekta. 
+        Максимальна доза в пухлину — мінімум на здорові органи.
+      </p>
+      
+      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+        <Link
+          href="/technologies"
+          class="flex gap-1 items-center justify-center px-6 py-3"
+          rel="noopener">
+          <Icon class="text-white w-5 h-5" name="bx:bxs-zap" />
+          Наші технології
+        </Link>
+        <Link
+          size="lg"
+          style="outline"
+          rel="noopener"
+          href="/contact"
+          class="flex gap-1 items-center justify-center px-6 py-3">
+          <Icon class="text-black w-4 h-4" name="bx:bxs-calendar" />
+          Записатися на прийом
+        </Link>
+      </div>
+    </div>
+
+  </div>
+</main>

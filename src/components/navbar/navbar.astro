@@ -1,0 +1,48 @@
+---
+import Link from "@components/ui/link.astro";
+import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
+
+const menuitems = [
+  { title: "Про відділення", path: "/about" },
+  { title: "Послуги", path: "/services" },
+  { title: "Лікарі", path: "/doctors" },
+  { title: "Контакти", path: "/contact" },
+];
+---
+
+<div class="max-w-screen-2xl mx-auto px-5">
+  <header class="flex flex-col lg:flex-row justify-between items-center my-5">
+    <Astronav>
+      <div class="flex w-full lg:w-auto items-center justify-between">
+        <a href="/" class="text-2xl">
+          <span class="font-bold text-slate-800">КНТ</span>
+          <span class="text-blue-600">Дніпро</span>
+        </a>
+        <div class="block lg:hidden">
+          <MenuIcon class="w-6 h-6 text-gray-800" />
+        </div>
+      </div>
+      
+      <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
+        <ul class="flex flex-col lg:flex-row lg:gap-8">
+          {
+            menuitems.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-blue-600 font-medium transition">
+                  <span> {item.title}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </MenuItems>
+    </Astronav>
+
+    <div class="hidden lg:flex items-center gap-4">
+      <a href="tel:+380671234567" class="text-sm font-bold text-gray-700 hover:text-blue-600">+38 (067) 123-45-67</a>
+      <Link href="/contact" size="sm">Записатися</Link>
+    </div>
+  </header>
+</div>
