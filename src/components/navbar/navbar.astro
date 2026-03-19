@@ -9,6 +9,7 @@ const menuitems = [
   { title: "Послуги", path: "/services" },
   { title: "Лікарі", path: "/doctors" },
   { title: "Контакти", path: "/contact" },
+  { title: "На головну клініки ↗", path: "https://dokod.org.ua/", external: true },
 ];
 ---
 
@@ -33,20 +34,27 @@ const menuitems = [
       </div>
       
       <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-        <ul class="flex flex-col lg:flex-row lg:gap-8">
-          {
-            menuitems.map((item) => (
-              <li>
-                <a
-                  href={item.path}
-                  class="flex lg:px-3 py-2 items-center text-gray-600 hover:text-blue-600 font-medium transition text-sm">
-                  <span> {item.title}</span>
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </MenuItems>
+  <ul class="flex flex-col lg:flex-row lg:gap-8">
+    {
+      menuitems.map((item) => (
+        <li>
+          <a
+            href={item.path}
+            target={item.external ? "_blank" : "_self"}
+            rel={item.external ? "noopener" : ""}
+            class:list={[
+              "flex lg:px-3 py-2 items-center font-medium transition text-sm",
+              item.external 
+                ? "text-blue-400 hover:text-blue-600 italic" // Зовнішнє посилання виділимо кольором
+                : "text-gray-600 hover:text-blue-600"
+            ]}>
+            <span> {item.title}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</MenuItems>
     </Astronav>
 
     <div class="hidden lg:flex items-center gap-4">
