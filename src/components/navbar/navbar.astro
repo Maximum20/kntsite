@@ -1,5 +1,4 @@
 ---
-import Link from "@components/ui/link.astro";
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import fullLogo from "../../assets/full-logo.jpg";
@@ -13,39 +12,42 @@ const menuitems = [
 ];
 
 const socials = [
-  { name: "Facebook", url: "https://www.facebook.com/kz.kod.dor", icon: "fb" },
-  { name: "Instagram", url: "https://www.instagram.com/dokod.dp/", icon: "ig" },
-  { name: "Telegram", url: "https://t.me/dokod_dp", icon: "tg" },
-  { name: "YouTube", url: "https://youtube.com/@dokodlic", icon: "yt" },
-  { name: "TikTok", url: "https://www.tiktok.com/@dokod_dp", icon: "tt" },
+  { name: "Facebook", url: "https://www.facebook.com/kz.kod.dor", icon: "fb", color: "hover:text-blue-600" },
+  { name: "Instagram", url: "https://www.instagram.com/dokod.dp/", icon: "ig", color: "hover:text-pink-600" },
+  { name: "Telegram", url: "https://t.me/dokod_dp", icon: "tg", color: "hover:text-sky-500" },
+  { name: "YouTube", url: "https://youtube.com/@dokodlic", icon: "yt", color: "hover:text-red-600" },
+  { name: "TikTok", url: "https://www.tiktok.com/@dokod_dp", icon: "tt", color: "hover:text-black" },
 ];
 ---
 
-<div class="bg-slate-50 border-b border-slate-200 py-2 hidden md:block">
-  <div class="max-w-screen-2xl mx-auto px-5 flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-slate-500">
+<!-- 1. ОНОВЛЕНИЙ TOP BAR (Тепер видимий скрізь) -->
+<div class="bg-slate-100 border-b border-slate-200 py-2">
+  <div class="max-w-screen-2xl mx-auto px-5 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-0">
     
-    <div class="flex gap-4 items-center">
-      <span class="text-slate-400">Зв'язок з нами:</span>
-      <div class="flex gap-4 items-center">
-        <a href="tel:+380567207901" class="hover:text-blue-600 transition tracking-tighter text-[11px] normal-case font-medium">(056) 720-79-01</a>
-        <a href="tel:+380662904491" class="hover:text-blue-600 transition tracking-tighter text-[11px] normal-case font-medium">(066) 290-44-91</a>
-        <a href="tel:+380939585567" class="hover:text-blue-600 transition tracking-tighter text-[11px] normal-case font-medium">(093) 958-55-67</a>
-        <a href="tel:+380680015515" class="hover:text-blue-600 transition tracking-tighter text-[11px] normal-case font-medium">(068) 001-55-15</a>
-        <span class="text-slate-300 font-light">|</span>
-        <a href="mailto:kz-kod-dor@ukr.net" class="hover:text-blue-600 transition lowercase font-medium text-[11px]">kz-kod-dor@ukr.net</a>
+    <!-- Секція контактів -->
+    <div class="flex flex-wrap justify-center md:justify-start gap-y-2 gap-x-4 items-center text-xs sm:text-sm font-semibold text-slate-700">
+      <span class="text-blue-600 font-bold uppercase tracking-tighter hidden lg:inline">Зв'язок з нами:</span>
+      <div class="flex flex-wrap justify-center gap-x-4 gap-y-1">
+        <a href="tel:+380567207901" class="hover:text-blue-600 transition tracking-tight">(056) 720-79-01</a>
+        <a href="tel:+380662904491" class="hover:text-blue-600 transition tracking-tight">(066) 290-44-91</a>
+        <a href="tel:+380939585567" class="hover:text-blue-600 transition tracking-tight">(093) 958-55-67</a>
+        <a href="tel:+380680015515" class="hover:text-blue-600 transition tracking-tight">(068) 001-55-15</a>
       </div>
+      <span class="hidden xl:inline text-slate-300">|</span>
+      <a href="mailto:kz-kod-dor@ukr.net" class="hover:text-blue-600 transition lowercase font-bold text-blue-500">kz-kod-dor@ukr.net</a>
     </div>
 
+    <!-- Секція соцмереж -->
     <div class="flex gap-4 items-center">
-      <span class="text-slate-400">Наші соціальні мережі:</span>
-      <div class="flex gap-3 items-center">
+      <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest hidden sm:inline">Наші соцмережі:</span>
+      <div class="flex gap-4 items-center">
         {socials.map((soc) => (
-          <a href={soc.url} target="_blank" rel="noopener" class="text-slate-400 hover:text-blue-600 transition-all transform hover:scale-110" title={soc.name}>
-            {soc.icon === 'fb' && <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>}
-            {soc.icon === 'ig' && <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>}
-            {soc.icon === 'tg' && <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.665 3.717l-17.73 6.837c-1.213.486-1.203 1.163-.223 1.467l4.55 1.42 10.532-6.645c.498-.303.953-.14.578.192l-8.533 7.707-.33 4.955c.483 0 .697-.223.967-.483l2.325-2.26 4.837 3.57c.89.49 1.53.24 1.752-.823l3.17-14.937c.325-1.3-.5-1.894-1.352-1.51z"/></svg>}
-            {soc.icon === 'yt' && <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>}
-            {soc.icon === 'tt' && <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31 0 2.591.21 3.793.602.502.162.305.92-.193.92-1.106 0-2.177-.281-3.116-.792a6.96 6.96 0 0 0-3.51-.93c-3.86 0-7 3.14-7 7s3.14 7 7 7c.38 0 .75-.031 1.11-.092V9.01h2v7.124a6.96 6.96 0 0 0 4.137 1.836c.51.04.536.804.032.846-1.12.094-2.26-.065-3.32-.472a8.96 8.96 0 0 1-4.85-4.85c-.41-1.06-.57-2.2-.47-3.32.04-.51.8-.48.84.03a6.96 6.96 0 0 0 1.84 4.14V7.01h4c0-1.92 1.25-3.55 3-4.13.51-.17.65.59.16.82-1.25.58-2.16 1.84-2.16 3.31 0 .51-.81.51-.81 0 0-2.76 2.24-5 5-5 .51 0 .51.81 0 .81-2.21 0-4 1.79-4 4 0 .51-.81.51-.81 0V3.01h-2v1.01c0 3.86-3.14 7-7 7s-7-3.14-7-7 3.14-7 7-7c.38 0 .75.031 1.11.092z"/></svg>}
+          <a href={soc.url} target="_blank" rel="noopener" class={`text-slate-500 transition-all duration-300 transform hover:scale-125 ${soc.color}`} title={soc.name}>
+            {soc.icon === 'fb' && <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>}
+            {soc.icon === 'ig' && <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>}
+            {soc.icon === 'tg' && <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.665 3.717l-17.73 6.837c-1.213.486-1.203 1.163-.223 1.467l4.55 1.42 10.532-6.645c.498-.303.953-.14.578.192l-8.533 7.707-.33 4.955c.483 0 .697-.223.967-.483l2.325-2.26 4.837 3.57c.89.49 1.53.24 1.752-.823l3.17-14.937c.325-1.3-.5-1.894-1.352-1.51z"/></svg>}
+            {soc.icon === 'yt' && <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>}
+            {soc.icon === 'tt' && <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31 0 2.591.21 3.793.602.502.162.305.92-.193.92-1.106 0-2.177-.281-3.116-.792a6.96 6.96 0 0 0-3.51-.93c-3.86 0-7 3.14-7 7s3.14 7 7 7c.38 0 .75-.031 1.11-.092V9.01h2v7.124a6.96 6.96 0 0 0 4.137 1.836c.51.04.536.804.032.846-1.12.094-2.26-.065-3.32-.472a8.96 8.96 0 0 1-4.85-4.85c-.41-1.06-.57-2.2-.47-3.32.04-.51.8-.48.84.03a6.96 6.96 0 0 0 1.84 4.14V7.01h4c0-1.92 1.25-3.55 3-4.13.51-.17.65.59.16.82-1.25.58-2.16 1.84-2.16 3.31 0 .51-.81.51-.81 0 0-2.76 2.24-5 5-5 .51 0 .51.81 0 .81-2.21 0-4 1.79-4 4 0 .51-.81.51-.81 0V3.01h-2v1.01c0 3.86-3.14 7-7 7s-7-3.14-7-7 3.14-7 7-7c.38 0 .75.031 1.11.092z"/></svg>}
           </a>
         ))}
       </div>
@@ -53,26 +55,27 @@ const socials = [
   </div>
 </div>
 
+<!-- 2. MAIN NAVIGATION -->
 <div class="max-w-screen-2xl mx-auto px-5">
-  <header class="flex flex-col lg:flex-row items-center py-5 gap-4">
+  <header class="flex flex-col lg:flex-row items-center py-6 gap-4">
     <Astronav>
       <div class="flex w-full lg:w-auto items-center justify-between">
         <a href="/" class="flex items-center shrink-0">
           <Image 
             src={fullLogo} 
             alt="Логотип КНТ Дніпро" 
-            class="h-10 md:h-14 lg:h-16 w-auto object-contain" 
+            class="h-12 md:h-14 lg:h-16 w-auto object-contain" 
             loading="eager"
             format="webp"
           />
         </a>
         <div class="block lg:hidden">
-          <MenuIcon class="w-6 h-6 text-gray-800" />
+          <MenuIcon class="w-8 h-8 text-gray-800" />
         </div>
       </div>
       
-      <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0 lg:ml-auto">
-        <ul class="flex flex-col lg:flex-row lg:gap-5 xl:gap-8">
+      <MenuItems class="hidden w-full lg:w-auto mt-4 lg:flex lg:mt-0 lg:ml-auto">
+        <ul class="flex flex-col lg:flex-row lg:gap-6 xl:gap-10">
           {menuitems.map((item) => (
             <li>
               <a
@@ -80,14 +83,14 @@ const socials = [
                 target={item.external ? "_blank" : "_self"}
                 rel={item.external ? "noopener" : ""}
                 class:list={[
-                  "flex lg:px-3 py-2 items-center font-bold transition text-sm group tracking-tight",
+                  "flex lg:px-2 py-2 items-center font-bold transition text-sm sm:text-base group tracking-tight",
                   item.external 
-                    ? "text-blue-500 hover:text-blue-700 italic" 
-                    : "text-slate-600 hover:text-blue-600"
+                    ? "text-blue-600 hover:text-blue-800 italic decoration-2 underline-offset-4" 
+                    : "text-slate-700 hover:text-blue-600"
                 ]}>
                 <span>{item.title}</span>
                 {item.external && (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 ml-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-4 h-4 ml-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
                   </svg>
                 )}
