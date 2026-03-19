@@ -9,49 +9,48 @@ import Footer from "../components/footer.astro";
   <main class="grid gap-20 mt-16 text-slate-800">
     <Hero />
     
-    <!-- Наш новий блок замість Features -->
+    <!-- Технології (вже є у тебе) -->
     <section class="container mx-auto px-5">
       <div class="mt-12">
-        <h2 class="text-4xl lg:text-5xl font-bold lg:tracking-tight text-center">
-          Сучасні технології лікування
-        </h2>
+        <h2 class="text-4xl lg:text-5xl font-bold text-center">Сучасні технології лікування</h2>
         <p class="text-lg mt-4 text-slate-600 text-center max-w-xl mx-auto">
-          Використовуємо передові протоколи та обладнання Elekta для досягнення найкращих результатів.
+          Використовуємо обладнання Elekta для досягнення найкращих результатів.
         </p>
       </div>
-
       <div class="grid sm:grid-cols-2 md:grid-cols-3 mt-16 gap-16">
-        <div class="flex flex-col items-center text-center">
-          <div class="rounded-full bg-blue-100 p-4 w-16 h-16 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-blue-600 w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h3 class="font-bold text-xl mt-4">Висока точність</h3>
-          <p class="text-slate-500 mt-2 italic text-sm">Субміліметровий контроль підведення дози IMRT та VMAT.</p>
-        </div>
+        <!-- Твої картки про Точність, Швидкість, Безпеку -->
+      </div>
+    </section>
 
-        <div class="flex flex-col items-center text-center">
-          <div class="rounded-full bg-green-100 p-4 w-16 h-16 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-green-600 w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
+    <!-- НОВИЙ РОЗДІЛ: Етапи лікування -->
+    <section class="bg-slate-50 py-16 px-5">
+      <div class="container mx-auto">
+        <h2 class="text-3xl font-bold text-center mb-12">Як проходить лікування?</h2>
+        <div class="grid md:grid-cols-4 gap-8">
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="text-blue-600 font-bold text-3xl mb-4">01</div>
+            <h4 class="font-bold mb-2">Консультація</h4>
+            <p class="text-sm text-slate-600">Огляд лікаря-радіолога та вивчення історії хвороби.</p>
           </div>
-          <h3 class="font-bold text-xl mt-4">Швидкість сеансу</h3>
-          <p class="text-slate-500 mt-2 italic text-sm">Технологія VMAT дозволяє скоротити час опромінення до 2-5 хвилин.</p>
-        </div>
-
-        <div class="flex flex-col items-center text-center">
-          <div class="rounded-full bg-purple-100 p-4 w-16 h-16 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="text-purple-600 w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12H15M12 9V15M12 2L2 7L12 22L22 7L12 2Z" />
-            </svg>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="text-blue-600 font-bold text-3xl mb-4">02</div>
+            <h4 class="font-bold mb-2">КТ-розмітка</h4>
+            <p class="text-sm text-slate-600">Виготовлення фіксуючих засобів та топометрична підготовка.</p>
           </div>
-          <h3 class="font-bold text-xl mt-4">Безпека органів</h3>
-          <p class="text-slate-500 mt-2 italic text-sm">Мінімальне навантаження на критичні структури та здорові тканини.</p>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="text-blue-600 font-bold text-3xl mb-4">03</div>
+            <h4 class="font-bold mb-2">Планування</h4>
+            <p class="text-sm text-slate-600">Робота медичних фізиків над дозиметричним планом IMRT/VMAT.</p>
+          </div>
+          <div class="bg-white p-6 rounded-lg shadow-sm">
+            <div class="text-blue-600 font-bold text-3xl mb-4">04</div>
+            <h4 class="font-bold mb-2">Опромінення</h4>
+            <p class="text-sm text-slate-600">Курс сеансів на лінійному прискорювачі під контролем IGRT.</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
-  <Footer />
+  
+  <Footer /> <!-- Тільки один раз! -->
 </Layout>
