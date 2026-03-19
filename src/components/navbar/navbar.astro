@@ -9,7 +9,7 @@ const menuitems = [
   { title: "Послуги", path: "/services" },
   { title: "Лікарі", path: "/doctors" },
   { title: "Контакти", path: "/contact" },
-  { title: "На головну клініки ↗", path: "https://dokod.org.ua/", external: true },
+  { title: "На головну клініки", path: "https://dokod.org.ua/", external: true },
 ];
 ---
 
@@ -17,12 +17,11 @@ const menuitems = [
   <header class="flex flex-col lg:flex-row justify-between items-center my-5 gap-4">
     <Astronav>
       <div class="flex w-full lg:w-auto items-center justify-between">
-        <!-- ЗАМІНА ТУТ: Замість тексту вставляємо картинку-логотип -->
-        <a href="/" class="flex items-center">
+        <a href="/" class="flex items-center shrink-0">
           <Image 
             src={fullLogo} 
             alt="Логотип КНТ Дніпро" 
-            class="h-10 md:h-14 lg:h-24 w-auto object-contain" 
+            class="h-10 md:h-14 lg:h-20 w-auto object-contain" 
             loading="eager"
             format="webp"
           />
@@ -34,27 +33,40 @@ const menuitems = [
       </div>
       
       <MenuItems class="hidden w-full lg:w-auto mt-2 lg:flex lg:mt-0">
-  <ul class="flex flex-col lg:flex-row lg:gap-8">
-    {
-      menuitems.map((item) => (
-        <li>
-          <a
-            href={item.path}
-            target={item.external ? "_blank" : "_self"}
-            rel={item.external ? "noopener" : ""}
-            class:list={[
-              "flex lg:px-3 py-2 items-center font-medium transition text-sm",
-              item.external 
-                ? "text-blue-400 hover:text-blue-600 italic" // Зовнішнє посилання виділимо кольором
-                : "text-gray-600 hover:text-blue-600"
-            ]}>
-            <span> {item.title}</span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
-</MenuItems>
+        <ul class="flex flex-col lg:flex-row lg:gap-8">
+          {
+            menuitems.map((item) => (
+              <li>
+                <a
+                  href={item.path}
+                  target={item.external ? "_blank" : "_self"}
+                  rel={item.external ? "noopener" : ""}
+                  class:list={[
+                    "flex lg:px-3 py-2 items-center font-medium transition text-sm group",
+                    item.external 
+                      ? "text-blue-500 hover:text-blue-700 italic" 
+                      : "text-gray-600 hover:text-blue-600"
+                  ]}>
+                  <span>{item.title}</span>
+                  
+                  {item.external && (
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke-width="2.5" 
+                      stroke="currentColor" 
+                      class="w-3 h-3 ml-1 transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
+                    </svg>
+                  )}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </MenuItems>
     </Astronav>
 
     <div class="hidden lg:flex items-center gap-4">
