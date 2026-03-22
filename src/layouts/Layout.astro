@@ -1,78 +1,67 @@
 ---
 import { SEO } from "astro-seo";
-// ПРАВКА 1: Змінюємо шляхи з "@components" на відносні "../components"
 import Footer from "../components/footer.astro";
 import Navbar from "../components/navbar/navbar.astro";
 
-// ПРАВКА 2: Шрифт Bricolage Grotesque також вимагає підключення CSS-файлу
 import "@fontsource-variable/inter/index.css";
 import '@fontsource-variable/bricolage-grotesque/index.css';
-
-
 import "../styles/global.css";
 
-
-
-export interface Props {
-  title: string;
-}
-
-// ПРАВКА 3: Прибираємо зайвий символ "^"
-const canonicalURL = new URL(Astro.url.pathname, Astro.site).toString();
-
-const resolvedImageWithDomain = new URL(
-  "/opengraph.jpg",
-  Astro.site
-).toString();
-
 const { title } = Astro.props;
-
-// ПРАВКА 4: Змінюємо назву за замовчуванням з "Astroship" на назву вашого відділення
-const makeTitle = title
-  ? title + " | " + "Відділення променевої терапії"
-  : "Відділення променевої терапії - Сучасне лікування раку";
+const makeTitle = title ? title + " | Відділення променевої терапії" : "Відділення променевої терапії - №1";
 ---
+
 <!DOCTYPE html>
 <html lang="uk" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-	<meta name="robots" content="noindex, nofollow" />
-
     <meta name="viewport" content="width=device-width" />
-	
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
-    <SEO
-      title={makeTitle}
-      
-      description="Офіційний сайт відділення променевої терапії у Дніпрі. Сучасні методи лікування IMRT, VMAT. Інформація для пацієнтів та колег."
-      canonical={canonicalURL}
-      twitter={{
-        creator: "@",
-        site: "@",
-        card: "summary_large_image",
-      }}
-      openGraph={{
-        basic: {
-          url: canonicalURL,
-          type: "website",
-          title: makeTitle,
-          image: resolvedImageWithDomain,
-        },
-        image: {
-          alt: "Логотип Відділення променевої терапії",
-        },
-      }}
-    />
+    <title>{makeTitle}</title>
+    <SEO title={makeTitle} description="Сучасна променева терапія у Дніпрі." />
   </head>
-  <body>
+  
+  <!-- Основний фон тепер не білий, а світло-сірий bg-slate-50 -->
+  <body class="bg-slate-50 text-slate-900 antialiased min-h-screen relative overflow-x-hidden">
+    
+    <!-- ДЕКОРАТИВНІ ЕЛЕМЕНТИ ФОНУ (Тепер яскравіші та анімовані) -->
+    <div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+      <!-- Велика синя пляма зліва зверху -->
+      <div class="absolute top-[-15%] left-[-10%] w-[800px] h-[800px] bg-blue-400/20 rounded-full blur-[120px] animate-blob"></div>
+      
+      <!-- Бірюзова пляма справа посередині -->
+      <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
+      
+      <!-- М'яка фіолетова/індиго пляма знизу зліва -->
+      <div class="absolute bottom-[-10%] left-[10%] w-[700px] h-[700px] bg-indigo-400/15 rounded-full blur-[130px] animate-blob animation-delay-4000"></div>
+    </div>
+
     <Navbar />
     <slot />
     <Footer />
+    
     <style is:global>
-      img {
-        content-visibility: auto;
+      /* Анімація для «плаваючих» плям, щоб вони повільно рухалися */
+      @keyframes blob {
+        0%, 100% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(40px, -60px) scale(1.1); }
+        66% { transform: translate(-30px, 30px) scale(0.9); }
       }
+      
+      .animate-blob {
+        animation: blob 12s infinite alternate ease-in-out;
+      }
+      
+      .animation-delay-2000 { animation-delay: 2s; }
+      .animation-delay-4000 { animation-delay: 4s; }
+
+      img { content-visibility: auto; }
+      
+      /* Гарний скролбар під новий фон */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #94a1b4; }
     </style>
   </body>
 </html>
