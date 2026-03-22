@@ -1,6 +1,7 @@
 ---
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
 import fullLogo from "../../assets/full-logo.jpg";
 
 const menuitems = [
@@ -8,70 +9,85 @@ const menuitems = [
   { title: "Послуги", path: "/services" },
   { title: "Лікарі", path: "/doctors" },
   { title: "Контакти", path: "/contact" },
-  { title: "На головну клініки", path: "https://dokod.org.ua/", external: true },
 ];
+
+const mainClinic = { title: "На головну клініки", path: "https://dokod.org.ua/" };
 ---
 
-<div class="max-w-screen-2xl mx-auto px-5 font-sans">
-  <header class="flex flex-col lg:flex-row items-center py-6 gap-4">
-    <Astronav>
-      <div class="flex w-full lg:w-auto items-center justify-between">
-        <a href="/" class="flex items-center shrink-0">
-          <Image 
-            src={fullLogo} 
-            alt="Логотип КНТ Дніпро" 
-            class="h-12 md:h-14 lg:h-18 w-auto object-contain" 
-            loading="eager"
-            format="webp"
-          />
-        </a>
-        
-        <div class="flex items-center gap-3 lg:hidden">
-          <!-- Кнопка просто скролить вниз -->
-          <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs transition-all active:scale-95 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-            Зв'язок
+<!-- 
+  КЛАСИ ДЛЯ sticky:
+  lg:sticky lg:top-0 - прилипає тільки на великих екранах
+  lg:backdrop-blur-md - ефект матового скла при скролі
+  lg:bg-white/90 - білий фон з прозорістю 90%
+  z-50 - щоб шапка була поверх всього контенту
+-->
+<header class="w-full lg:sticky lg:top-0 z-50 transition-all duration-300 lg:bg-white/90 lg:backdrop-blur-md lg:border-b lg:border-slate-100 lg:shadow-sm">
+  <div class="max-w-screen-2xl mx-auto px-5 font-sans">
+    <div class="flex flex-col lg:flex-row items-center py-4 lg:py-3 gap-4">
+      <Astronav>
+        <div class="flex w-full lg:w-auto items-center justify-between">
+          <a href="/" class="flex items-center shrink-0 transition-transform hover:scale-105">
+            <Image 
+              src={fullLogo} 
+              alt="Логотип КНТ Дніпро" 
+              class="h-12 md:h-14 lg:h-16 w-auto object-contain" 
+              loading="eager"
+              format="webp"
+            />
           </a>
-          <MenuIcon class="w-8 h-8 text-slate-800" />
-        </div>
-      </div>
-      
-      <MenuItems class="hidden w-full lg:w-auto mt-4 lg:flex lg:mt-0 lg:ml-auto">
-        <ul class="flex flex-col lg:flex-row lg:gap-5 xl:gap-8 items-center">
-          {menuitems.map((item) => (
-            <li>
-              <a
-                href={item.path}
-                target={item.external ? "_blank" : "_self"}
-                rel={item.external ? "noopener" : ""}
-                class:list={[
-                  "flex lg:px-2 py-2 items-center font-bold transition text-[15px] tracking-tight group",
-                  item.external 
-                    ? "text-blue-600 hover:text-blue-800 italic" 
-                    : "text-slate-600 hover:text-blue-600"
-                ]}>
-                <span>{item.title}</span>
-                {item.external && (
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-3.5 h-3.5 ml-1.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 19.5 15-15m0 0H8.25m11.25 0v11.25" />
-                  </svg>
-                )}
-              </a>
-            </li>
-          ))}
           
-          <li class="hidden lg:block ml-2">
-            <a href="#contacts" class="flex items-center gap-2 font-bold text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full transition-all text-[15px]">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
+          <div class="flex items-center gap-3 lg:hidden">
+             <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs shadow-sm active:scale-95">
+              <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
               Зв'язок
             </a>
-          </li>
-        </ul>
-      </MenuItems>
-    </Astronav>
-  </header>
-</div>
+            <MenuIcon class="w-8 h-8 text-slate-800" />
+          </div>
+        </div>
+        
+        <MenuItems class="hidden w-full lg:w-auto mt-4 lg:flex lg:mt-0 lg:ml-auto">
+          <ul class="flex flex-col lg:flex-row lg:gap-2 xl:gap-3 items-start lg:items-center w-full lg:w-auto">
+            
+            {menuitems.map((item) => (
+              <li class="w-full lg:w-auto">
+                <a 
+                  href={item.path} 
+                  class="flex items-center gap-3 px-4 py-3 lg:py-2.5 rounded-full text-[15px] lg:text-[14px] font-bold text-slate-600 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600 lg:hover:-translate-y-0.5 group w-full"
+                >
+                  <div class="w-2.5 h-2.5 rounded-full bg-blue-200 group-hover:bg-blue-500 transition-colors shadow-[0_0_8px_rgba(59,130,246,0.3)] shrink-0 group-hover:scale-110"></div>
+                  <span>{item.title}</span>
+                </a>
+              </li>
+            ))}
+
+            <div class="hidden lg:block w-px h-6 bg-slate-200 mx-2"></div>
+
+            <!-- Кнопка Клініки -->
+            <li class="mt-6 lg:mt-0 w-full lg:w-auto px-4 lg:px-0">
+              <a 
+                href={mainClinic.path} 
+                target="_blank" 
+                class="flex items-center justify-center lg:justify-start gap-2 px-6 py-3 lg:py-2 rounded-xl lg:rounded-full bg-slate-50 text-slate-700 font-bold text-[14px] hover:bg-slate-800 hover:text-white lg:hover:-translate-y-0.5 transition-all shadow-sm border border-slate-200 group w-full lg:w-auto"
+              >
+                <Icon name="bx:link-external" class="w-4 h-4 opacity-50 group-hover:opacity-100" />
+                <span>{mainClinic.title}</span>
+              </a>
+            </li>
+
+            <!-- Кнопка Зв'язок -->
+            <li class="mt-3 lg:mt-0 w-full lg:w-auto px-4 lg:px-0">
+              <a 
+                href="#contacts" 
+                class="flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-3.5 lg:py-2.5 rounded-xl lg:rounded-full font-bold transition-all hover:bg-blue-700 hover:scale-[1.02] lg:hover:scale-105 lg:hover:shadow-blue-200 shadow-lg shadow-blue-100 text-[15px] lg:text-[14px] active:scale-95 border-2 border-transparent w-full lg:w-auto"
+              >
+                <Icon name="bx:bxs-phone-call" class="w-5 h-5 lg:w-4 h-4" />
+                Зв'язок
+              </a>
+            </li>
+
+          </ul>
+        </MenuItems>
+      </Navnav>
+    </div>
+  </div>
+</header>
