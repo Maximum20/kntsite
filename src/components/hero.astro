@@ -1,54 +1,124 @@
 ---
 import { Picture } from "astro:assets";
-import heroImage from "@assets/linear_accel.png";
+import heroImage from "@assets/main_page.jpg";
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
 ---
 
-<main class="max-w-screen-xl mx-auto px-5 pt-8 pb-8 md:pt-12 md:pb-24">
-  <div class="grid lg:grid-cols-2 place-items-center gap-8">
+<main class="max-w-screen-xl mx-auto px-5 pt-4 md:pt-20 pb-16 md:pb-32 font-sans relative overflow-visible">
+  <div class="grid lg:grid-cols-[1fr_1.1fr] items-center gap-12 lg:gap-20 relative z-10">
     
-    <div class="py-6 md:order-1 flex justify-center w-full">
-      <div class="max-w-[280px] md:max-w-md lg:max-w-full"> <Picture
-          src={heroImage}
-          alt="Лінійний прискорювач Elekta Versa HD"
-          widths={[200, 400, 600]}
-          sizes="(max-width: 800px) 100vw, 620px"
-          loading="eager"
-          format="avif"
-          class="h-auto w-full object-contain" 
-        />
+    <div class="text-center lg:text-left order-1 relative z-10">
+      <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-600 px-3 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest mb-6 border border-cyan-100 shadow-sm relative z-20">
+        <Icon name="bx:bxs-badge-check" class="w-4 h-4" />
+        Передові технології лікування
       </div>
-    </div>
 
-    <div class="text-center lg:text-left">
-      <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold lg:tracking-tight xl:tracking-tighter">
-        Відділення променевої терапії
+      <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight text-slate-900 relative z-20">
+        Відділення <br class="hidden lg:block"/> променевої терапії <br/> <span class="text-cyan-600 italic font-medium tracking-tighter">№1</span>
       </h1>
-      <p class="text-lg mt-4 text-slate-600 max-w-xl mx-auto lg:mx-0">
-        Високоточне опромінення IMRT та VMAT на лінійних прискорювачах Elekta. 
-        Максимальна доза в пухлину — мінімум на здорові органи.
+
+      <div class="lg:hidden my-10 relative z-10">
+         <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-50 relative z-10">
+            <Picture
+              src={heroImage}
+              alt="Будівля відділення"
+              widths={[400, 600]}
+              sizes="100vw"
+              loading="eager"
+              format="avif"
+              class="h-auto w-full object-cover" 
+            />
+         </div>
+         <div class="absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md p-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[180px] animate-float z-20">
+            <div class="flex items-start gap-3 text-left">
+              <div class="w-8 h-8 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600">
+                <Icon name="bx:bxs-heart" class="w-5 h-5" />
+              </div>
+              <div>
+                <h4 class="font-bold text-slate-900 text-[11px] mb-0.5 tracking-tight text-balance">Турбота про кожного</h4>
+                <p class="text-[9px] text-slate-500 leading-tight font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
+              </div>
+            </div>
+          </div>
+      </div>
+      
+      <p class="text-base md:text-lg mt-6 text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium relative z-20">
+        Ми поєднуємо інноваційну радіотерапію з комплексним 
+        блоком реабілітації для забезпечення найкращих 
+        результатів та якості життя наших пацієнтів
       </p>
       
-      <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-20">
         <Link
           href="/technologies"
-          class="flex gap-1 items-center justify-center px-6 py-3"
+          class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold shadow-lg shadow-cyan-100 transition-transform active:scale-95"
           rel="noopener">
           <Icon class="text-white w-5 h-5" name="bx:bxs-zap" />
           Наші технології
         </Link>
         <Link
-          size="lg"
           style="outline"
-          rel="noopener"
           href="/contact"
-          class="flex gap-1 items-center justify-center px-6 py-3">
-          <Icon class="text-black w-4 h-4" name="bx:bxs-calendar" />
-          Записатися на прийом
+          class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold border-2 border-slate-200 hover:bg-slate-50 transition-all active:scale-95 text-slate-700">
+          <Icon class="text-slate-700 w-5 h-5" name="bx:bxs-calendar" />
+          Наші лікарі
         </Link>
+      </div>
+
+      <div class="mt-12 flex items-center justify-center lg:justify-start gap-10 border-t border-slate-100 pt-10 relative z-20">
+        <div class="flex flex-col text-left">
+          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">15+</span>
+          <span class="text-[9px] md:text-xs uppercase font-bold text-slate-400 tracking-widest mt-1">Років досвіду</span>
+        </div>
+        <div class="w-px h-10 bg-slate-200"></div>
+        <div class="flex flex-col text-left">
+          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">2000+</span>
+          <span class="text-[9px] md:text-xs uppercase font-bold text-slate-400 tracking-widest mt-1">Пацієнтів щорічно</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden lg:block relative order-2 z-10 w-full">
+      <div class="relative transform lg:scale-110 transition-transform duration-500 hover:scale-[1.17] group">
+        
+        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10">
+          <Picture
+            src={heroImage}
+            alt="Будівля відділення"
+            widths={[800, 1200]}
+            sizes="800px"
+            loading="eager"
+            format="avif"
+            class="h-auto w-full object-cover" 
+          />
+        </div>
+
+        <div class="absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transform group-hover:scale-105 transition-transform duration-500">
+          <div class="flex items-start gap-4 text-left">
+            <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner">
+              <Icon name="bx:bxs-heart" class="w-7 h-7" />
+            </div>
+            <div class="pr-2">
+              <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
+              <p class="text-[12px] text-slate-500 leading-relaxed font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
   </div>
 </main>
+
+<style>
+  /* Анімація для картки "Турбота про кожного" */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  .animate-float {
+    animation: float 5s ease-in-out infinite;
+  }
+</style>
