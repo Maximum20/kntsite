@@ -18,7 +18,7 @@ import { Icon } from "astro-icon/components";
         Відділення <br class="hidden lg:block"/> променевої терапії <br/> <span class="text-cyan-600 italic font-medium tracking-tighter">№1</span>
       </h1>
 
-      <!-- МОБІЛЬНЕ ФОТО -->
+      <!-- МОБІЛЬНЕ ФОТО (Тепер теж клікабельне!) -->
       <div class="lg:hidden my-10 relative z-10">
          <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-50 relative z-10">
             <Picture
@@ -31,14 +31,20 @@ import { Icon } from "astro-icon/components";
               class="h-auto w-full object-cover" 
             />
          </div>
-         <div class="absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md p-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[180px] animate-float z-20">
-            <div class="flex items-start gap-3 text-left">
-              <div class="w-8 h-8 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600">
-                <Icon name="bx:bxs-heart" class="w-5 h-5" />
+         <!-- Додав клас hug-card-trigger сюди -->
+         <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md p-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[180px] animate-float z-20 cursor-pointer active:scale-95">
+            <div class="flex items-start gap-3 text-left pointer-events-none">
+              <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
+                <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
+                  <Icon name="bx:bxs-heart" class="w-6 h-6" />
+                </div>
+                <div class="hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">
+                  🤗
+                </div>
               </div>
               <div>
-                <h4 class="font-bold text-slate-900 text-[11px] mb-0.5 tracking-tight text-balance">Турбота про кожного</h4>
-                <p class="text-[9px] text-slate-500 leading-tight">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
+                <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
+              <p class="text-[12px] text-slate-500 leading-relaxed font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
               </div>
             </div>
           </div>
@@ -67,7 +73,7 @@ import { Icon } from "astro-icon/components";
         </Link>
       </div>
 
-      <!-- КОМПАКТНА ПАНЕЛЬ СТАТИСТИКИ (Стиснута) -->
+      <!-- ПАНЕЛЬ СТАТИСТИКИ -->
       <div class="mt-10 inline-flex items-center justify-between bg-white/40 backdrop-blur-md border border-white/60 py-3.5 px-8 md:py-4 md:px-12 rounded-[2.5rem] relative z-20 shadow-sm min-w-[280px] md:min-w-[400px]">
         <div class="flex flex-col text-left">
           <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">15+</span>
@@ -97,21 +103,17 @@ import { Icon } from "astro-icon/components";
           />
         </div>
 
-        <!-- КАРТКА З 🤗 -->
-        <div id="hug-card" class="absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
+        <!-- Додав клас hug-card-trigger сюди -->
+        <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
           <div class="flex items-start gap-4 text-left pointer-events-none">
-            
             <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
-              <!-- ШАР 1: СЕРЦЕ -->
-              <div id="heart-layer" class="absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
+              <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
                 <Icon name="bx:bxs-heart" class="w-7 h-7" />
               </div>
-              <!-- ШАР 2: ВЕЛИКИЙ СМАЙЛИК -->
-              <div id="hug-layer" class="absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">
+              <div class="hug-layer absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">
                 🤗
               </div>
             </div>
-
             <div class="pr-2">
               <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
               <p class="text-[12px] text-slate-500 leading-relaxed font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
@@ -136,28 +138,32 @@ import { Icon } from "astro-icon/components";
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const card = document.getElementById('hug-card');
-    const heart = document.getElementById('heart-layer');
-    const hug = document.getElementById('hug-layer');
+    // Шукаємо ВСІ картки (і мобільну, і ПК)
+    const cards = document.querySelectorAll('.hug-card-trigger');
 
-    if (card && heart && hug) {
-      card.addEventListener('click', () => {
-        // Миттєва зміна станів: серце зникає, смайлик виростає
-        heart.style.opacity = '0';
-        heart.style.transform = 'scale(0)';
-        
-        hug.style.opacity = '1';
-        hug.style.transform = 'scale(1.4)'; // Робимо смайлик масивним
+    cards.forEach(card => {
+      const heart = card.querySelector('.heart-layer');
+      const hug = card.querySelector('.hug-layer');
 
-        // Повернення до сердечка через 1.5 секунди
-        setTimeout(() => {
-          heart.style.opacity = '1';
-          heart.style.transform = 'scale(1)';
+      if (heart && hug) {
+        card.addEventListener('click', () => {
+          // Анімація появи
+          heart.style.opacity = '0';
+          heart.style.transform = 'scale(0)';
           
-          hug.style.opacity = '0';
-          hug.style.transform = 'scale(0.5)';
-        }, 1500);
-      });
-    }
+          hug.style.opacity = '1';
+          hug.style.transform = 'scale(1.4)';
+
+          // Повернення
+          setTimeout(() => {
+            heart.style.opacity = '1';
+            heart.style.transform = 'scale(1)';
+            
+            hug.style.opacity = '0';
+            hug.style.transform = 'scale(0.5)';
+          }, 1500);
+        });
+      }
+    });
   });
 </script>
