@@ -14,29 +14,24 @@ const menuitems = [
 const mainClinic = { title: "На головну клініки", path: "https://dokod.org.ua/" };
 ---
 
-<!-- 
-  КЛАСИ ДЛЯ sticky:
-  lg:sticky lg:top-0 - прилипає тільки на великих екранах
-  lg:backdrop-blur-md - ефект матового скла при скролі
-  lg:bg-white/90 - білий фон з прозорістю 90%
-  z-50 - щоб шапка була поверх всього контенту
--->
-<header class="w-full lg:sticky lg:top-0 z-50 transition-all duration-300 lg:bg-white/90 lg:backdrop-blur-md lg:border-b lg:border-slate-100 lg:shadow-sm">
+<!-- Липка шапка працює тепер з xl, щоб уникнути колізії -->
+<header class="w-full xl:sticky xl:top-0 z-50 transition-all duration-300 xl:bg-white/90 xl:backdrop-blur-md xl:border-b xl:border-slate-100 xl:shadow-sm">
   <div class="max-w-screen-2xl mx-auto px-5 font-sans">
-    <div class="flex flex-col lg:flex-row items-center py-4 lg:py-3 gap-4">
+    <div class="flex flex-col xl:flex-row items-center py-4 xl:py-3 gap-4">
       <Astronav>
-        <div class="flex w-full lg:w-auto items-center justify-between">
+        <div class="flex w-full xl:w-auto items-center justify-between">
           <a href="/" class="flex items-center shrink-0 transition-transform hover:scale-105">
             <Image 
               src={fullLogo} 
               alt="Логотип КНТ Дніпро" 
-              class="h-12 md:h-14 lg:h-16 w-auto object-contain" 
+              class="h-10 md:h-12 xl:h-16 w-auto object-contain" 
               loading="eager"
               format="webp"
             />
           </a>
           
-          <div class="flex items-center gap-3 lg:hidden">
+          <!-- Бургер тепер з'являється раніше (на xl) -->
+          <div class="flex items-center gap-3 xl:hidden">
              <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs shadow-sm active:scale-95">
               <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
               Зв'язок
@@ -45,49 +40,50 @@ const mainClinic = { title: "На головну клініки", path: "https:/
           </div>
         </div>
         
-        <MenuItems class="hidden w-full lg:w-auto mt-4 lg:flex lg:mt-0 lg:ml-auto">
-          <ul class="flex flex-col lg:flex-row lg:gap-2 xl:gap-3 items-start lg:items-center w-full lg:w-auto">
+        <!-- Меню розгортається тепер тільки на дуже широких екранах (xl) -->
+        <MenuItems class="hidden w-full xl:w-auto mt-4 xl:flex xl:mt-0 xl:ml-auto">
+          <ul class="flex flex-col xl:flex-row xl:gap-1 2xl:gap-4 items-start xl:items-center w-full xl:w-auto">
             
             {menuitems.map((item) => (
-              <li class="w-full lg:w-auto">
+              <li class="w-full xl:w-auto">
                 <a 
                   href={item.path} 
-                  class="flex items-center gap-3 px-4 py-3 lg:py-2.5 rounded-full text-[15px] lg:text-[14px] font-bold text-slate-600 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600 lg:hover:-translate-y-0.5 group w-full"
+                  class="flex items-center gap-2 px-3 2xl:px-4 py-3 xl:py-2.5 rounded-full text-[15px] xl:text-[13px] 2xl:text-[14px] font-bold text-slate-600 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600 xl:hover:-translate-y-0.5 group w-full"
                 >
-                  <div class="w-2.5 h-2.5 rounded-full bg-blue-200 group-hover:bg-blue-500 transition-colors shadow-[0_0_8px_rgba(59,130,246,0.3)] shrink-0 group-hover:scale-110"></div>
-                  <span>{item.title}</span>
+                  <div class="w-2 h-2 rounded-full bg-blue-200 group-hover:bg-blue-500 transition-colors shadow-[0_0_8px_rgba(59,130,246,0.3)] shrink-0 group-hover:scale-110"></div>
+                  <span class="whitespace-nowrap">{item.title}</span>
                 </a>
               </li>
             ))}
 
-            <div class="hidden lg:block w-px h-6 bg-slate-200 mx-2"></div>
+            <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1 2xl:mx-2"></div>
 
             <!-- Кнопка Клініки -->
-            <li class="mt-6 lg:mt-0 w-full lg:w-auto px-4 lg:px-0">
+            <li class="mt-6 xl:mt-0 w-full xl:w-auto px-4 xl:px-0">
               <a 
                 href={mainClinic.path} 
                 target="_blank" 
-                class="flex items-center justify-center lg:justify-start gap-2 px-6 py-3 lg:py-2 rounded-xl lg:rounded-full bg-slate-50 text-slate-700 font-bold text-[14px] hover:bg-slate-800 hover:text-white lg:hover:-translate-y-0.5 transition-all shadow-sm border border-slate-200 group w-full lg:w-auto"
+                class="flex items-center justify-center xl:justify-start gap-2 px-4 2xl:px-6 py-3 xl:py-2 rounded-xl xl:rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white xl:hover:-translate-y-0.5 transition-all shadow-sm border border-slate-200 group w-full xl:w-auto"
               >
                 <Icon name="bx:link-external" class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                <span>{mainClinic.title}</span>
+                <span class="whitespace-nowrap">{mainClinic.title}</span>
               </a>
             </li>
 
             <!-- Кнопка Зв'язок -->
-            <li class="mt-3 lg:mt-0 w-full lg:w-auto px-4 lg:px-0">
+            <li class="mt-3 xl:mt-0 w-full xl:w-auto px-4 xl:px-0">
               <a 
                 href="#contacts" 
-                class="flex items-center justify-center gap-2 bg-blue-600 text-white px-8 py-3.5 lg:py-2.5 rounded-xl lg:rounded-full font-bold transition-all hover:bg-blue-700 hover:scale-[1.02] lg:hover:scale-105 lg:hover:shadow-blue-200 shadow-lg shadow-blue-100 text-[15px] lg:text-[14px] active:scale-95 border-2 border-transparent w-full lg:w-auto"
+                class="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 2xl:px-8 py-3.5 xl:py-2.5 rounded-xl xl:rounded-full font-bold transition-all hover:bg-blue-700 hover:scale-[1.02] xl:hover:scale-105 xl:hover:shadow-blue-200 shadow-lg shadow-blue-100 text-[15px] xl:text-[13px] 2xl:text-[14px] active:scale-95 border-2 border-transparent w-full xl:w-auto"
               >
-                <Icon name="bx:bxs-phone-call" class="w-5 h-5 lg:w-4 h-4" />
-                Зв'язок
+                <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
+                <span class="whitespace-nowrap">Зв'язок</span>
               </a>
             </li>
 
           </ul>
         </MenuItems>
-      </Navnav>
+      </Astronav>
     </div>
   </div>
 </header>
