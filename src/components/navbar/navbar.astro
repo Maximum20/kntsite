@@ -2,7 +2,7 @@
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import fullLogo from "../../assets/full-logo.jpg";
+import fullLogo from "../../assets/full-logo.png";
 
 const menuitems = [
   { title: "Про відділення", path: "/about" },
@@ -20,15 +20,24 @@ const mainClinic = { title: "На головну клініки", path: "https:/
     <div class="flex flex-col xl:flex-row items-center py-4 xl:py-3 gap-4">
       <Astronav>
         <div class="flex w-full xl:w-auto items-center justify-between">
-          <a href="/" class="flex items-center shrink-0 transition-transform hover:scale-105">
-            <Image 
-              src={fullLogo} 
-              alt="Логотип КНТ Дніпро" 
-              class="h-10 md:h-12 xl:h-16 w-auto object-contain" 
-              loading="eager"
-              format="webp"
-            />
-          </a>
+          
+          <!-- ЛОГО + ТЕКСТ КНТ "ДОКОД" ДОР -->
+          <div class="flex items-center gap-2 sm:gap-4">
+            <a href="/" class="flex items-center shrink-0 transition-transform hover:scale-105">
+              <Image 
+                src={fullLogo} 
+                alt="Логотип КНТ Дніпро" 
+                class="h-10 md:h-12 xl:h-16 w-auto object-contain" 
+                loading="eager"
+                format="webp"
+              />
+            </a>
+            <div class="flex items-center border-l border-slate-200 pl-2 sm:pl-4">
+              <span class="text-slate-500 font-bold text-[9px] sm:text-[12px] xl:text-[13px] uppercase leading-tight">
+                КНТ "ДОКОД" ДОР
+              </span>
+            </div>
+          </div>
           
           <!-- Бургер тепер з'являється раніше (на xl) -->
           <div class="flex items-center gap-3 xl:hidden">

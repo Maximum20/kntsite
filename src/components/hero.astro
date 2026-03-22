@@ -31,9 +31,10 @@ import { Icon } from "astro-icon/components";
               class="h-auto w-full object-cover" 
             />
          </div>
-         <!-- Додав клас hug-card-trigger сюди -->
-         <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md p-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[180px] animate-float z-20 cursor-pointer active:scale-95">
-            <div class="flex items-start gap-3 text-left pointer-events-none">
+         
+         <!-- МОБІЛЬНА КАРТКА: Зроблена ширшою (max-w-[260px]) та нижчою (py-3) -->
+         <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-float z-20 cursor-pointer active:scale-95">
+            <div class="flex items-center gap-3 text-left pointer-events-none">
               <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
                 <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
                   <Icon name="bx:bxs-heart" class="w-6 h-6" />
@@ -43,7 +44,7 @@ import { Icon } from "astro-icon/components";
                 </div>
               </div>
               <div>
-                <h4 class="font-bold text-slate-900 text-[11px] mb-0.5 tracking-tight text-balance">Турбота про кожного</h4>
+                <h4 class="font-bold text-slate-900 text-[11px] mb-0 tracking-tight text-balance">Турбота про кожного</h4>
                 <p class="text-[9px] text-slate-500 leading-tight font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
               </div>
             </div>
