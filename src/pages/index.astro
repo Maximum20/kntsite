@@ -1,13 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/hero.astro";
+import News from "../components/news.astro"; // Імпорт нашого нового блоку
 ---
 
 <Layout title="Відділення променевої терапії">
   <main class="grid gap-20 mt-16 text-slate-800">
     <Hero />
     
-    <!-- Переваги -->
     <section class="container mx-auto px-5">
       <div class="mt-12">
         <h2 class="text-4xl lg:text-5xl font-bold text-center tracking-tight">Сучасні технології лікування</h2>
@@ -41,7 +41,6 @@ import Hero from "../components/hero.astro";
       </div>
     </section>
 
-    <!-- Етапи лікування -->
     <section class="bg-slate-50 py-16 px-5 border-y border-slate-200">
       <div class="container mx-auto">
         <h2 class="text-3xl md:text-4xl font-bold text-center mb-16 tracking-tight text-slate-900">Як проходить лікування?</h2>
@@ -70,17 +69,14 @@ import Hero from "../components/hero.astro";
       </div>
     </section>
 
-    <!-- СЕКЦІЯ КОНТАКТІВ (ВИПРАВЛЕНО: Компактність + Скрол) -->
-    <section id="contacts" class="container mx-auto px-5 pt-6 pb-20 scroll-mt-4">
+    <section id="contacts" class="container mx-auto px-5 pt-6 pb-10 scroll-mt-4">
       <div class="bg-slate-900 rounded-[2rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
-        <!-- Декор -->
         <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[120px] opacity-20 -mr-32 -mt-32"></div>
         
         <div class="relative z-10">
           <h2 class="text-3xl md:text-5xl font-bold mb-8 md:mb-12 tracking-tighter">Наші контакти</h2>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            <!-- Колонна 1: Телефони -->
             <div class="flex flex-col gap-4 md:gap-6">
               <span class="text-blue-400 font-bold uppercase text-[10px] md:text-xs tracking-widest">Реєстратура</span>
               <div class="flex flex-col gap-2 md:gap-4 text-lg md:text-2xl font-bold tracking-tight">
@@ -91,7 +87,6 @@ import Hero from "../components/hero.astro";
               </div>
             </div>
 
-            <!-- Колонна 2: Адреса та пошта -->
             <div class="flex flex-col gap-4 md:gap-6 md:border-x md:border-slate-800 md:px-10">
               <span class="text-blue-400 font-bold uppercase text-[10px] md:text-xs tracking-widest">Адреса та пошта</span>
               <div class="space-y-2 md:space-y-4">
@@ -105,29 +100,17 @@ import Hero from "../components/hero.astro";
               </div>
             </div>
 
-            <!-- Колонна 3: Соцмережі -->
             <div class="flex flex-col gap-4 md:gap-6">
               <span class="text-blue-400 font-bold uppercase text-[10px] md:text-xs tracking-widest">Ми в мережі</span>
               <div class="flex flex-wrap gap-3 md:gap-4">
-                <!-- Facebook -->
-                <a href="https://www.facebook.com/kz.kod.dor" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-all shadow-lg">
+                <a href="https://www.facebook.com/kz.kod.dor" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-all shadow-lg text-white">
                   <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
                 </a>
-                <!-- Instagram -->
-                <a href="https://www.instagram.com/dokod.dp/" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition-all shadow-lg">
+                <a href="https://www.instagram.com/dokod.dp/" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition-all shadow-lg text-white">
                   <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                 </a>
-                <!-- Telegram -->
-                <a href="https://t.me/dokod_dp" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-sky-500 transition-all shadow-lg">
+                <a href="https://t.me/dokod_dp" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-sky-500 transition-all shadow-lg text-white">
                   <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.665 3.717l-17.73 6.837c-1.213.486-1.203 1.163-.223 1.467l4.55 1.42 10.532-6.645c.498-.303.953-.14.578.192l-8.533 7.707-.33 4.955c.483 0 .697-.223.967-.483l2.325-2.26 4.837 3.57c.89.49 1.53.24 1.752-.823l3.17-14.937c.325-1.3-.5-1.894-1.352-1.51z"/></svg>
-                </a>
-                <!-- YouTube -->
-                <a href="https://youtube.com/@dokodlic" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-all shadow-lg">
-                  <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                </a>
-                <!-- TikTok -->
-                <a href="https://www.tiktok.com/@dokod_dp" target="_blank" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-white hover:text-black transition-all shadow-lg">
-                  <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 448 512"><path d="M448,209.91a210.06,210.06,0,0,1-122.77-39.25V349.38A162.55,162.55,0,1,1,185,188.31V278.2a74.62,74.62,0,1,0,52.23,71.18V0l88,0a121.18,121.18,0,0,0,1.86,22.17h0A122.18,122.18,0,0,0,381,102.39a121.43,121.43,0,0,0,67,20.14Z"/></svg>
                 </a>
               </div>
             </div>
@@ -135,5 +118,8 @@ import Hero from "../components/hero.astro";
         </div>
       </div>
     </section>
+
+    <News />
+    
   </main>
 </Layout>
