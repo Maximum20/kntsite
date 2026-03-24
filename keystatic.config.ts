@@ -10,7 +10,8 @@ export default config({
       label: 'Новини',
       slugField: 'title',
       path: 'src/content/news/*',
-      format: { contentField: 'content' },
+      // Цей рядок каже: шукай метадані зверху, а текст знизу в одному файлі
+      format: { data: 'frontmatter', contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Заголовок' } }),
         date: fields.date({ label: 'Дата публікації' }),
