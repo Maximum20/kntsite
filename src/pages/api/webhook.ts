@@ -1,124 +1,81 @@
 import type { APIRoute } from 'astro';
-import { kv } from '@vercel/kv';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const tgToken = process.env.TELEGRAM_TOKEN;
     const githubToken = process.env.GITHUB_TOKEN;
-    
-    // Твої дані (вже вписав)
     const REPO_OWNER = "maximum20"; 
     const REPO_NAME = "kntsite";
 
-    // Telegram надсилає дані або в message, або в callback_query (якщо натиснута кнопка)
-    const chatId = body.message?.chat.id || body.callback_query?.message.chat.id;
-    const text = body.message?.text;
-    const data = body.callback_query?.data;
+    const msg = body.message;
+    if (!msg) return new Response('ok');
 
-    if (!chatId) return new Response('no chat id', { status: 200 });
+    const chatId = msg.chat.id;
+    const text = msg.text;
+    const replyTo = msg.reply_to_message?.text;
 
-    // --- ЛОГІКА БОТА ---
-
-    // 1. Команда /start - Скидаємо все і пропонуємо почати
+    // 1. Команда START
     if (text === '/start') {
-      await kv.set(`state:${chatId}`, 'IDLE');
-      await sendTelegram(tgToken, chatId, "Вітаю, Максе! 🏥\nБажаєте опублікувати нову новину на сайт?", [
-        [{ text: "Так, розпочати! ✍️", callback_data: "start_news" }]
-      ]);
+      await sendTelegram(tgToken, chatId, "Вітаю, Максе! Оберіть дію:", {
+        inline_keyboard: [[{ text: "Створити новину ✍️", callback_data: "new_post" }]]
+      });
       return new Response('ok');
     }
 
-    // Отримуємо поточний стан користувача
-    const state = await kv.get(`state:${chatId}`);
-
-    // 2. Натиснули кнопку "Розпочати"
-    if (data === 'start_news') {
-      await kv.set(`state:${chatId}`, 'AWAIT_TITLE');
-      await sendTelegram(tgToken, chatId, "🟢 **Крок 1:**\nНапишіть заголовок новини:");
-    } 
-
-    // 3. Отримали заголовок -> Питаємо опис
-    else if (state === 'AWAIT_TITLE' && text) {
-      await kv.set(`news:${chatId}:title`, text);
-      await kv.set(`state:${chatId}`, 'AWAIT_DESC');
-      await sendTelegram(tgToken, chatId, "🟡 **Крок 2:**\nТепер напишіть короткий опис (анонс для головної сторінки):");
+    // 2. Натиснули кнопку "Створити новину"
+    if (body.callback_query?.data === 'new_post') {
+      const cId = body.callback_query.message.chat.id;
+      await sendTelegram(tgToken, cId, "📌 Напишіть ЗАГОЛОВОК новини:", { force_reply: true });
+      return new Response('ok');
     }
 
-    // 4. Отримали опис -> Питаємо основний текст
-    else if (state === 'AWAIT_DESC' && text) {
-      await kv.set(`news:${chatId}:desc`, text);
-      await kv.set(`state:${chatId}`, 'AWAIT_BODY');
-      await sendTelegram(tgToken, chatId, "🔵 **Крок 3:**\nНапишіть основний зміст новини:");
-    }
+    // 3. Обробка відповідей (Логіка за ключовими словами у запитаннях)
+    if (replyTo) {
+      // Якщо ти відповів на запит заголовка
+      if (replyTo.includes("ЗАГОЛОВОК")) {
+        await sendTelegram(tgToken, chatId, `Заголовок прийнято: ${text}\n\n📌 Тепер напишіть ОПИС (анонс):`, { force_reply: true });
+      } 
+      // Якщо ти відповів на запит опису
+      else if (replyTo.includes("ОПИС")) {
+        const title = replyTo.split(":")[1].trim(); // Дістаємо заголовок з попереднього повідомлення
+        await sendTelegram(tgToken, chatId, `Заголовок: ${title}\nОпис: ${text}\n\n📌 Тепер напишіть ОСНОВНИЙ ТЕКСТ:`, { force_reply: true });
+      }
+      // Якщо ти відповів на запит тексту -> ПУШИМО
+      else if (replyTo.includes("ОСНОВНИЙ ТЕКСТ")) {
+        const lines = replyTo.split("\n");
+        const title = lines[0].split(":")[1].trim();
+        const desc = lines[1].split(":")[1].trim();
 
-    // 5. Отримали текст -> ФІНАЛ (Пушимо в GitHub)
-    else if (state === 'AWAIT_BODY' && text) {
-      const title = await kv.get(`news:${chatId}:title`);
-      const desc = await kv.get(`news:${chatId}:desc`);
-      
-      const fileName = `news-${Date.now()}.md`;
-      
-      // Формуємо файл
-      const fileContent = `---
-title: "${title}"
-date: "${new Date().toLocaleDateString('uk-UA')}"
-description: "${desc}"
----
-${text}`;
+        const fileName = `news-${Date.now()}.md`;
+        const fileContent = `---\ntitle: "${title}"\ndate: "${new Date().toLocaleDateString('uk-UA')}"\ndescription: "${desc}"\n---\n${text}`;
 
-      const base64Content = Buffer.from(fileContent).toString('base64');
-
-      // Відправка на GitHub через API
-      const ghResponse = await fetch(
-        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/news/${fileName}`,
-        {
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/news/${fileName}`, {
           method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Content-Type': 'application/json',
-            'User-Agent': 'Astro-Bot',
-          },
-          body: JSON.stringify({
-            message: `New post: ${title}`,
-            content: base64Content,
-          }),
-        }
-      );
+          headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: `New post: ${title}`, content: Buffer.from(fileContent).toString('base64') }),
+        });
 
-      if (ghResponse.ok) {
-        await sendTelegram(tgToken, chatId, `✅ **Успіх!**\nНовина "${title}" опублікована.\n\nЗа 30 секунд вона з'явиться на сайті.`);
-        // Очищуємо пам'ять бота
-        await kv.del(`state:${chatId}`);
-        await kv.del(`news:${chatId}:title`);
-        await kv.del(`news:${chatId}:desc`);
-      } else {
-        await sendTelegram(tgToken, chatId, "❌ Помилка GitHub. Можливо, токен застарів або немає прав.");
+        if (res.ok) {
+          await sendTelegram(tgToken, chatId, "✅ НОВИНА ОПУБЛІКОВАНА!");
+        } else {
+          await sendTelegram(tgToken, chatId, "❌ Помилка GitHub.");
+        }
       }
     }
 
-    return new Response(JSON.stringify({ status: 'ok' }), { status: 200 });
-  } catch (err: any) {
-    console.error('Webhook Error:', err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    return new Response('ok');
+  } catch (err) {
+    return new Response('error');
   }
 };
 
-// Функція-помічник для відправки повідомлень у Telegram
-async function sendTelegram(token: string | undefined, chatId: number, text: string, buttons: any = null) {
-  const url = `https://api.telegram.org/bot${token}/sendMessage`;
-  const body: any = {
-    chat_id: chatId,
-    text: text,
-    parse_mode: 'Markdown',
-  };
-  if (buttons) {
-    body.reply_markup = { inline_keyboard: buttons };
-  }
-
-  await fetch(url, {
+async function sendTelegram(token, chatId, text, replyMarkup: any = null) {
+  const payload: any = { chat_id: chatId, text: text, parse_mode: 'Markdown' };
+  if (replyMarkup) payload.reply_markup = replyMarkup;
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    body: JSON.stringify(payload)
   });
 }
