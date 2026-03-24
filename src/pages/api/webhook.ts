@@ -36,48 +36,63 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (replyTo) {
-      // 1. ПЕРЕВІРЯЄМО НАЙПІЗНІШИЙ ЕТАП (Текст)
       if (replyTo.includes("Крок 3")) {
-        const lines = replyTo.split("\n");
-        const title = lines[0].replace("Заголовок:", "").trim();
-        const desc = lines[1].replace("Опис:", "").trim();
+        const titleMatch = replyTo.match(/Заголовок:\s*(.*)/);
+        const descMatch = replyTo.match(/Опис:\s*(.*)/);
+        
+        const title = titleMatch ? titleMatch[1].trim() : "Новина";
+        const desc = descMatch ? descMatch[1].trim() : "Опис новини";
 
         const fileName = `news-${Date.now()}.md`;
-        const fileContent = `---\ntitle: "${title}"\ndate: "${new Date().toLocaleDateString('uk-UA')}"\ndescription: "${desc}"\n---\n${text}`;
+        const fileContent = `---\ntitle: "${title}"\ndate: "${new Date().toISOString().split('T')[0]}"\ndescription: "${desc}"\n---\n${text}`;
 
         const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/news/${fileName}`, {
           method: 'PUT',
-          headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `New post: ${title}`, content: Buffer.from(fileContent).toString('base64') }),
+          headers: { 
+            'Authorization': `token ${githubToken}`, 
+            'Content-Type': 'application/json',
+            'User-Agent': 'Astro-Bot'
+          },
+          body: JSON.stringify({ 
+            message: `New post via bot: ${title}`, 
+            content: Buffer.from(fileContent).toString('base64') 
+          }),
         });
 
         if (res.ok) {
-          await sendTelegram(tgToken, chatId, `✅ ОПУБЛІКОВАНО!\n\nНовина "${title}" вже летить на сайт.`);
+          // Відправляємо без Markdown, щоб не було помилок через символи
+          await sendTelegram(tgToken, chatId, "✅ ОПУБЛІКОВАНО! Новина вже на сайті.");
         } else {
-          await sendTelegram(tgToken, chatId, "❌ Помилка GitHub.");
+          const errorInfo = await res.json();
+          await sendTelegram(tgToken, chatId, "❌ Помилка GitHub: " + errorInfo.message);
         }
       } 
-      // 2. ПЕРЕВІРЯЄМО СЕРЕДНІЙ ЕТАП (Опис)
       else if (replyTo.includes("Крок 2")) {
-        const title = replyTo.replace("Заголовок:", "").split("\n")[0].trim();
+        const titleMatch = replyTo.match(/Заголовок:\s*(.*)/);
+        const title = titleMatch ? titleMatch[1].trim() : "Новина";
         await sendTelegram(tgToken, chatId, `Заголовок: ${title}\nОпис: ${text}\n\n👉 Крок 3: Введіть ОСНОВНИЙ ТЕКСТ:`, { force_reply: true });
       }
-      // 3. ПЕРЕВІРЯЄМО ПЕРШИЙ ЕТАП (Заголовок)
       else if (replyTo.includes("Крок 1")) {
         await sendTelegram(tgToken, chatId, `Заголовок: ${text}\n\n👉 Крок 2: Введіть ОПИС (анонс):`, { force_reply: true });
       }
     }
 
     return new Response('ok');
-  } catch (err) {
+  } catch (err: any) {
+    // Якщо щось зовсім впало, хоча б логуємо в Vercel
+    console.error(err);
     return new Response('ok');
   }
 };
 
-async function sendTelegram(token, chatId, text, replyMarkup: any = null) {
+async function sendTelegram(token: string | undefined, chatId: number, text: string, replyMarkup: any = null) {
   await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text: text, reply_markup: replyMarkup })
+    body: JSON.stringify({ 
+      chat_id: chatId, 
+      text: text, 
+      reply_markup: replyMarkup 
+    })
   });
 }
