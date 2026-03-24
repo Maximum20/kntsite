@@ -10,12 +10,13 @@ export default config({
       label: 'Новини',
       slugField: 'title',
       path: 'src/content/news/*',
-      // Цей рядок каже: шукай метадані зверху, а текст знизу в одному файлі
+      // СЕКРЕТ ТУТ: змушуємо зберігати в .md
+      entryExtension: '.md', 
       format: { data: 'frontmatter', contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Заголовок' } }),
         date: fields.date({ label: 'Дата публікації' }),
-        description: fields.text({ label: 'Короткий опис (анонс)', multiline: true }),
+        description: fields.text({ label: 'Короткий опис', multiline: true }),
         content: fields.markdoc({ label: 'Основний текст' }),
       },
     }),
