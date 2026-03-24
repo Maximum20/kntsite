@@ -10,14 +10,18 @@ export default config({
       label: 'Новини',
       slugField: 'title',
       path: 'src/content/news/*',
-      // СЕКРЕТ ТУТ: змушуємо зберігати в .md
-      entryExtension: '.md', 
-      format: { data: 'frontmatter', contentField: 'content' },
+      // Використовуємо стандартний формат, він зазвичай дає .md або .mdoc
+      format: { data: 'yaml', contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Заголовок' } }),
         date: fields.date({ label: 'Дата публікації' }),
         description: fields.text({ label: 'Короткий опис', multiline: true }),
-        content: fields.markdoc({ label: 'Основний текст' }),
+        content: fields.document({ 
+          label: 'Основний текст',
+          formatting: true,
+          dividers: true,
+          links: true,
+        }),
       },
     }),
   },
