@@ -8,6 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const REPO_OWNER = "maximum20"; 
     const REPO_NAME = "kntsite";
 
+    // 1. Обробка кліку по кнопці
     if (body.callback_query) {
       const chatId = body.callback_query.message.chat.id;
       if (body.callback_query.data === 'new_post') {
@@ -28,6 +29,7 @@ export const POST: APIRoute = async ({ request }) => {
     const text = msg.text;
     const replyTo = msg.reply_to_message?.text;
 
+    // 2. Команда /start
     if (text === '/start') {
       await sendTelegram(tgToken, chatId, "Вітаю! Оберіть дію:", {
         inline_keyboard: [[{ text: "Створити новину ✍️", callback_data: "new_post" }]]
@@ -35,10 +37,12 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('ok');
     }
 
+    // 3. Логіка Reply (Кроки 1, 2, 3)
     if (replyTo) {
       if (replyTo.includes("Крок 3")) {
-        const title = replyTo.split('\n')[0].split(':')[1]?.trim() || "Новина";
-        const desc = replyTo.split('\n')[1].split(':')[1]?.trim() || "Опис";
+        // Витягуємо дані через пошук рядків
+        const title = replyTo.split('\n').find(l => l.includes('Заголовок:'))?.replace('Заголовок:', '').trim() || "Новина";
+        const desc = replyTo.split('\n').find(l => l.includes('Опис:'))?.replace('Опис:', '').trim() || "Опис";
 
         const fileName = `news-${Date.now()}.md`;
         const fileContent = `---\ntitle: "${title}"\ndate: "${new Date().toISOString().split('T')[0]}"\ndescription: "${desc}"\n---\n${text}`;
@@ -54,21 +58,14 @@ export const POST: APIRoute = async ({ request }) => {
         });
 
         if (res.ok) {
-          console.log("GitHub OK. Спроба відправити в TG...");
-          const tgRes = await sendTelegram(tgToken, chatId, "✅ ГОТОВО! Новина вже на сайті.");
-          const tgResult = await tgRes.json();
-          if (!tgRes.ok) {
-            console.error("Помилка Telegram API:", tgResult);
-          } else {
-            console.log("Telegram відповів успішно!");
-          }
+          await sendTelegram(tgToken, chatId, "✅ ГОТОВО! Новина вже на сайті.");
         } else {
           const err = await res.json();
           await sendTelegram(tgToken, chatId, "❌ Помилка GitHub: " + err.message);
         }
       } 
       else if (replyTo.includes("Крок 2")) {
-        const title = replyTo.split('\n')[0].split(':')[1]?.trim();
+        const title = replyTo.split('\n').find(l => l.includes('Заголовок:'))?.replace('Заголовок:', '').trim() || "Новина";
         await sendTelegram(tgToken, chatId, `Заголовок: ${title}\nОпис: ${text}\n\n👉 Крок 3: Введіть ОСНОВНИЙ ТЕКСТ:`, { force_reply: true });
       }
       else if (replyTo.includes("Крок 1")) {
@@ -78,19 +75,25 @@ export const POST: APIRoute = async ({ request }) => {
 
     return new Response('ok');
   } catch (err: any) {
-    console.error("Глобальний збій:", err.message);
     return new Response('ok');
   }
 };
 
+// ВИПРАВЛЕНА ФУНКЦІЯ (Без помилки 400)
 async function sendTelegram(token: string | undefined, chatId: number, text: string, replyMarkup: any = null) {
+  const payload: any = {
+    chat_id: chatId,
+    text: text
+  };
+  
+  // Додаємо reply_markup ТІЛЬКИ якщо він справді переданий
+  if (replyMarkup) {
+    payload.reply_markup = replyMarkup;
+  }
+
   return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      chat_id: chatId, 
-      text: text, 
-      reply_markup: replyMarkup 
-    })
+    body: JSON.stringify(payload)
   });
 }
