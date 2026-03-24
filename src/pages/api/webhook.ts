@@ -44,7 +44,11 @@ export const POST: APIRoute = async ({ request }) => {
         const title = replyTo.split('\n').find(l => l.includes('Заголовок:'))?.replace('Заголовок:', '').trim() || "Новина";
         const desc = replyTo.split('\n').find(l => l.includes('Опис:'))?.replace('Опис:', '').trim() || "Опис";
 
-        const fileName = `news-${Date.now()}.md`;
+        const slug = title.toLowerCase()
+  .replace(/[^a-z0-9а-яіїєґ]/g, '-') // замінюємо символи на дефіси
+  .replace(/-+/g, '-')             // прибираємо подвійні дефіси
+  .trim();
+const fileName = `${slug}.md`;
         const fileContent = `---\ntitle: "${title}"\ndate: "${new Date().toISOString().split('T')[0]}"\ndescription: "${desc}"\n---\n${text}`;
 
         const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/news/${fileName}`, {

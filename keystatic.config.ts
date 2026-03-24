@@ -9,7 +9,7 @@ export default config({
     news: collection({
       label: 'Новини',
       slugField: 'title',
-      path: 'src/content/news/*',
+      path: 'src/content/news/*.md',
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Заголовок' } }),
