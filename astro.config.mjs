@@ -1,19 +1,27 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
-import vercel from '@astrojs/vercel'; // Додаємо цей імпорт
+import vercel from '@astrojs/vercel';
+import keystatic from '@keystatic/astro'; // Додаємо адмінку
+import react from '@astrojs/react';     // Адмінці потрібен React
 
 export default defineConfig({
-  // Встав сюди адресу свого сайту на Vercel
+  // Твій сайт
   site: 'https://kntsite.vercel.app', 
   
-  // Цей рядок каже Astro працювати як сервер, щоб API ожило
+  // Працюємо як сервер для API та адмінки
   output: 'server',
   
-  // Кажемо Astro використовувати потужності Vercel
+  // Використовуємо Vercel
   adapter: vercel(),
 
-  integrations: [icon()],
+  // Додаємо нові інтеграції до існуючих
+  integrations: [
+    icon(), 
+    react(),     // Потрібен для інтерфейсу Keystatic
+    keystatic()  // Сама адмінка
+  ],
+
   vite: {
     plugins: [tailwindcss()],
   },
