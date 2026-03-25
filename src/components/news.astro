@@ -43,10 +43,10 @@ const sortedNews = allNews.sort((a, b) => b.data.date.getTime() - a.data.date.ge
           <p class="text-slate-500 text-sm leading-relaxed mb-6 font-medium">
             {item.data.description}
           </p>
-          <button class="flex items-center gap-2 font-bold text-sm text-slate-900 group/btn">
-            Детальніше 
-            <Icon name="bx:right-arrow-alt" class="w-5 h-5 transition-transform group-hover/btn:translate-x-1" />
-          </button>
+          <a href={`/news/${item.id}`} class="flex items-center gap-2 font-bold text-sm text-slate-900 group/btn">
+  Детальніше 
+  <Icon name="bx:right-arrow-alt" class="w-5 h-5 transition-transform group-hover/btn:translate-x-1" />
+</a>
         </div>
       </div>
     ))}
