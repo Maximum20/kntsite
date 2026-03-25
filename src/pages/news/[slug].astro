@@ -1,25 +1,28 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
 
-// 1. Генеруємо шляхи для всіх новин
-export async function getStaticPaths() {
-  const newsEntries = await getCollection('news');
-  return newsEntries.map(entry => ({
-    params: { slug: entry.id }, props: { entry },
-  }));
-}
+// 1. Отримуємо slug з URL
+const { slug } = Astro.params;
 
-// 2. Отримуємо дані конкретної новини
-const { entry } = Astro.props;
+// 2. Якщо slug порожній (дивно, але про всяк випадок), перекидаємо на 404
+if (!slug) return Astro.redirect('/404');
+
+// 3. Отримуємо саму новину за цим slug
+const entry = await getEntry('news', slug);
+
+// 4. Якщо новини не існує (наприклад, її видалили), теж на 404
+if (!entry) return Astro.redirect('/404');
+
+// 5. Рендеримо контент
 const { Content } = await render(entry);
 ---
 
 <Layout title={entry.data.title}>
   <article class="max-w-4xl mx-auto px-5 py-20">
     <a href="/#news" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 mb-8 transition-colors">
-      ← Назад до новин
+      ← Назад до новий
     </a>
 
     {entry.data.image && (
