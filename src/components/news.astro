@@ -4,7 +4,7 @@ import { Icon } from "astro-icon/components";
 
 // Отримуємо новини. Якщо колекція ще не завантажилась, повертаємо порожній масив
 const allNews = await getCollection('news') || [];
-const sortedNews = allNews.sort((a, b) => Date.parse(b.data.date) - Date.parse(a.data.date));
+const sortedNews = allNews.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
 <section id="news" class="container mx-auto px-5 py-20 scroll-mt-20">
@@ -31,7 +31,7 @@ const sortedNews = allNews.sort((a, b) => Date.parse(b.data.date) - Date.parse(a
         </div>
         <div class="p-8">
           <div class="flex items-center gap-2 text-blue-600 font-bold text-xs mb-4 uppercase">
-            <Icon name="bx:calendar" class="w-4 h-4" /> {item.data.date}
+            <Icon name="bx:calendar" class="w-4 h-4" /> {item.data.date.toLocaleDateString('uk-UA')}
           </div>
           <h3 class="text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors">
             {item.data.title}
