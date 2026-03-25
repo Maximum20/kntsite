@@ -15,7 +15,7 @@ import { Icon } from "astro-icon/components";
       </div>
 
       <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight text-slate-900 relative z-20">
-        Відділення <br class="hidden lg:block"/> променевої терапії <br/> <span class="text-cyan-600 italic font-medium tracking-tighter">№1</span>
+        Відділення <br class="hidden lg:block"/> променевої терапії <br/> 
       </h1>
 
       <!-- МОБІЛЬНЕ ФОТО (Тепер теж клікабельне!) -->
@@ -139,23 +139,23 @@ import { Icon } from "astro-icon/components";
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Шукаємо ВСІ картки (і мобільну, і ПК)
-    const cards = document.querySelectorAll('.hug-card-trigger');
+    // Додаємо <HTMLElement>, щоб TypeScript розумів, що у цих елементів є стилі
+    const cards = document.querySelectorAll<HTMLElement>('.hug-card-trigger');
 
     cards.forEach(card => {
-      const heart = card.querySelector('.heart-layer');
-      const hug = card.querySelector('.hug-layer');
+      // Тут теж підказуємо тип елемента
+      const heart = card.querySelector<HTMLElement>('.heart-layer');
+      const hug = card.querySelector<HTMLElement>('.hug-layer');
 
       if (heart && hug) {
         card.addEventListener('click', () => {
-          // Анімація появи
+          // Тепер TypeScript бачить .style і мовчить
           heart.style.opacity = '0';
           heart.style.transform = 'scale(0)';
           
           hug.style.opacity = '1';
           hug.style.transform = 'scale(1.4)';
 
-          // Повернення
           setTimeout(() => {
             heart.style.opacity = '1';
             heart.style.transform = 'scale(1)';
