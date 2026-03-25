@@ -17,15 +17,23 @@ export default config({
       slugField: 'title',
       path: 'src/content/news/*',
       format: { data: 'yaml', contentField: 'content' },
+      // ... (початок файлу без змін)
       schema: {
         title: fields.slug({ name: { label: 'Заголовок' } }),
         date: fields.date({ label: 'Дата публікації' }),
+        // 👇 Додаємо поле для фото
+        image: fields.image({
+  label: 'Головне фото',
+  directory: 'src/assets/news',
+  publicPath: '/src/assets/news/' // 👈 Починаємо від /src
+}),
         description: fields.text({ label: 'Короткий опис', multiline: true }),
         content: fields.markdoc({ 
           label: 'Основний текст',
           extension: 'md'
         }),
       },
+// ...
     }),
   },
 });

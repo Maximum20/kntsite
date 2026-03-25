@@ -1,14 +1,15 @@
 import { defineCollection, z } from 'astro:content';
-import { glob } from 'astro/loaders'; // Додаємо новий завантажувач
+import { glob } from 'astro/loaders';
 
 const news = defineCollection({
-  // Вказуємо Astro, де шукати файли новин
-  loader: glob({ pattern: "**/*.md", base: "./src/content/news" }),
-  schema: z.object({
+  // pattern: "**/*.{md,mdoc}" шукає всі md файли
+  // base: "./src/content/news" вказує Astro, куди саме дивитись
+  loader: glob({ pattern: "**/*.{md,mdoc}", base: "./src/content/news" }),
+  schema: ({ image }) => z.object({
     title: z.string(),
     date: z.coerce.date(),
-    image: z.string().optional(),
     description: z.string(),
+    image: image().optional(),
   }),
 });
 

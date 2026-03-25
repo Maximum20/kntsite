@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { Icon } from "astro-icon/components";
-
+import { Image } from 'astro:assets'; // 👈 ДОДАЙ ЦЕЙ РЯДОК
 // Отримуємо новини. Якщо колекція ще не завантажилась, повертаємо порожній масив
 const allNews = await getCollection('news') || [];
 const sortedNews = allNews.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
@@ -25,9 +25,13 @@ const sortedNews = allNews.sort((a, b) => b.data.date.getTime() - a.data.date.ge
     {sortedNews.map(item => (
       <div class="group bg-white rounded-[2rem] border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
         <div class="aspect-video overflow-hidden">
-          {item.data.image && (
-            <img src={item.data.image} alt={item.data.title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-          )}
+         {item.data.image && (
+  <Image 
+    src={item.data.image} 
+    alt={item.data.title} 
+    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+  />
+)}
         </div>
         <div class="p-8">
           <div class="flex items-center gap-2 text-blue-600 font-bold text-xs mb-4 uppercase">
