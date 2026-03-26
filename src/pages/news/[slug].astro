@@ -2,58 +2,210 @@
 import { getEntry, render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import { Image } from 'astro:assets';
+import { Icon } from "astro-icon/components";
 
-// 1. Отримуємо slug з URL
 const { slug } = Astro.params;
-
-// 2. Якщо slug порожній (дивно, але про всяк випадок), перекидаємо на 404
 if (!slug) return Astro.redirect('/404');
-
-// 3. Отримуємо саму новину за цим slug
 const entry = await getEntry('news', slug);
-
-// 4. Якщо новини не існує (наприклад, її видалили), теж на 404
 if (!entry) return Astro.redirect('/404');
-
-// 5. Рендеримо контент
 const { Content } = await render(entry);
+
+const wordsPerMinute = 200;
+const words = entry.body ? entry.body.split(/\s+/g).length : 0;
+const readingTime = Math.ceil(words / wordsPerMinute);
 ---
 
 <Layout title={entry.data.title}>
-  <article class="max-w-4xl mx-auto px-5 py-20">
-    <a href="/#news" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 mb-8 transition-colors">
-      ← Назад до новий
-    </a>
+  <div id="progress-bar" class="fixed top-0 left-0 h-1.5 bg-gradient-to-r from-blue-600 to-cyan-400 z-50 transition-all duration-150 w-0 shadow-[0_0_10px_rgba(37,99,235,0.3)]"></div>
 
-    {entry.data.image && (
-      <div class="rounded-[2rem] overflow-hidden mb-12 shadow-2xl">
-        <Image 
-          src={entry.data.image} 
-          alt={entry.data.title} 
-          class="w-full h-auto object-cover"
-        />
+  <main class="max-w-6xl mx-auto px-5 py-10 md:py-16 font-sans relative">
+    
+    <div class="flex justify-between items-center mb-10 gap-4">
+      <a href="/#news" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors font-bold text-xs uppercase tracking-widest group">
+        <Icon name="bx:left-arrow-alt" class="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> Назад до списку
+      </a>
+      
+      <div class="flex items-center gap-2 bg-white/50 backdrop-blur-sm px-4 py-1.5 rounded-full border border-slate-100 shadow-sm text-slate-500 font-bold text-[10px] uppercase tracking-tighter shrink-0">
+        <Icon name="bx:time-five" class="w-4 h-4 text-blue-500" />
+        <span>~ {readingTime} хв читання</span>
       </div>
-    )}
-
-    <div class="mb-10">
-      <time class="text-blue-600 font-bold uppercase text-sm tracking-widest">
-        {entry.data.date.toLocaleDateString('uk-UA')}
-      </time>
-      <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mt-4 leading-tight">
-        {entry.data.title}
-      </h1>
-      <p class="text-xl text-slate-500 mt-6 leading-relaxed font-medium">
-        {entry.data.description}
-      </p>
     </div>
 
-    <hr class="border-slate-100 mb-10" />
+    <header class="grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-16 items-start mb-16">
+      {entry.data.image && (
+        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-50 relative group">
+          <Image 
+            src={entry.data.image} 
+            alt={entry.data.title} 
+            class="w-full max-h-[500px] md:max-h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        </div>
+      )}
 
-    <div class="prose prose-slate prose-lg max-w-none 
-      prose-headings:font-bold prose-headings:text-slate-900 
-      prose-p:leading-relaxed prose-p:text-slate-600
-      prose-img:rounded-2xl">
-      <Content />
+      <div class="flex flex-col">
+        <time class="text-blue-600 font-black uppercase text-xs tracking-[0.2em] mb-4">
+          {entry.data.date.toLocaleDateString('uk-UA')}
+        </time>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-8">
+          {entry.data.title}
+        </h1>
+        <div class="bg-blue-50/40 border-l-4 border-blue-500 p-6 md:p-8 rounded-r-[2rem]">
+           <p class="text-lg md:text-xl text-slate-700 leading-relaxed italic font-medium">
+            {entry.data.description}
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex flex-col items-center gap-4 mb-16 animate-bounce opacity-80">
+      <span class="text-xs uppercase font-black tracking-[0.3em] text-blue-600">Розповідаємо детально</span>
+      <Icon name="bx:chevron-down" class="w-7 h-7 text-blue-600" />
     </div>
-  </article>
+
+    <div class="max-w-4xl mx-auto"> 
+      <div class="article-box relative">
+        <article class="prose prose-slate prose-lg max-w-none 
+          prose-headings:text-slate-900 prose-headings:font-bold prose-headings:leading-tight
+          prose-strong:text-blue-900 prose-strong:font-black
+          prose-img:rounded-[2rem] prose-img:shadow-xl
+          prose-a:text-blue-600 prose-a:font-bold hover:prose-a:underline">
+          <Content />
+        </article>
+
+        <div class="mt-24 pt-16 border-t border-slate-100 flex flex-col items-center text-center article-box-child">
+           
+           <div class="hug-card-trigger w-20 h-20 rounded-[2rem] bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-white shadow-xl shadow-blue-200/50 mb-8 rotate-6 hover:rotate-0 transition-all duration-500 cursor-pointer group relative overflow-hidden active:scale-95">
+             <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
+               <Icon name="bx:bxs-heart" class="w-10 h-10 group-hover:scale-110 transition-transform" />
+             </div>
+             <div class="hug-layer absolute inset-0 flex items-center justify-center text-5xl opacity-0 scale-50 transition-all duration-300 leading-none">
+               🤗
+             </div>
+           </div>
+           
+           <div class="space-y-3">
+             <h2 class="text-xl md:text-2xl font-black uppercase tracking-[0.2em] text-slate-900 leading-tight">
+               Ваше відділення <br class="md:hidden"/> променевої терапії
+             </h2>
+             <div class="flex items-center justify-center gap-3">
+                <span class="h-px w-8 bg-blue-200"></span>
+                <p class="text-xs md:text-sm text-blue-500 font-bold uppercase tracking-[0.15em] italic">
+                  Працюємо заради вашого здоров'я
+                </p>
+                <span class="h-px w-8 bg-blue-200"></span>
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <button id="to-top" class="fixed bottom-8 right-8 z-50 p-4 bg-slate-900/90 backdrop-blur-sm text-white rounded-2xl shadow-2xl transition-all duration-300 translate-y-20 opacity-0 hover:bg-blue-600 active:scale-90 group">
+    <Icon name="bx:up-arrow-alt" class="w-6 h-6 group-hover:-translate-x-0.5 transition-transform" />
+  </button>
 </Layout>
+
+<style is:global>
+  :root {
+    --font-primary: 'Inter Variable', ui-sans-serif, system-ui;
+  }
+
+  .article-box article > * {
+    font-family: var(--font-primary) !important;
+    background-color: #fcfdfe; 
+    border-radius: 1.5rem; 
+    padding: 1.75rem 2.5rem !important; 
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
+    margin-bottom: 2.5rem !important;
+    position: relative;
+  }
+  
+  .article-box article p {
+    line-height: 1.9 !important;
+    color: #334155 !important;
+    font-size: 1.125rem;
+    white-space: pre-line;
+    margin-bottom: 0 !important;
+  }
+
+  .article-box article p::before, .article-box article p::after {
+    content: '';
+    position: absolute;
+    top: 1.75rem;
+    bottom: 1.75rem;
+    width: 3px;
+    background-color: #93c5fd;
+    border-radius: 999px;
+  }
+
+  .article-box article p::before { left: 1.25rem; }
+  .article-box article p::after { right: 1.25rem; }
+
+  .article-box .article-box-child {
+     background-color: transparent !important;
+     box-shadow: none !important;
+     border: none !important;
+     padding: 0 !important;
+     margin-bottom: 0 !important;
+  }
+
+  .article-box article strong {
+    color: #0f172a;
+    background: linear-gradient(180deg, transparent 70%, #dbeafe 0);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. ЛОГІКА ДЛЯ ПРОГРЕС-БАРУ ТА КНОПКИ ВГОРУ
+    let lastScrollTop = 0;
+    const toTopBtn = document.getElementById("to-top");
+    const progressBar = document.getElementById("progress-bar");
+
+    window.addEventListener('scroll', () => {
+      const st = window.pageYOffset || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (st / height) * 100;
+      
+      if (progressBar) progressBar.style.width = scrolled + "%";
+
+      if (st > 400 && st < lastScrollTop) {
+        toTopBtn?.classList.remove("translate-y-20", "opacity-0");
+        toTopBtn?.classList.add("translate-y-0", "opacity-100");
+      } else {
+        toTopBtn?.classList.add("translate-y-20", "opacity-0");
+        toTopBtn?.classList.remove("translate-y-0", "opacity-100");
+      }
+      lastScrollTop = st <= 0 ? 0 : st;
+    });
+
+    toTopBtn?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // 2. ЛОГІКА ДЛЯ СЕРДЕЧКА (ОБІЙМИ)
+    const cards = document.querySelectorAll<HTMLElement>('.hug-card-trigger');
+
+    cards.forEach(card => {
+      const heart = card.querySelector<HTMLElement>('.heart-layer');
+      const hug = card.querySelector<HTMLElement>('.hug-layer');
+
+      if (heart && hug) {
+        card.addEventListener('click', () => {
+          heart.style.opacity = '0';
+          heart.style.transform = 'scale(0)';
+          hug.style.opacity = '1';
+          hug.style.transform = 'scale(1.3)';
+
+          setTimeout(() => {
+            heart.style.opacity = '1';
+            heart.style.transform = 'scale(1)';
+            hug.style.opacity = '0';
+            hug.style.transform = 'scale(0.5)';
+          }, 1500);
+        });
+      }
+    });
+  });
+</script>
