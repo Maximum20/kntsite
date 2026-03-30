@@ -1,6 +1,5 @@
 ---
-import { Picture } from "astro:assets";
-import heroImage from "@assets/main_page.jpg";
+// ПРИБРАЛИ Picture, він нам більше не треба
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
 ---
@@ -9,30 +8,51 @@ import { Icon } from "astro-icon/components";
   <div class="grid lg:grid-cols-[1fr_1.1fr] items-center gap-12 lg:gap-20 relative z-10">
     
     <div class="text-center lg:text-left order-1 relative z-10">
-      <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-600 px-3 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest mb-6 border border-cyan-100 shadow-sm relative z-20">
-        <Icon name="bx:bxs-badge-check" class="w-4 h-4" />
-        Передові технології лікування
-      </div>
+  
+  <div class="flex flex-row items-center justify-center lg:justify-start gap-3 mb-8 relative z-20 overflow-x-visible">
+  
+  <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-cyan-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0">
+    <Icon name="bx:bxs-badge-check" class="w-4 h-4 text-cyan-600" />
+    Передові технології лікування
+  </div>
 
+  <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-blue-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0">
+    <img 
+      src="/hero/nszu.png" 
+      alt="НСЗУ" 
+      class="h-4 md:h-5 w-auto object-contain" 
+    />
+    Програма медичних гарантій
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
       <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight text-slate-900 relative z-20">
         Відділення <br class="hidden lg:block"/> променевої терапії <br/> 
       </h1>
 
-      <!-- МОБІЛЬНЕ ФОТО (Тепер теж клікабельне!) -->
       <div class="lg:hidden my-10 relative z-10">
          <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-50 relative z-10">
-            <Picture
-              src={heroImage}
-              alt="Будівля відділення"
-              widths={[400, 600]}
-              sizes="100vw"
-              loading="eager"
-              format="avif"
-              class="h-auto w-full object-cover" 
-            />
+            <img
+  src="/hero/raddepartment.jpg" 
+  alt="Будівля відділення"
+  class="hero-dynamic-img h-auto w-full object-cover" 
+/>
          </div>
          
-         <!-- МОБІЛЬНА КАРТКА: Зроблена ширшою (max-w-[260px]) та нижчою (py-3) -->
          <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-float z-20 cursor-pointer active:scale-95">
             <div class="flex items-center gap-3 text-left pointer-events-none">
               <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
@@ -74,7 +94,6 @@ import { Icon } from "astro-icon/components";
         </Link>
       </div>
 
-      <!-- ПАНЕЛЬ СТАТИСТИКИ -->
       <div class="mt-10 inline-flex items-center justify-between bg-white/40 backdrop-blur-md border border-white/60 py-3.5 px-8 md:py-4 md:px-12 rounded-[2.5rem] relative z-20 shadow-sm min-w-[280px] md:min-w-[400px]">
         <div class="flex flex-col text-left">
           <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">15+</span>
@@ -88,23 +107,17 @@ import { Icon } from "astro-icon/components";
       </div>
     </div>
 
-    <!-- ПК ФОТО ТА КАРТКА -->
     <div class="hidden lg:block relative order-2 z-10 w-full">
       <div class="relative transform lg:scale-110 transition-transform duration-500 hover:scale-[1.17] group">
         
         <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10">
-          <Picture
-            src={heroImage}
-            alt="Будівля відділення"
-            widths={[800, 1200]}
-            sizes="800px"
-            loading="eager"
-            format="avif"
-            class="h-auto w-full object-cover" 
-          />
+          <img
+  src="/hero/raddepartment.jpg" 
+  alt="Будівля відділення"
+  class="hero-dynamic-img h-auto w-full object-cover" 
+/>
         </div>
 
-        <!-- Додав клас hug-card-trigger сюди -->
         <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
           <div class="flex items-start gap-4 text-left pointer-events-none">
             <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
@@ -138,28 +151,21 @@ import { Icon } from "astro-icon/components";
 </style>
 
 <script>
+  // Твій скрипт для карток 🤗 залишається без змін
   document.addEventListener('DOMContentLoaded', () => {
-    // Додаємо <HTMLElement>, щоб TypeScript розумів, що у цих елементів є стилі
     const cards = document.querySelectorAll<HTMLElement>('.hug-card-trigger');
-
     cards.forEach(card => {
-      // Тут теж підказуємо тип елемента
       const heart = card.querySelector<HTMLElement>('.heart-layer');
       const hug = card.querySelector<HTMLElement>('.hug-layer');
-
       if (heart && hug) {
         card.addEventListener('click', () => {
-          // Тепер TypeScript бачить .style і мовчить
           heart.style.opacity = '0';
           heart.style.transform = 'scale(0)';
-          
           hug.style.opacity = '1';
           hug.style.transform = 'scale(1.4)';
-
           setTimeout(() => {
             heart.style.opacity = '1';
             heart.style.transform = 'scale(1)';
-            
             hug.style.opacity = '0';
             hug.style.transform = 'scale(0.5)';
           }, 1500);

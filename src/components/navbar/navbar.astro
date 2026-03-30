@@ -2,97 +2,153 @@
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import fullLogo from "../../assets/full-logo.png";
+import fullLogo from "../../assets/full-logo.png"; 
 
 const menuitems = [
+
   { title: "Про відділення", path: "/about" },
   { title: "Послуги", path: "/services" },
   { title: "Лікарі", path: "/doctors" },
-  { title: "Новини", path: "#news" }, // Перейменовано та змінено шлях на якір
+  { title: "Новини", path: "#news" },
 ];
 
 const mainClinic = { title: "На головну клініки", path: "https://dokod.org.ua/" };
+
+const departments = [
+  { id: "linac", btnTitle: "Лінійний прискорювач" },
+  { id: "gamma", btnTitle: "Гамма-терапія" },
+  { id: "brachy", btnTitle: "Брахітерапія" },
+  { id: "nearfocus", btnTitle: "Близький фокус" },
+  { id: "ct", btnTitle: "КТ-розмітка" }
+];
 ---
 
-<!-- Липка шапка працює тепер з xl, щоб уникнути колізії -->
-<header class="w-full xl:sticky xl:top-0 z-50 transition-all duration-300 xl:bg-white/90 xl:backdrop-blur-md xl:border-b xl:border-slate-100 xl:shadow-sm">
-  <div class="max-w-screen-2xl mx-auto px-5 font-sans">
-    <div class="flex flex-col xl:flex-row items-center py-4 xl:py-3 gap-4">
-      <Astronav>
-        <div class="flex w-full xl:w-auto items-center justify-between">
-          
-          <!-- ЛОГО + ТЕКСТ КНТ "ДОКОД" ДОР -->
-          <div class="flex items-center gap-2 sm:gap-4">
-            <a href="/" class="flex items-center shrink-0 transition-transform hover:scale-105">
-              <Image 
-                src={fullLogo} 
-                alt="Логотип КНТ Дніпро" 
-                class="h-10 md:h-12 xl:h-16 w-auto object-contain" 
-                loading="eager"
-                format="webp"
-              />
-            </a>
-            <div class="flex items-center border-l border-slate-200 pl-2 sm:pl-4">
-              <span class="text-slate-500 font-bold text-[9px] sm:text-[12px] xl:text-[13px] uppercase leading-tight">
-                КНТ "ДОКОД" ДОР
-              </span>
+<header class="w-full xl:sticky xl:top-0 z-[100] transition-all duration-300">
+  
+  <div class="bg-transparent xl:bg-white/70 xl:backdrop-blur-xl border-transparent xl:border-b xl:border-white/60 shadow-none xl:shadow-sm relative z-20">
+    <div class="max-w-screen-2xl mx-auto px-5 font-sans">
+      
+      <div class="flex flex-col xl:flex-row items-center py-3 xl:py-2 gap-4">
+        <Astronav>
+          <div class="flex w-full xl:w-auto items-center justify-between">
+            <div class="flex items-center gap-2 sm:gap-4">
+             <a href="/" class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95" data-target="home">
+  <Image src={fullLogo} alt="Лого" class="h-10 md:h-12 xl:h-14 w-auto object-contain" loading="eager" />
+</a>
+              <div class="flex items-center border-l border-slate-200 pl-2 sm:pl-4">
+                <span class="text-slate-500 font-bold text-[9px] sm:text-[12px] uppercase leading-tight">КНТ "ДОКОД" ДОР</span>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-3 xl:hidden">
+               <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs active:scale-95">
+                <Icon name="bx:bxs-phone-call" class="w-4 h-4" /> Зв'язок
+              </a>
+              <MenuIcon class="w-8 h-8 text-slate-800" />
             </div>
           </div>
-          
-          <!-- Бургер тепер з'являється раніше (на xl) -->
-          <div class="flex items-center gap-3 xl:hidden">
-             <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs shadow-sm active:scale-95">
-              <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
-              Зв'язок
-            </a>
-            <MenuIcon class="w-8 h-8 text-slate-800" />
-          </div>
-        </div>
-        
-        <!-- Меню розгортається тепер тільки на дуже широких екранах (xl) -->
-        <MenuItems class="hidden w-full xl:w-auto mt-4 xl:flex xl:mt-0 xl:ml-auto">
-          <ul class="flex flex-col xl:flex-row xl:gap-1 2xl:gap-4 items-start xl:items-center w-full xl:w-auto">
-            
-            {menuitems.map((item) => (
-              <li class="w-full xl:w-auto">
-                <a 
-                  href={item.path} 
-                  class="flex items-center gap-2 px-3 2xl:px-4 py-3 xl:py-2.5 rounded-full text-[15px] xl:text-[13px] 2xl:text-[14px] font-bold text-slate-600 transition-all duration-300 hover:bg-blue-50 hover:text-blue-600 xl:hover:-translate-y-0.5 group w-full"
-                >
-                  <div class="w-2 h-2 rounded-full bg-blue-400/50 group-hover:bg-blue-500 transition-colors shadow-[0_0_8px_rgba(59,130,246,0.2)] shrink-0 group-hover:scale-110"></div>
-                  <span class="whitespace-nowrap">{item.title}</span>
+          <MenuItems class="hidden w-full xl:flex xl:w-auto mt-4 xl:mt-0 xl:ml-auto">
+            <ul class="flex flex-col xl:flex-row xl:items-center gap-2 2xl:gap-4">
+              {menuitems.map((item) => (
+                <li>
+                  <a href={item.path} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
+                    <span>{item.title}</span>
+                  </a>
+                </li>
+              ))}
+              <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1"></div>
+              <li>
+                <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-slate-200 transition-all">
+                  <Icon name="bx:link-external" class="w-4 h-4 opacity-50" />
+                  <span>{mainClinic.title}</span>
                 </a>
               </li>
-            ))}
+              <li>
+                <a href="#contacts" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                  <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
+                  <span>Зв'язок</span>
+                </a>
+              </li>
+            </ul>
+          </MenuItems>
+        </Astronav>
+      </div>
+    </div>
+  </div>
 
-            <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1 2xl:mx-2"></div>
-
-            <!-- Кнопка Клініки -->
-            <li class="mt-6 xl:mt-0 w-full xl:w-auto px-4 xl:px-0">
-              <a 
-                href={mainClinic.path} 
-                target="_blank" 
-                class="flex items-center justify-center xl:justify-start gap-2 px-4 2xl:px-6 py-3 xl:py-2 rounded-xl xl:rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white xl:hover:-translate-y-0.5 transition-all shadow-sm border border-slate-200 group w-full xl:w-auto"
-              >
-                <Icon name="bx:link-external" class="w-4 h-4 opacity-50 group-hover:opacity-100" />
-                <span class="whitespace-nowrap">{mainClinic.title}</span>
-              </a>
-            </li>
-
-            <!-- Кнопка Зв'язок -->
-            <li class="mt-3 xl:mt-0 w-full xl:w-auto px-4 xl:px-0">
-              <a 
-                href="#contacts" 
-                class="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 2xl:px-8 py-3.5 xl:py-2.5 rounded-xl xl:rounded-full font-bold transition-all hover:bg-blue-700 hover:scale-[1.02] xl:hover:scale-105 xl:hover:shadow-blue-200 shadow-lg shadow-blue-100 text-[15px] xl:text-[13px] 2xl:text-[14px] active:scale-95 border-2 border-transparent w-full xl:w-auto"
-              >
-                <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
-                <span class="whitespace-nowrap">Зв'язок</span>
-              </a>
-            </li>
-
-          </ul>
-        </MenuItems>
-      </Astronav>
+  <div 
+    id="dept-panel" 
+    class="flex justify-center px-5 pt-3 pb-2 pointer-events-none relative z-10 transition-all duration-500 ease-in-out transform-gpu">
+  
+    <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl shadow-slate-200/40 flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
+      {departments.map((dept, index) => (
+  <button 
+    data-target={dept.id}
+    class="dept-btn px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-white/80 hover:text-blue-600"
+  >
+    {dept.btnTitle}
+  </button>
+))}
     </div>
   </div>
 </header>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Новий швидкий та плавний клас */
+  .dept-hidden {
+    transform: translateY(-110%); /* Трохи більше, щоб сховати тінь кнопки */
+    opacity: 0;
+    pointer-events: none;
+    /* Прибрали margin-bottom, щоб сторінка не стрибала */
+  }
+
+  /* Додаємо анімацію тільки для потрібних властивостей */
+  #dept-panel {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear;
+    will-change: transform; /* Підказка браузеру для плавності */
+  }
+</style>
+
+<script>
+  let lastScrollTop = 0;
+  const panel = document.getElementById('dept-panel');
+  const threshold = 10;
+
+  // 1. Логіка скролу (залишається як була)
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth >= 1280) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const distance = Math.abs(scrollTop - lastScrollTop);
+
+      if (distance > threshold) {
+        if (scrollTop > lastScrollTop && scrollTop > 80) {
+          panel?.classList.add('dept-hidden');
+        } else {
+          panel?.classList.remove('dept-hidden');
+        }
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      }
+    }
+  }, { passive: true });
+
+  // 2. ВСТАВЛЯЙ СЮДИ: Логіка перемикання кнопок
+  const buttons = document.querySelectorAll('.dept-btn');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Прибираємо активний стиль з усіх
+      buttons.forEach(b => {
+        b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+        b.classList.add('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
+      });
+
+      // Додаємо активний стиль натиснутій кнопці
+      btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
+      btn.classList.remove('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
+    });
+  });
+</script>
