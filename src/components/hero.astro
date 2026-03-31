@@ -5,7 +5,7 @@ import { Icon } from "astro-icon/components";
 ---
 
 <main class="max-w-screen-xl mx-auto px-5 pt-4 md:pt-20 pb-16 md:pb-32 font-sans relative overflow-visible">
-  <div class="grid lg:grid-cols-[1fr_1.1fr] items-center gap-12 lg:gap-20 relative z-10">
+  <div class="grid lg:grid-cols-[1fr_1.1fr] items-start gap-12 lg:gap-20 relative z-10 min-h-[520px]">
     
     <div class="text-center lg:text-left order-1 relative z-10">
   
@@ -110,12 +110,13 @@ import { Icon } from "astro-icon/components";
     <div class="hidden lg:block relative order-2 z-10 w-full">
       <div class="relative transform lg:scale-110 transition-transform duration-500 hover:scale-[1.17] group">
         
-        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10">
-          <img
-  src="/hero/raddepartment.jpg" 
-  alt="Будівля відділення"
-  class="hero-dynamic-img h-auto w-full object-cover" 
-/>
+       <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10 aspect-[4/3]">
+  <img
+    src="/hero/raddepartment.jpg" 
+    alt="Будівля відділення"
+    class="hero-dynamic-img w-full h-full object-cover transition-opacity duration-500"
+  />
+</div>
         </div>
 
         <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
