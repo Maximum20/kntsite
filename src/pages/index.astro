@@ -200,6 +200,17 @@ const departments = [
   const logoTrigger = document.querySelector('.logo-home-trigger');
   const dynamicZone = document.getElementById('dynamic-zone');
 
+// Попереднє завантаження всіх фото відділень
+window.addEventListener('DOMContentLoaded', () => {
+  departments.forEach(dept => {
+    if (dept.image) {
+      const img = new Image();
+      img.src = dept.image;
+    }
+  });
+});
+
+
   // Твій об'єкт з іконками
   const iconMap = {
     'bx:bxs-badge-check': '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>',
@@ -221,56 +232,57 @@ const departments = [
     'bx:bxs-graduation': '<path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.89 9.5l8.11 4.42 8.11-4.42-8.11-4.42-8.11 4.42zM12 15.5l-6-3.27V17c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-4.77l-6 3.27z"/>'
   };
 
-  function updateContent(targetId) {
-    const data = departments.find(d => d.id === targetId);
-    if (!data) return;
+ function updateContent(targetId) {
+  const data = departments.find(d => d.id === targetId);
+  if (!data) return;
 
-    // Ховаємо
-    dynamicZone.style.opacity = '0';
-    dynamicZone.style.transform = 'translateY(10px)';
+  // --- КРОК А: МІНЯЄМО ФОТО ВІДРАЗУ ---
+  // Робимо це до setTimeout, щоб у браузера було 300мс фори, поки зона прозора
+  const heroImages = document.querySelectorAll('.hero-dynamic-img');
+  heroImages.forEach(img => {
+    if (data.image) {
+      img.src = data.image;
+    }
+  });
 
-    setTimeout(() => {
-      // 1. ОНОВЛЮЄМО КАРТИНКИ
-      const heroImages = document.querySelectorAll('.hero-dynamic-img');
-      heroImages.forEach(img => {
-        if (data.image) {
-          img.src = data.image;
-        }
-      });
+  // Ховаємо текстову зону
+  dynamicZone.style.opacity = '0';
+  dynamicZone.style.transform = 'translateY(10px)';
 
-      // 2. ОНОВЛЮЄМО ТЕКСТИ
-      const h1 = document.querySelector('h1');
-      if (h1) h1.innerHTML = `${data.title} <br/> <span class="text-blue-600">${data.subtitle || ''}</span>`;
-      
-      const heroP = document.querySelector('h1 + div + p') || document.querySelector('h1 + p');
-      if (heroP) heroP.textContent = data.description;
+  setTimeout(() => {
+    // --- КРОК Б: ОНОВЛЮЄМО ТЕКСТИ ТА ІКОНКИ (через 300мс) ---
+    const h1 = document.querySelector('h1');
+    if (h1) h1.innerHTML = `${data.title} <br/> <span class="text-blue-600">${data.subtitle || ''}</span>`;
+    
+    const heroP = document.querySelector('h1 + div + p') || document.querySelector('h1 + p');
+    if (heroP) heroP.textContent = data.description;
 
-      const tTitle = document.getElementById('tech-title');
-      const tDesc = document.getElementById('tech-desc');
-      const tGrid = document.getElementById('tech-grid');
+    const tTitle = document.getElementById('tech-title');
+    const tDesc = document.getElementById('tech-desc');
+    const tGrid = document.getElementById('tech-grid');
 
-      if (tTitle) {
-        tTitle.textContent = targetId === 'home' ? "Наші переваги та можливості" : data.title;
-      }
-      if (tDesc) tDesc.textContent = data.description;
+    if (tTitle) {
+      tTitle.textContent = targetId === 'home' ? "Наші переваги та можливості" : data.title;
+    }
+    if (tDesc) tDesc.textContent = data.description;
 
-      if (tGrid) {
-        tGrid.innerHTML = data.features.map(f => `
-          <div class="animate-in">
-             <div class="rounded-full ${f.bg} p-4 w-16 h-16 mx-auto flex items-center justify-center ${f.color} shadow-sm border border-white/50">
-               <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">${iconMap[f.icon] || ''}</svg>
-             </div>
-             <h3 class="font-bold text-xl mt-4 tracking-tight text-slate-900">${f.title}</h3>
-             <p class="text-slate-500 mt-2 text-sm italic leading-relaxed">${f.desc}</p>
-          </div>
-        `).join('');
-      }
+    if (tGrid) {
+      tGrid.innerHTML = data.features.map(f => `
+        <div class="animate-in">
+           <div class="rounded-full ${f.bg} p-4 w-16 h-16 mx-auto flex items-center justify-center ${f.color} shadow-sm border border-white/50">
+             <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">${iconMap[f.icon] || ''}</svg>
+           </div>
+           <h3 class="font-bold text-xl mt-4 tracking-tight text-slate-900">${f.title}</h3>
+           <p class="text-slate-500 mt-2 text-sm italic leading-relaxed">${f.desc}</p>
+        </div>
+      `).join('');
+    }
 
-      // Показуємо
-      dynamicZone.style.opacity = '1';
-      dynamicZone.style.transform = 'translateY(0)';
-    }, 300);
-  }
+    // Показуємо оновлений контент
+    dynamicZone.style.opacity = '1';
+    dynamicZone.style.transform = 'translateY(0)';
+  }, 300);
+}
 
   // Кліки по кнопках
   buttons.forEach(btn => {
