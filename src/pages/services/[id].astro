@@ -1,0 +1,40 @@
+---
+// src/pages/services/[id].astro
+export const prerender = true;
+import Layout from "../../layouts/Layout.astro";
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const serviceEntries = await getCollection('services');
+  
+  return serviceEntries.map(entry => {
+    console.log('Генерую шлях для:', entry.id); // Побачиш у терміналі, що він знайшов
+    return {
+      params: { id: entry.id },
+      props: { entry },
+    };
+  });
+}
+
+const { entry } = Astro.props;
+
+
+console.log('Поточні пропси:', entry);
+
+// 1. ПЕРЕВІРКА: якщо entry не існує, відправляємо на 404
+if (!entry) {
+ // return Astro.redirect('/404');
+}
+
+// 2. Тепер безпечно викликаємо render
+const { Content } = await render(entry);
+---
+
+<Layout title={entry.data.title}>
+  <main class="w-full font-sans">
+    <div class="max-w-[1600px] mx-auto px-10 pt-20 pb-32">
+       {/* Тільки контент, без зайвих заголовків зверху! */}
+       <Content />
+    </div>
+  </main>
+</Layout>

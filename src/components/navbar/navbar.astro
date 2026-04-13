@@ -5,7 +5,6 @@ import { Icon } from "astro-icon/components";
 import fullLogo from "../../assets/full-logo.png"; 
 
 const menuitems = [
-
   { title: "Про відділення", path: "/about" },
   { title: "Послуги", path: "/services" },
   { title: "Лікарі", path: "/doctors" },
@@ -15,33 +14,47 @@ const menuitems = [
 const mainClinic = { title: "На головну клініки", path: "https://dokod.org.ua/" };
 
 const departments = [
-  { id: "linac", btnTitle: "Лінійний прискорювач" },
+  { id: "linac", btnTitle: "Мегавольтна терапія" },
   { id: "gamma", btnTitle: "Гамма-терапія" },
   { id: "brachy", btnTitle: "Брахітерапія" },
   { id: "nearfocus", btnTitle: "Близький фокус" },
-  { id: "ct", btnTitle: "КТ-розмітка" }
+  { id: "ct", btnTitle: "КТ-розмітка" },
+  { id: "mlt", btnTitle: "Реабілітація" }
 ];
+
+// --- ЛОГІКА ДЛЯ КРУТІЛКИ ---
+const { id: currentId } = Astro.params; 
+const currentIndex = departments.findIndex(d => d.id === currentId);
+const isServiceDetailPage = currentIndex !== -1;
+
+// Визначаємо індекси та назви (ОСЬ ЦЕ БУЛО ПРОПУЩЕНО)
+const prevIndex = isServiceDetailPage ? (currentIndex - 1 + departments.length) % departments.length : 0;
+const nextIndex = isServiceDetailPage ? (currentIndex + 1) % departments.length : 0;
+
+const prevPath = isServiceDetailPage ? `/services/${departments[prevIndex].id}` : '';
+const nextPath = isServiceDetailPage ? `/services/${departments[nextIndex].id}` : '';
+
+const prevTitle = isServiceDetailPage ? departments[prevIndex].btnTitle : '';
+const nextTitle = isServiceDetailPage ? departments[nextIndex].btnTitle : '';
+const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : '';
 ---
 
 <header class="w-full xl:sticky xl:top-0 z-[100] transition-all duration-300">
-  
   <div class="bg-transparent xl:bg-white/70 xl:backdrop-blur-xl border-transparent xl:border-b xl:border-white/60 shadow-none xl:shadow-sm relative z-20">
-    <div class="max-w-screen-2xl mx-auto px-5 font-sans">
-      
+    <div class="max-w-[1800px] mx-auto px-5 font-sans">
       <div class="flex flex-col xl:flex-row items-center py-3 xl:py-2 gap-4">
         <Astronav>
           <div class="flex w-full xl:w-auto items-center justify-between">
             <div class="flex items-center gap-2 sm:gap-4">
-             <a href="/" class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95" data-target="home">
-  <Image src={fullLogo} alt="Лого" class="h-10 md:h-12 xl:h-14 w-auto object-contain" loading="eager" />
-</a>
+              <a href="/" class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95" data-target="home">
+                <Image src={fullLogo} alt="Лого" class="h-10 md:h-12 xl:h-14 w-auto object-contain" loading="eager" />
+              </a>
               <div class="flex items-center border-l border-slate-200 pl-2 sm:pl-4">
                 <span class="text-slate-500 font-bold text-[9px] sm:text-[12px] uppercase leading-tight">КНТ "ДОКОД" ДОР</span>
               </div>
             </div>
-            
             <div class="flex items-center gap-3 xl:hidden">
-               <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs active:scale-95">
+              <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs active:scale-95">
                 <Icon name="bx:bxs-phone-call" class="w-4 h-4" /> Зв'язок
               </a>
               <MenuIcon class="w-8 h-8 text-slate-800" />
@@ -77,39 +90,69 @@ const departments = [
     </div>
   </div>
 
-  <div 
-    id="dept-panel" 
-    class="flex justify-center px-5 pt-3 pb-2 pointer-events-none relative z-10 transition-all duration-500 ease-in-out transform-gpu">
+ 
+
+<div id="dept-panel" class="flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500">
   
-    <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl shadow-slate-200/40 flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
-      {departments.map((dept, index) => (
-  <button 
-    data-target={dept.id}
-    class="dept-btn px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-white/80 hover:text-blue-600"
-  >
-    {dept.btnTitle}
-  </button>
-))}
+  {isServiceDetailPage ? (
+    /* ВАРІАНТ 1: Оновлена крутілка з затемненими назвами */
+    <div class="bg-white/80 backdrop-blur-2xl p-2 rounded-[3.5rem] border border-white/60 shadow-2xl flex items-center gap-2 pointer-events-auto">
+      
+      <a href={prevPath} class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+          <Icon name="bx:chevron-left" class="w-6 h-6" />
+        </div>
+        <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+          {prevTitle}
+        </span>
+      </a>
+
+      <div class="px-10 py-1 text-center min-w-[200px] border-x border-slate-100">
+        <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">Відділення</span>
+        <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">
+          {currentTitle}
+        </h2>
+      </div>
+
+      <a href={nextPath} class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right">
+        <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+          {nextTitle}
+        </span>
+        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+          <Icon name="bx:chevron-right" class="w-6 h-6" />
+        </div>
+      </a>
+
     </div>
-  </div>
+  ) : (
+    /* ВАРІАНТ 2: Список для головної (залишаємо як було) */
+    <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
+      {departments.map((dept) => (
+        <a 
+          href={`/services/${dept.id}`}
+          class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white"
+        >
+          {dept.btnTitle}
+        </a>
+      ))}
+    </div>
+  )}
+</div>
 </header>
 
 <style>
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-  /* Новий швидкий та плавний клас */
   .dept-hidden {
-    transform: translateY(-110%); /* Трохи більше, щоб сховати тінь кнопки */
+    transform: translateY(-110%);
     opacity: 0;
     pointer-events: none;
-    /* Прибрали margin-bottom, щоб сторінка не стрибала */
   }
 
-  /* Додаємо анімацію тільки для потрібних властивостей */
   #dept-panel {
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear;
-    will-change: transform; /* Підказка браузеру для плавності */
+    will-change: transform;
   }
 </style>
 
@@ -118,7 +161,6 @@ const departments = [
   const panel = document.getElementById('dept-panel');
   const threshold = 10;
 
-  // 1. Логіка скролу (залишається як була)
   window.addEventListener('scroll', () => {
     if (window.innerWidth >= 1280) {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -135,20 +177,19 @@ const departments = [
     }
   }, { passive: true });
 
-  // 2. ВСТАВЛЯЙ СЮДИ: Логіка перемикання кнопок
   const buttons = document.querySelectorAll('.dept-btn');
 
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Прибираємо активний стиль з усіх
       buttons.forEach(b => {
         b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
         b.classList.add('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
       });
 
-      // Додаємо активний стиль натиснутій кнопці
       btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
       btn.classList.remove('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
+      
+      // Твій скрипт на головній підхопить data-target і покаже вітальне інфо
     });
   });
 </script>

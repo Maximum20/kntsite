@@ -1,0 +1,79 @@
+---
+// src/components/ServiceUI.astro
+import { Icon } from "astro-icon/components";
+
+// Отримуємо пропси з дефолтними значеннями, щоб TypeScript не лаявся
+const { 
+  type = "", 
+  title = "", 
+  subtitle = "", 
+  text = "", 
+  src = "", 
+  icon = "", 
+  alt = "" 
+} = Astro.props;
+---
+
+{type === 'hero' && (
+  <div class="relative mb-24 not-prose">
+    {/* КНОПКА НАЗАД */}
+    <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all mb-12 group">
+      <div class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-blue-200 group-hover:bg-blue-50 transition-all">
+        <Icon name="bx:left-arrow-alt" class="w-6 h-6" />
+      </div>
+      <span class="text-[10px] font-black uppercase tracking-[0.2em]">На головну</span>
+    </a>
+
+    {/* СІТКА ГЕРО-БЛОКУ */}
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div class="relative order-2 lg:order-1">
+        <div class="absolute inset-0 bg-blue-600/5 rounded-[3.5rem] -rotate-2 scale-105"></div>
+        <div class="relative rounded-[3.5rem] overflow-hidden shadow-2xl border-[12px] border-white bg-slate-100 aspect-[4/3] lg:aspect-square">
+          {src && <img src={src} alt={alt || title} class="w-full h-full object-cover" />}
+        </div>
+      </div>
+
+      <div class="order-1 lg:order-2">
+        {subtitle && (
+          <span class="text-blue-600 font-black uppercase tracking-[0.4em] text-xs mb-6 block">
+            {subtitle}
+          </span>
+        )}
+        <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8 uppercase">
+          {/* Безпечний спліт: спочатку перевіряємо чи є title */}
+          {title && title.split(' ').map((word: string) => (
+            <span>{word}<br/></span>
+          ))}
+        </h1>
+        {text && (
+          <p class="text-xl md:text-2xl text-slate-500 leading-relaxed font-medium">
+            {text}
+          </p>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
+{type === 'accordion' && (
+  <details class="group my-4 border border-slate-200 rounded-[2rem] bg-white shadow-sm overflow-hidden not-prose transition-all duration-300 open:shadow-xl open:ring-1 open:ring-blue-100">
+    <summary class="flex justify-between items-center p-8 cursor-pointer list-none hover:bg-slate-50 transition-colors">
+      <div class="flex items-center gap-4">
+        {icon && <span class="text-2xl">{icon}</span>}
+        <h3 class="text-xl font-black text-slate-800 tracking-tight">{title}</h3>
+      </div>
+      <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-open:rotate-180 transition-transform duration-300">
+        <Icon name="bx:chevron-down" class="h-5 w-5 text-slate-500" />
+      </div>
+    </summary>
+    <div class="px-8 pb-8 pt-2 text-slate-600 leading-relaxed border-t border-slate-50">
+      <slot />
+    </div>
+  </details>
+)}
+
+{type === 'image' && (
+  <div class="my-12 not-prose">
+    {src && <img src={src} alt={alt} class="w-full rounded-[2.5rem] shadow-2xl border-4 border-white object-cover" />}
+  </div>
+)}

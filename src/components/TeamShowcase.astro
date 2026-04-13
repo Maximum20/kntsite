@@ -1,0 +1,114 @@
+---
+// src/components/TeamShowcase.astro
+const staff = [
+  { id: 'max', name: "Тест Тест", role: "Medical Physicist", bio: "Спеціаліст з дозиметричного планування Monaco та QA лінійних прискорювачів.", src: "/staff/max.jpg" },
+  { id: 'evgen', name: "Тест2 Тест2", role: "Radiation Oncologist", bio: "Експерт у методиках VMAT/IMRT та стереотаксичній радіохірургії (SBRT).", src: "/staff/evgen.jpg" },
+  { id: 'yulia', name: "Тест3 Тест3", role: "General Director / MD", bio: "Забезпечує впровадження міжнародних протоколів лікування.", src: "/staff/yulia.jpg" }
+];
+---
+
+<div class="team-showcase not-prose py-16 group/showcase relative" data-current-index="0" data-total={staff.length}>
+  <div class="flex flex-col lg:flex-row items-center gap-16 min-h-[600px]">
+    
+    <div class="w-full lg:w-3/5 h-[500px] lg:h-[750px] relative">
+      <div class="relative h-full w-full rounded-[4rem] overflow-hidden shadow-2xl bg-slate-100 border-[14px] border-white">
+        {staff.map((person, index) => (
+          <img 
+            id={`photo-${index}`}
+            src={person.src}
+            class={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-[cubic-bezier(0.23,1,0.32,1)] ${index === 0 ? 'opacity-100 scale-100' : 'opacity-0 scale-110'}`}
+          />
+        ))}
+
+        <button class="nav-arrow nav-prev absolute left-6 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center border border-white/30 opacity-0 group-hover/showcase:opacity-100 hover:bg-white/40 transition-all z-20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+        </button>
+        <button class="nav-arrow nav-next absolute right-6 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center border border-white/30 opacity-0 group-hover/showcase:opacity-100 hover:bg-white/40 transition-all z-20">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" /></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="w-full lg:w-2/5 px-8">
+      {staff.map((person, index) => (
+        <div id={`info-${index}`} class={`transition-all duration-700 delay-100 ${index === 0 ? 'block translate-y-0 opacity-100' : 'hidden translate-y-20 opacity-0'}`}>
+           <span class="text-blue-600 font-black uppercase tracking-[0.3em] text-sm">{person.role}</span>
+           <h2 class="text-6xl md:text-7xl font-black text-slate-900 mt-3 mb-10 leading-[0.9] tracking-tighter">
+             {person.name.split(' ').map((word) => <span>{word}<br/></span>)}
+           </h2>
+           <p class="text-2xl text-slate-500 leading-relaxed max-w-lg font-medium italic">
+             "{person.bio}"
+           </p>
+        </div>
+      ))}
+
+      <div class="flex gap-5 mt-20">
+        {staff.map((person, index) => (
+          <button 
+            class={`team-trigger w-20 h-20 rounded-2xl overflow-hidden transition-all duration-500 ring-offset-4 grayscale ${index === 0 ? 'ring-4 ring-blue-600 scale-110 grayscale-0' : 'opacity-50 hover:opacity-100'}`}
+            data-index={index}
+          >
+            <img src={person.src} class="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const showcase = document.querySelector('.team-showcase');
+  const triggers = document.querySelectorAll('.team-trigger');
+  const photos = document.querySelectorAll('[id^="photo-"]');
+  const infos = document.querySelectorAll('[id^="info-"]');
+  const prevBtn = document.querySelector('.nav-prev');
+  const nextBtn = document.querySelector('.nav-next');
+  const total = parseInt(showcase?.getAttribute('data-total') || '0');
+
+  // Головна функція оновлення
+  const updateActivePerson = (newIndex) => {
+    showcase?.setAttribute('data-current-index', newIndex.toString());
+
+    // 1. Оновлення кнопок
+    triggers.forEach(t => t.classList.remove('ring-4', 'ring-blue-600', 'scale-110', 'grayscale-0', 'opacity-100'));
+    triggers.forEach(t => t.classList.add('grayscale', 'opacity-50'));
+    const activeTrigger = document.querySelector(`[data-index="${newIndex}"]`);
+    activeTrigger?.classList.add('ring-4', 'ring-blue-600', 'scale-110', 'grayscale-0', 'opacity-100');
+    activeTrigger?.classList.remove('grayscale', 'opacity-50');
+
+    // 2. Оновлення фото (Плавне згасання)
+    photos.forEach(p => p.classList.add('opacity-0', 'scale-110'));
+    document.getElementById(`photo-${newIndex}`)?.classList.replace('opacity-0', 'opacity-100');
+    document.getElementById(`photo-${newIndex}`)?.classList.remove('scale-110');
+
+    // 3. Оновлення тексту (Випливання знизу)
+    infos.forEach(i => i.classList.add('hidden', 'translate-y-20', 'opacity-0'));
+    const activeInfo = document.getElementById(`info-${newIndex}`);
+    activeInfo?.classList.remove('hidden');
+    setTimeout(() => {
+      activeInfo?.classList.add('block', 'translate-y-0', 'opacity-100');
+      activeInfo?.classList.remove('translate-y-20', 'opacity-0');
+    }, 50);
+  };
+
+  // Клік по Thumbnails
+  triggers.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const index = parseInt(btn.getAttribute('data-index') || '0');
+      updateActivePerson(index);
+    });
+  });
+
+  // Клік по Стрілочках (З циклом)
+  prevBtn?.addEventListener('click', () => {
+    const currentIndex = parseInt(showcase?.getAttribute('data-current-index') || '0');
+    const newIndex = (currentIndex === 0) ? total - 1 : currentIndex - 1;
+    updateActivePerson(newIndex);
+  });
+
+  nextBtn?.addEventListener('click', () => {
+    const currentIndex = parseInt(showcase?.getAttribute('data-current-index') || '0');
+    const newIndex = (currentIndex === total - 1) ? 0 : currentIndex + 1;
+    updateActivePerson(newIndex);
+  });
+</script>

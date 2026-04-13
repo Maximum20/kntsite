@@ -4,6 +4,9 @@ import icon from 'astro-icon';
 import vercel from '@astrojs/vercel';
 import keystatic from '@keystatic/astro'; // Додаємо адмінку
 import react from '@astrojs/react';     // Адмінці потрібен React
+//import { mdx } from 'node_modules/@keystatic/core/dist/declarations/src/form/fields';
+import mdx from '@astrojs/mdx';
+
 
 export default defineConfig({
   // Твій сайт
@@ -19,7 +22,8 @@ export default defineConfig({
   integrations: [
     icon(), 
     react(),     // Потрібен для інтерфейсу Keystatic
-    keystatic()  // Сама адмінка
+    keystatic(),  // Сама адмінка
+    mdx()
   ],
 
   vite: {

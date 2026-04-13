@@ -1,56 +1,40 @@
 ---
-// ПРИБРАЛИ Picture, він нам більше не треба
+// src/components/hero.astro
 import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
+
+// 1. Отримуємо дані, які прийдуть з index.astro
+const { title, subtitle, description } = Astro.props;
 ---
 
-<main class="max-w-screen-xl mx-auto px-5 pt-4 md:pt-20 pb-16 md:pb-32 font-sans relative overflow-visible">
-  <div class="grid lg:grid-cols-[1fr_1.1fr] items-start gap-12 lg:gap-20 relative z-10 min-h-[520px]">
+{/* МІНЯЄМО max-w-screen-xl на max-w-[1850px] та збільшуємо відступи px */}
+<main class="max-w-[1850px] mx-auto px-6 md:px-12 lg:px-20 pt-4 md:pt-20 pb-16 md:pb-32 font-sans relative overflow-visible">
+  
+  {/* Міняємо співвідношення сітки: 1fr для тексту і 1.3fr для картинки, щоб вона була БІЛЬШОЮ */}
+  <div class="grid lg:grid-cols-[1fr_1.3fr] items-center gap-12 lg:gap-24 relative z-10 min-h-[600px]">
     
     <div class="text-center lg:text-left order-1 relative z-10">
   
-  <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 mb-8 relative z-20">
-  
-  <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-cyan-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0 w-fit">
-    <Icon name="bx:bxs-badge-check" class="w-4 h-4 text-cyan-600" />
-    Передові технології лікування
-  </div>
+      <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10 relative z-20">
+        <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-700 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] border border-cyan-100 shadow-sm transition-transform hover:scale-105 select-none shrink-0 w-fit">
+          <Icon name="bx:bxs-badge-check" class="w-5 h-5 text-cyan-600" />
+          Передові технології лікування
+        </div>
 
-  <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-blue-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0 w-fit">
-    <img 
-      src="/hero/nszu.png" 
-      alt="НСЗУ" 
-      class="h-4 md:h-5 w-auto object-contain" 
-    />
-    Програма медичних гарантій
-  </div>
+        <div class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-blue-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0 w-fit">
+          <img src="/hero/nszu.png" alt="НСЗУ" class="h-4 md:h-5 w-auto object-contain" />
+          Програма медичних гарантій
+        </div>
+      </div>
 
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
       <h1 class="text-4xl lg:text-6xl xl:text-7xl font-bold leading-[1.1] tracking-tight text-slate-900 relative z-20">
-        Відділення <br class="hidden lg:block"/> променевої терапії <br/> 
+        {title} <br class="hidden lg:block"/> 
+        <span class="text-blue-600">{subtitle}</span>
       </h1>
 
       <div class="lg:hidden my-10 relative z-10">
          <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-50 relative z-10">
-            <img
-  src="/hero/raddepartment.jpg" 
-  alt="Будівля відділення"
-  class="hero-dynamic-img h-auto w-full object-cover" 
-/>
+            <img src="/hero/raddepartment.jpg" alt="Будівля відділення" class="hero-dynamic-img h-auto w-full object-cover" />
          </div>
          
          <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-float z-20 cursor-pointer active:scale-95">
@@ -59,9 +43,7 @@ import { Icon } from "astro-icon/components";
                 <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
                   <Icon name="bx:bxs-heart" class="w-6 h-6" />
                 </div>
-                <div class="hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">
-                  🤗
-                </div>
+                <div class="hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">🤗</div>
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 text-[11px] mb-0 tracking-tight text-balance">Турбота про кожного</h4>
@@ -72,27 +54,28 @@ import { Icon } from "astro-icon/components";
       </div>
       
       <p class="text-base md:text-lg mt-6 text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium relative z-20">
-        Ми поєднуємо інноваційну радіотерапію з комплексним 
-        блоком реабілітації для забезпечення найкращих 
-        результатів та якості життя наших пацієнтів
+        {description}
       </p>
       
-      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-20">
-        <Link
-          href="/technologies"
-          class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold shadow-lg shadow-cyan-100 transition-transform active:scale-95"
-          rel="noopener">
-          <Icon class="text-white w-5 h-5" name="bx:bxs-zap" />
-          Наші технології
-        </Link>
-        <Link
-          style="outline"
-          href="/contact"
-          class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold border-2 border-slate-200 hover:bg-slate-50 transition-all active:scale-95 text-slate-700">
-          <Icon class="text-slate-700 w-5 h-5" name="bx:bxs-calendar" />
-          Наші лікарі
-        </Link>
-      </div>
+      <div id="hero-buttons" class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-20 hidden">
+  <a
+    id="dynamic-btn"
+    href="#"
+    class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold shadow-lg bg-slate-900 text-white transition-transform active:scale-95"
+  >
+    <Icon class="w-5 h-5" name="bx:bxs-chevron-right-circle" />
+    <span id="dynamic-btn-text">Детальніше</span>
+  </a>
+
+  <a
+    id="doctors-btn"
+    href="/contact"
+    class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold border-2 border-slate-200 hover:bg-slate-50 transition-all active:scale-95 text-slate-700"
+  >
+    <Icon class="text-slate-700 w-5 h-5" name="bx:bxs-calendar" />
+    <span id="doctors-btn-text">Наші лікарі</span>
+  </a>
+</div>
 
       <div class="mt-10 inline-flex items-center justify-between bg-white/40 backdrop-blur-md border border-white/60 py-3.5 px-8 md:py-4 md:px-12 rounded-[2.5rem] relative z-20 shadow-sm min-w-[280px] md:min-w-[400px]">
         <div class="flex flex-col text-left">
@@ -109,30 +92,22 @@ import { Icon } from "astro-icon/components";
 
     <div class="hidden lg:block relative order-2 z-10 w-full">
       <div class="relative transform lg:scale-110 transition-transform duration-500 hover:scale-[1.17] group">
-        
-       <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10 aspect-[4/3]">
-  <img
-    src="/hero/raddepartment.jpg" 
-    alt="Будівля відділення"
-    class="hero-dynamic-img w-full h-full object-cover transition-opacity duration-500"
-  />
-</div>
+        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10 aspect-[4/3]">
+          <img src="/hero/raddepartment.jpg" alt="Будівля відділення" class="hero-dynamic-img w-full h-full object-cover transition-opacity duration-500" />
         </div>
+      </div>
 
-        <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
-          <div class="flex items-start gap-4 text-left pointer-events-none">
-            <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
-              <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
-                <Icon name="bx:bxs-heart" class="w-7 h-7" />
-              </div>
-              <div class="hug-layer absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">
-                🤗
-              </div>
+      <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
+        <div class="flex items-start gap-4 text-left pointer-events-none">
+          <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
+            <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
+              <Icon name="bx:bxs-heart" class="w-7 h-7" />
             </div>
-            <div class="pr-2">
-              <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
-              <p class="text-[12px] text-slate-500 leading-relaxed font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
-            </div>
+            <div class="hug-layer absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">🤗</div>
+          </div>
+          <div class="pr-2">
+            <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
+            <p class="text-[12px] text-slate-500 leading-relaxed font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
           </div>
         </div>
       </div>
@@ -152,7 +127,6 @@ import { Icon } from "astro-icon/components";
 </style>
 
 <script>
-  // Твій скрипт для карток 🤗 залишається без змін
   document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll<HTMLElement>('.hug-card-trigger');
     cards.forEach(card => {

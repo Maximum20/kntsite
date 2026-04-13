@@ -1,0 +1,28 @@
+---
+// src/components/TechSection.astro
+import { Icon } from "astro-icon/components";
+const { departments } = Astro.props; // Це як конструктор у Flutter
+---
+
+<section class="container mx-auto px-5 mt-12 md:mt-16">
+  <div class="text-center mb-12">
+    <h2 id="tech-title" class="text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-tight">
+      Сучасні технології лікування
+    </h2>
+    <p id="tech-desc" class="text-lg mt-4 text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed italic">
+      У нас є все — від поверхневого лікування шкіри до складних операцій на внутрішніх органах
+    </p>
+  </div>
+
+  <div id="tech-grid" class="grid sm:grid-cols-2 md:grid-cols-3 gap-12 text-center">
+    {departments[0].features.map((f: any) => (
+      <div class="feature-card animate-in">
+         <div class={`rounded-full ${f.bg} p-4 w-16 h-16 mx-auto flex items-center justify-center ${f.color} shadow-sm border border-white/50`}>
+           <Icon name={f.icon} class="w-8 h-8" />
+         </div>
+         <h3 class="font-bold text-xl mt-4 tracking-tight text-slate-900">{f.title}</h3>
+         <p class="text-slate-500 mt-2 text-sm italic leading-relaxed">{f.desc}</p>
+      </div>
+    ))}
+  </div>
+</section>

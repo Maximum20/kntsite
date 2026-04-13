@@ -1,0 +1,52 @@
+---
+// src/components/Contacts.astro
+import { Icon } from "astro-icon/components";
+---
+
+<section id="contacts" class="container mx-auto px-5 py-20 scroll-mt-48">
+  <div class="bg-slate-900 rounded-[2.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600 rounded-full blur-[120px] opacity-20 -mr-32 -mt-32"></div>
+    <div class="relative z-10">
+      <h2 class="text-3xl md:text-5xl font-bold mb-12 tracking-tighter">Наші контакти</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        
+        <div class="flex flex-col gap-6">
+          <span class="text-blue-400 font-bold uppercase text-xs tracking-widest">Реєстратура</span>
+          <div class="flex flex-col gap-3 text-xl md:text-2xl font-bold tracking-tight">
+            <a href="tel:+380567207901" class="hover:text-blue-400 transition-colors">(056) 720-79-01</a>
+            <a href="tel:+380662904491" class="hover:text-blue-400 transition-colors">(066) 290-44-91</a>
+            <a href="tel:+380939585567" class="hover:text-blue-400 transition-colors">(093) 958-55-67</a>
+            <a href="tel:+380680015515" class="hover:text-blue-400 transition-colors">(068) 001-55-15</a>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6 md:border-x md:border-slate-800 md:px-10">
+          <span class="text-blue-400 font-bold uppercase text-xs tracking-widest">Адреса та пошта</span>
+          <div class="space-y-4">
+            <a href="mailto:linac_olt1@ukr.net" class="text-xl font-bold hover:text-blue-400 block break-all">linac_olt1@ukr.net</a>
+            <a href="https://maps.google.com" target="_blank" class="group block">
+              <p class="text-slate-400 font-medium group-hover:text-blue-400 transition-colors">
+                м. Дніпро, вул. Космічна, 21<br/>КНТ "ДОКОД" ДОР
+              </p>
+              <span class="inline-flex items-center gap-1 text-[10px] text-blue-500 font-bold uppercase mt-2 group-hover:translate-x-1 transition-all">
+                <Icon name="bx:map" class="w-3 h-3" /> Дивитись на карті
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+          <span class="text-blue-400 font-bold uppercase text-xs tracking-widest">Ми в мережі</span>
+          <div class="flex flex-wrap gap-4">
+            <a href="https://t.me/dokod_dp" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-sky-500 transition-all text-white"><Icon name="bx:bxl-telegram" class="w-6 h-6" /></a>
+            <a href="https://www.facebook.com/kz.kod.dor" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-all text-white"><Icon name="bx:bxl-facebook" class="w-6 h-6" /></a>
+            <a href="https://www.instagram.com/dokod.dp/" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition-all text-white"><Icon name="bx:bxl-instagram" class="w-6 h-6" /></a>
+            <a href="https://www.youtube.com/@DOKOD_DP" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-all text-white"><Icon name="bx:bxl-youtube" class="w-6 h-6" /></a>
+            <a href="https://www.tiktok.com/@dokod.dp" target="_blank" class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center hover:bg-black transition-all text-white"><Icon name="bx:bxl-tiktok" class="w-6 h-6" /></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
