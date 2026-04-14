@@ -37,13 +37,13 @@ const { title, subtitle, description } = Astro.props;
             <img src="/hero/raddepartment.jpg" alt="Будівля відділення" class="hero-dynamic-img h-auto w-full object-cover" />
          </div>
          
-         <div class="hug-card-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-float z-20 cursor-pointer active:scale-95">
+         <div class="hero-hug-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-hero-float z-20 cursor-pointer active:scale-95">
             <div class="flex items-center gap-3 text-left pointer-events-none">
               <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
-                <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
+                <div class="hero-heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
                   <Icon name="bx:bxs-heart" class="w-6 h-6" />
                 </div>
-                <div class="hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">🤗</div>
+                <div class="hero-hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">🤗</div>
               </div>
               <div>
                 <h4 class="font-bold text-slate-900 text-[11px] mb-0 tracking-tight text-balance">Турбота про кожного</h4>
@@ -97,13 +97,13 @@ const { title, subtitle, description } = Astro.props;
         </div>
       </div>
 
-      <div class="hug-card-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
+      <div class="hero-hug-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-hero-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
         <div class="flex items-start gap-4 text-left pointer-events-none">
           <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
-            <div class="heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
+            <div class="hero-heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
               <Icon name="bx:bxs-heart" class="w-7 h-7" />
             </div>
-            <div class="hug-layer absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">🤗</div>
+            <div class="hero-hug-layer absolute inset-0 flex items-center justify-center text-4xl opacity-0 scale-50 transition-all duration-300 leading-none">🤗</div>
           </div>
           <div class="pr-2">
             <h4 class="font-bold text-slate-900 text-base mb-1 tracking-tight leading-tight">Турбота про кожного</h4>
@@ -117,21 +117,24 @@ const { title, subtitle, description } = Astro.props;
 </main>
 
 <style>
-  @keyframes float {
+  @keyframes hero-float-anim {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-15px); }
   }
-  .animate-float {
-    animation: float 5s ease-in-out infinite;
+  
+  .animate-hero-float {
+    animation: hero-float-anim 5s ease-in-out infinite;
   }
 </style>
 
 <script>
+
+
   document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll<HTMLElement>('.hug-card-trigger');
+    const cards = document.querySelectorAll<HTMLElement>('.hero-hug-trigger');
     cards.forEach(card => {
-      const heart = card.querySelector<HTMLElement>('.heart-layer');
-      const hug = card.querySelector<HTMLElement>('.hug-layer');
+      const heart = card.querySelector<HTMLElement>('.hero-heart-layer');
+      const hug = card.querySelector<HTMLElement>('.hero-hug-layer');
       if (heart && hug) {
         card.addEventListener('click', () => {
           heart.style.opacity = '0';
