@@ -4,7 +4,7 @@ description: "Фундамент вашого лікування."
 ---
 
 import UI from '../../components/ServiceUI.astro';
-import Content from '../../components/ContentBlocks.astro';
+import Blocks from '../../components/ContentBlocks.astro';
 import Interactive from '../../components/Interactive.astro';
 
 <Interactive type="scroll-progress" />
@@ -31,16 +31,16 @@ import Interactive from '../../components/Interactive.astro';
   
   КТ-розмітка (топометрія, симуляція) — це **спеціальне комп'ютерно-томографічне сканування**, яке виконується перед початком променевої терапії. Це не діагностична КТ, а **підготовча процедура для точного планування лікування**.
   
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="💡" 
     title="Чому це важливо?"
   >
     Кожна людина унікальна: різна анатомія, різне розташування органів, різні розміри тіла. Щоб доставити дозу **точно в пухлину** і **обійти здорові органи**, фізикам потрібна детальна 3D-карта вашого тіла.
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="numbered-list"
     items={[
       "Визначити точне положення пухлини відносно кісток та органів",
@@ -86,7 +86,7 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Що далі? Процес планування" icon="🔬">
   
-  <Content 
+  <Blocks 
     type="steps"
     items={[
       {
@@ -112,14 +112,14 @@ import Interactive from '../../components/Interactive.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="✅" 
     title="Результат планування"
   >
     Ви отримуєте індивідуальний план лікування з кольоровою картою дози на кожному зрізі та гістограмою доза-об'єм (DVH), що показує, який відсоток кожного органу отримає яку дозу.
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -135,7 +135,7 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Особливості для різних локалізацій" icon="🎨">
 
-  <Content 
+  <Blocks 
     type="mobile-tabs"
     items={[
       {
@@ -244,25 +244,25 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
-  <Content type="expandable" title="Чи можна зробити КТ-розмітку, якщо у мене алергія на контраст?" icon="⚠️">
+  <Blocks type="expandable" title="Чи можна зробити КТ-розмітку, якщо у мене алергія на контраст?" icon="⚠️">
     Так. Повідомте лікаря заздалегідь. Можливі варіанти: виконати КТ без контрасту (якщо він не критичний), премедикація антигістамінними та стероїдами за 12 та 2 години до процедури, або використати альтернативу (МРТ для планування).
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи можна видалити татуювання після лікування?" icon="✏️">
+  <Blocks type="expandable" title="Чи можна видалити татуювання після лікування?" icon="✏️">
     Так, лазерне видалення можливе. Але мітки крихітні (1-2 мм) і майже непомітні — більшість пацієнтів залишають їх як є. Це також корисно, якщо знадобиться повторне лікування в майбутньому.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Що робити, якщо я не можу лежати нерухомо 15 хвилин?" icon="😰">
+  <Blocks type="expandable" title="Що робити, якщо я не можу лежати нерухомо 15 хвилин?" icon="😰">
     Повідомте персонал. Можливі варіанти: знеболююче перед процедурою (якщо біль не дає лежати), легкий седативний препарат (якщо тривога/клаустрофобія), або перерви під час сканування (хоча це подовжує процедуру).
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Скільки часу займає КТ-розмітка?" icon="⏰">
+  <Blocks type="expandable" title="Скільки часу займає КТ-розмітка?" icon="⏰">
     Загалом 30-90 хвилин: виготовлення маски/матрацу (10-20 хв), позиціювання (10-15 хв), сканування (5-15 хв), нанесення міток (5-10 хв). Самий важливий фактор — ви маєте лежати нерухомо.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Що станеться, якщо я змінюся у вазі під час лікування?" icon="⚖️">
+  <Blocks type="expandable" title="Що станеться, якщо я змінюся у вазі під час лікування?" icon="⚖️">
     Значна зміна ваги (> 5-7 кг) може вплинути на анатомію та положення органів. У такому разі потрібна повторна КТ-розмітка та перепланування. Намагайтеся підтримувати стабільну вагу під час курсу.
-  </Content>
+  </Blocks>
 
 </UI>
 

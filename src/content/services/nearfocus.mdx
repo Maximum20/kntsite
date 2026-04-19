@@ -4,7 +4,7 @@ description: "Лікування поверхневих новоутворень
 ---
 
 import UI from '../../components/ServiceUI.astro';
-import Content from '../../components/ContentBlocks.astro';
+import Blocks from '../../components/ContentBlocks.astro';
 import Interactive from '../../components/Interactive.astro';
 
 <Interactive type="scroll-progress" />
@@ -41,7 +41,7 @@ import Interactive from '../../components/Interactive.astro';
   
   Близькофокусна рентгенотерапія використовує м'яке рентгенівське випромінювання з **низькою енергією 10-150 кеВ**.
   
-  <Content 
+  <Blocks 
     type="emoji-cards"
     items={[
       { icon: "💯", title: "100% дози в поверхневому шарі" },
@@ -51,14 +51,14 @@ import Interactive from '../../components/Interactive.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="📏" 
     title="Відстань до шкіри"
   >
     Апарат встановлюється на відстані **1-5 см від шкіри** (звідси назва "близький фокус"), а опромінення триває від 30 секунд до 10 хвилин залежно від розміру та глибини новоутворення.
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -124,7 +124,7 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Показання до лікування" icon="📋">
 
-  <Content 
+  <Blocks 
     type="mobile-tabs"
     items={[
       {
@@ -220,14 +220,14 @@ import Interactive from '../../components/Interactive.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="😌" 
     title="Що відчуваєте?"
   >
     **Більшість пацієнтів — нічого:** Опромінення невідчутне, процедура абсолютно безболісна. Можливі відчуття: легке приємне тепло, рідко — легке поколювання. Після процедури можна одразу йти додому, жодних обмежень (крім сонця).
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -249,7 +249,7 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Побічні ефекти" icon="⚠️">
 
-  <Content 
+  <Blocks 
     type="steps"
     items={[
       {
@@ -305,25 +305,25 @@ import Interactive from '../../components/Interactive.astro';
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
-  <Content type="expandable" title="Чому не зробити просто операцію?" icon="✂️">
+  <Blocks type="expandable" title="Чому не зробити просто операцію?" icon="✂️">
     Хірургія — відмінний метод, але залишає рубець (на обличчі це критично), потребує наркозу (ризик для літніх), може порушити функцію (повіка, ніс), при множинних пухлинах — багато розрізів. Близькофокусна терапія — альтернатива там, де рубець неприйнятний або операція ризикована.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи можна вилікувати будь-який рак шкіри?" icon="🤔">
+  <Blocks type="expandable" title="Чи можна вилікувати будь-який рак шкіри?" icon="🤔">
     Ні. Метод ефективний для поверхневих пухлин до 5 см та глибиною до 5 мм. Якщо пухлина проросла вглиб (м'язи, кістки) або дуже велика — потрібна хірургія чи інші методи.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи може пухлина повернутися?" icon="🔄">
+  <Blocks type="expandable" title="Чи може пухлина повернутися?" icon="🔄">
     Так, рецидив можливий у 2-10% випадків (залежить від типу пухлини). Тому важливо регулярно спостерігатися у лікаря. Огляди кожні 3 місяці перший рік, потім кожні 6 місяців.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи стану я радіоактивним?" icon="☢️">
+  <Blocks type="expandable" title="Чи стану я радіоактивним?" icon="☢️">
     Ні. Рентгенівське випромінювання не залишається в тілі. Ви безпечні для оточуючих одразу після сеансу. Можете обіймати дітей та онуків без обмежень.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Коли можна повернутися до роботи?" icon="💼">
+  <Blocks type="expandable" title="Коли можна повернутися до роботи?" icon="💼">
     Одразу. Процедура амбулаторна, без лікарняного. Єдине обмеження — якщо робота на відкритому сонці, візьміть відпустку або перейдіть на роботу в приміщенні під час курсу (захист від сонця критично важливий!).
-  </Content>
+  </Blocks>
 
 </UI>
 

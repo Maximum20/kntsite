@@ -4,7 +4,7 @@ description: "Технології точності та команда експ
 ---
 
 import UI from '../../components/ServiceUI.astro';
-import Content from '../../components/ContentBlocks.astro';
+import Blocks from '../../components/ContentBlocks.astro';
 import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI 
@@ -29,16 +29,16 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
   
   Мегавольтна терапія використовує високоенергетичне рентгенівське та електронне випромінювання для знищення ракових клітин. На відміну від звичайного рентгену, який використовується для діагностики, мегавольтне випромінювання має набагато більшу енергію (від 4 до 25 МеВ), що дозволяє проникати глибоко в тканини та точно доставляти дозу до пухлини.
   
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="🏥" 
     title="Наш лінійний прискорювач Elekta Versa HD"
   >
     Це медичний апарат розміром з невелику кімнату, що генерує потужні промені енергії. Завдяки інтегрованій системі візуалізації та роботизованому столу, ми досягаємо субміліметрової точності при кожному сеансі опромінення.
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="emoji-cards"
     items={[
       { icon: "⚡", title: "Високоенергетичні промені 4-25 МеВ" },
@@ -78,7 +78,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI type="accordion" title="Технології та техніки" icon="🔬">
   
-  <Content 
+  <Blocks 
     type="card-grid"
     items={[
       {
@@ -104,14 +104,14 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="✨" 
     title="Переваги сучасних технологій"
   >
     Завдяки IMRT/VMAT ми можемо опромінювати пухлини складної форми (наприклад, що обвивають спинний мозок) з мінімальним ризиком ушкодження критичних структур. IGRT гарантує, що навіть якщо пухлина рухається при диханні, промені будуть точно в цілі.
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -119,7 +119,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
   
   Мегавольтна терапія застосовується практично при всіх видах злоякісних новоутворень:
 
-  <Content 
+  <Blocks 
     type="icon-list"
     items={[
       "Рак голови та шиї — гортань, глотка, щитоподібна залоза, слинні залози",
@@ -133,13 +133,13 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="ℹ️"
   >
     Терапія може застосовуватися як самостійний метод, так і в комбінації з хірургією та хіміотерапією. Рішення приймається мультидисциплінарною командою (онколог, хірург, радіолог, хіміотерапевт).
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -155,7 +155,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI type="accordion" title="Переваги методу" icon="✨">
 
-  <Content 
+  <Blocks 
     type="info-boxes"
     items={[
       {
@@ -192,7 +192,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI type="accordion" title="За лаштунками точності" icon="🔬">
   
-  <Content 
+  <Blocks 
     type="steps"
     items={[
       {
@@ -226,16 +226,16 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI type="accordion" title="Побічні ефекти" icon="⚠️">
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="ℹ️" 
     title="Важливо розуміти"
   >
     Побічні ефекти залежать від зони опромінення, дози та індивідуальної чутливості. Більшість ефектів **тимчасові** та минають через 2-8 тижнів після завершення курсу.
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="mobile-tabs"
     items={[
       {
@@ -292,14 +292,14 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="💊" 
     title="Як мінімізувати побічні ефекти?"
   >
     Лікар призначить підтримуючу терапію: креми для шкіри, протиблювотні, знеболюючі, пробіотики для кишечника. Більшість побічних ефектів можна значно зменшити при правильному супровідному лікуванні.
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -309,29 +309,29 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
-  <Content type="expandable" title="Чи це больно?" icon="🤔">
+  <Blocks type="expandable" title="Чи це больно?" icon="🤔">
     Ні, процедура абсолютно безболісна. Ви не відчуваєте променів. Деякі пацієнти навіть засинають на столі. Єдиний дискомфорт — потрібно лежати нерухомо 15-30 хвилин.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи стану я радіоактивним?" icon="☢️">
+  <Blocks type="expandable" title="Чи стану я радіоактивним?" icon="☢️">
     Ні. Рентгенівське випромінювання не залишається у вашому тілі. Одразу після сеансу ви можете контактувати з іншими людьми, обіймати дітей, онуків — без жодних обмежень.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Які побічні ефекти?" icon="⚠️">
+  <Blocks type="expandable" title="Які побічні ефекти?" icon="⚠️">
     Залежать від зони опромінення. Найчастіше — втома, почервоніння шкіри (схоже на засмагу), зміни апетиту. Більшість ефектів тимчасові та минають через кілька тижнів після завершення курсу.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Скільки це коштує?" icon="💰">
+  <Blocks type="expandable" title="Скільки це коштує?" icon="💰">
     Лікування в нашому центрі проводиться за програмою медичних гарантій (безкоштовно за направленням) або на комерційній основі. Точну вартість можна дізнатися на консультації.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи можна працювати під час лікування?" icon="💼">
+  <Blocks type="expandable" title="Чи можна працювати під час лікування?" icon="💼">
     Так, більшість пацієнтів продовжують працювати. Сеанси зазвичай призначаються на ранок або вечір, щоб ви могли планувати свій день. Якщо робота фізично важка — може знадобитися лікарняний.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Як підготуватися до першого сеансу?" icon="📝">
+  <Blocks type="expandable" title="Як підготуватися до першого сеансу?" icon="📝">
     Прийдіть за 15 хвилин до призначеного часу. Носіть зручний одяг без металевих деталей. Не використовуйте креми або дезодоранти на зоні опромінення. Можете їсти та пити як звичайно (крім опромінення живота — тоді натще).
-  </Content>
+  </Blocks>
 
 </UI>
 
