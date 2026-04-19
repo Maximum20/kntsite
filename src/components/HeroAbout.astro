@@ -1,0 +1,339 @@
+---
+// AboutSection.astro
+const features = [
+  {
+    number: "01",
+    gradient: "from-cyan-400 to-blue-500",
+    subtitle: "Багаторічний досвід команди",
+    title: "Експертний рівень",
+    description: "Понад 15 років практики в онкології. Щороку тисячі успішних операцій та курсів лікування",
+    stat: "15+",
+    statLabel: "років досвіду"
+  },
+  {
+    number: "02",
+    gradient: "from-purple-400 to-pink-500",
+    subtitle: "Обладнання експертного класу",
+    title: "Точна діагностика",
+    description: "КТ останнього покоління, ПЕТ-сканери, лінійні прискорювачі для променевої терапії",
+    stat: "99%",
+    statLabel: "точність"
+  },
+  {
+    number: "03",
+    gradient: "from-emerald-400 to-teal-500",
+    subtitle: "Міжнародні стандарти",
+    title: "Європейські протоколи",
+    description: "Слідуємо всім міжнародним протоколам лікування. Наші лікарі мають сертифікати, регулярно проходять стажування та постійно вдосконалюють свою кваліфікацію",
+    stat: "100%",
+    statLabel: "відповідність стандартам"
+  },
+  {
+    number: "04",
+    gradient: "from-orange-400 to-red-500",
+    subtitle: "Персоналізоване лікування",
+    title: "Індивідуальний підхід",
+    description: "Розрахунок дози з точністю до міліметра для мінімізації впливу на здорові тканини",
+    stat: "100%",
+    statLabel: "персоналізація"
+  },
+  {
+    number: "05",
+    gradient: "from-indigo-400 to-purple-500",
+    subtitle: "Від діагностики до реабілітації",
+    title: "Повний цикл",
+    description: "Консультації, хірургія, променева та хіміотерапія в одному місці — ваша зручність",
+    stat: "24/7",
+    statLabel: "доступність"
+  },
+  {
+    number: "06",
+    gradient: "from-blue-500 to-cyan-500",
+    subtitle: "Програма медичних гарантій",
+    title: "Безкоштовне лікування",
+    description: "Отримайте якісну медичну допомогу за програмою НСЗУ. Лікування онкологічних захворювань повністю покривається державою",
+    stat: "НСЗУ",
+    statLabel: "державна підтримка",
+    isNSZU: true
+  }
+];
+
+const icons = {
+  shield: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />',
+  zap: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />',
+  target: '<circle cx="12" cy="12" r="10" stroke-width="2.5" /><circle cx="12" cy="12" r="6" stroke-width="2.5" /><circle cx="12" cy="12" r="2" stroke-width="2.5" />',
+  heart: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />',
+  clock: '<circle cx="12" cy="12" r="10" stroke-width="2.5" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6l4 2" />'
+};
+
+const featureIcons = ['zap', 'target', 'shield', 'heart', 'clock', 'shield'];
+---
+
+<div class="min-h-screen bg-transparent">
+  <section class="min-h-screen py-24 px-6">
+    <div class="max-w-7xl mx-auto">
+
+      <!-- Hero Block -->
+      <div class="mb-20">
+
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 backdrop-blur-lg rounded-full border border-blue-500/30 mb-6 animate-fade-in">
+          <div class="w-2 h-2 rounded-full bg-blue-500 pulse-dot"></div>
+          <span class="text-sm font-semibold text-blue-900">
+            Дніпровський онкологічний диспансер
+          </span>
+        </div>
+
+        <!-- Title -->
+        <h1 class="mb-6 animate-fade-in-up">
+          <div class="text-6xl md:text-8xl font-black leading-none mb-2">
+            <span class="bg-gradient-to-br from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Ми поруч,
+            </span>
+          </div>
+          <div class="text-6xl md:text-8xl font-black leading-none">
+            <span class="bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
+              коли це найважливіше
+            </span>
+          </div>
+        </h1>
+
+        <!-- Lead Text -->
+        <p class="text-xl text-gray-600 max-w-3xl leading-relaxed mb-20 animate-fade-in-up" style="animation-delay: 0.2s;">
+          Провідний онкологічний центр з повним циклом медичної допомоги — від діагностики до реабілітації
+        </p>
+      </div>
+
+      <!-- Section Title -->
+      <div class="mb-12 animate-fade-in-up">
+        <h2 class="text-5xl md:text-6xl font-black text-gray-900 mb-4">
+          Наші <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">переваги</span>
+        </h2>
+        <div class="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-full"></div>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+        {features.map((feature, index) => (
+          <div
+            class="feature-card relative bg-white/60 backdrop-blur-xl border border-black/5 rounded-3xl p-8 overflow-hidden group cursor-pointer transition-all duration-500 flex flex-col"
+            data-index={index}
+          >
+            {/* Gradient Background */}
+            <div class={`card-gradient absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+
+            {/* Large Number */}
+            <div class="text-8xl font-black text-transparent opacity-90 mb-6 select-none" style="-webkit-text-stroke: 2px rgba(0,0,0,0.15);">
+              {feature.number}
+            </div>
+
+            {/* Icon */}
+            <div class={`icon-wrapper w-14 h-14 rounded-2xl ${feature.isNSZU ? 'bg-white p-2' : `bg-gradient-to-br ${feature.gradient}`} flex items-center justify-center mb-6 transition-transform duration-600`}>
+              {feature.isNSZU ? (
+                <img src="/hero/nszu.png" alt="NSZU Logo" class="w-full h-full object-contain" />
+              ) : (
+                <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" set:html={icons[featureIcons[index]]} />
+              )}
+            </div>
+
+            {/* Content */}
+            <div class="relative z-10 flex-grow flex flex-col">
+              <p class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                {feature.subtitle}
+              </p>
+              <h3 class="text-3xl font-black text-gray-900 mb-4 leading-tight">
+                {feature.title}
+              </h3>
+              <p class="text-base text-gray-600 leading-relaxed mb-6">
+                {feature.description}
+              </p>
+
+              {/* Stats */}
+              <div class="pt-6 mt-auto border-t border-black/8">
+                <div class={`text-4xl font-black bg-gradient-to-br ${feature.gradient} bg-clip-text text-transparent mb-1`}>
+                  {feature.stat}
+                </div>
+                <p class="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  {feature.statLabel}
+                </p>
+              </div>
+            </div>
+
+            {/* Progress Bar */}
+            <div class={`progress-bar absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r ${feature.gradient} transform scale-x-0 origin-left transition-transform duration-500`}></div>
+          </div>
+        ))}
+      </div>
+
+      <!-- CTA Section -->
+      <div class="cta-section relative rounded-3xl overflow-hidden p-12 text-center bg-gradient-to-br from-blue-600 via-cyan-500 to-purple-600">
+        {/* Grid Pattern */}
+        <div
+          class="absolute inset-0 opacity-20"
+          style="background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.1) 0px, transparent 1px, transparent 60px, rgba(255,255,255,0.1) 61px), repeating-linear-gradient(90deg, rgba(255,255,255,0.1) 0px, transparent 1px, transparent 60px, rgba(255,255,255,0.1) 61px);"
+        ></div>
+
+        <div class="relative z-10">
+          <h2 class="text-4xl md:text-5xl font-black text-white mb-4">
+            Ваше здоров'я — наш пріоритет
+          </h2>
+          <p class="text-xl text-white/95 max-w-2xl mx-auto mb-8 leading-relaxed">
+            Сучасне обладнання, досвідчені фахівці та індивідуальний підхід до кожного пацієнта
+          </p>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button class="cta-button px-8 py-4 bg-white text-blue-600 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95">
+              Записатися на консультацію
+            </button>
+            <button class="cta-button px-8 py-4 bg-white/20 backdrop-blur-lg text-white border-2 border-white rounded-2xl font-bold text-lg hover:bg-white/30 transition-all hover:scale-105 active:scale-95">
+              Дізнатися більше
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</div>
+
+<style>
+  /* Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .pulse-dot {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Card hover effects */
+  .feature-card {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .feature-card:nth-child(1) { animation-delay: 0.1s; }
+  .feature-card:nth-child(2) { animation-delay: 0.2s; }
+  .feature-card:nth-child(3) { animation-delay: 0.3s; }
+  .feature-card:nth-child(4) { animation-delay: 0.4s; }
+  .feature-card:nth-child(5) { animation-delay: 0.5s; }
+  .feature-card:nth-child(6) { animation-delay: 0.6s; }
+
+  .feature-card:hover {
+    transform: scale(1.02) translateY(-8px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .feature-card:hover .progress-bar {
+    transform: scaleX(1);
+  }
+
+  .feature-card:hover .icon-wrapper {
+    transform: rotate(360deg);
+  }
+
+  /* CTA Section animation */
+  .cta-section {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  .cta-button {
+    transition: all 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .text-6xl {
+      font-size: 3rem;
+    }
+
+    .text-8xl {
+      font-size: 4rem;
+    }
+  }
+</style>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, observerOptions);
+
+  // Observe feature cards
+  document.querySelectorAll('.feature-card').forEach((card) => {
+    observer.observe(card);
+  });
+
+  // Observe CTA section
+  const ctaSection = document.querySelector('.cta-section');
+  if (ctaSection) {
+    observer.observe(ctaSection);
+  }
+
+  // 3D tilt effect on feature cards
+  document.querySelectorAll('.feature-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = (y - centerY) / 20;
+      const rotateY = (centerX - x) / 20;
+
+      card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02) translateY(-8px)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+</script>

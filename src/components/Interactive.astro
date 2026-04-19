@@ -1,0 +1,374 @@
+---
+// src/components/Interactive.astro
+// Додаткові інтерактивні компоненти
+import { Icon } from "astro-icon/components";
+
+const { type = "", items = [], title = "", value = 0, max = 100, color = "blue" } = Astro.props;
+---
+
+{/* ПРОГРЕС КРУЖЕЧКИ */}
+{type === 'progress-circle' && (
+  <div class="flex flex-wrap gap-6 sm:gap-8 my-8 not-prose justify-center">
+    {items.map((item: any, idx: number) => (
+      <div class="flex flex-col items-center group" style={`animation-delay: ${idx * 150}ms`}>
+        <div class="relative w-24 h-24 sm:w-32 sm:h-32">
+          <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            {/* Background circle */}
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke="#e5e7eb"
+              stroke-width="8"
+            ></circle>
+            {/* Progress circle */}
+            <circle
+              cx="50"
+              cy="50"
+              r="40"
+              fill="none"
+              stroke={`url(#gradient-${idx})`}
+              stroke-width="8"
+              stroke-linecap="round"
+              stroke-dasharray={`${(item.value / 100) * 251.2} 251.2`}
+              class="transition-all duration-1000 ease-out"
+            ></circle>
+            <defs>
+              <linearGradient id={`gradient-${idx}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#8b5cf6;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-2xl sm:text-3xl font-black bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              {item.value}%
+            </span>
+          </div>
+        </div>
+        <p class="text-xs sm:text-sm font-bold text-slate-700 text-center mt-3 max-w-[120px]">
+          {item.label}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
+
+{/* ІНТЕРАКТИВНИЙ ЧЕКЛІСТ (зберігається в localStorage) */}
+{type === 'checklist' && (
+  <div class="my-6 not-prose" data-checklist-id={title}>
+    {title && (
+      <h4 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+        <Icon name="bx:list-check" class="w-6 h-6 text-blue-600" />
+        {title}
+      </h4>
+    )}
+    <div class="space-y-2">
+      {items.map((item: string, idx: number) => (
+        <label class="flex items-start gap-3 p-3 rounded-xl hover:bg-blue-50 transition-all cursor-pointer group">
+          <input
+            type="checkbox"
+            class="checklist-item w-5 h-5 rounded border-2 border-slate-300 text-blue-600 focus:ring-2 focus:ring-blue-500 mt-0.5 cursor-pointer"
+            data-item-id={idx}
+          />
+          <span class="text-sm sm:text-base text-slate-700 group-has-[:checked]:line-through group-has-[:checked]:text-slate-400 transition-all flex-1">
+            {item}
+          </span>
+        </label>
+      ))}
+    </div>
+    <button class="clear-checklist mt-4 text-xs sm:text-sm text-slate-500 hover:text-red-600 transition-colors flex items-center gap-1">
+      <Icon name="bx:reset" class="w-4 h-4" />
+      Скинути все
+    </button>
+  </div>
+)}
+
+{/* КНОПКИ ДІЙІВ (Download PDF, Print, Share) */}
+{type === 'action-buttons' && (
+  <div class="flex flex-wrap gap-3 my-6 not-prose">
+    <button class="print-button inline-flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-sm text-slate-700 hover:border-blue-600 hover:text-blue-600 transition-all hover:scale-105 shadow-sm">
+      <Icon name="bx:printer" class="w-5 h-5" />
+      <span class="hidden sm:inline">Роздрукувати</span>
+      <span class="sm:hidden">Друк</span>
+    </button>
+
+    <button class="download-pdf inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl font-bold text-sm text-white hover:shadow-xl hover:scale-105 transition-all shadow-lg shadow-blue-600/30">
+      <Icon name="bx:download" class="w-5 h-5" />
+      <span class="hidden sm:inline">Завантажити PDF</span>
+      <span class="sm:hidden">PDF</span>
+    </button>
+
+    <button class="share-button inline-flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-slate-200 rounded-xl font-bold text-sm text-slate-700 hover:border-green-600 hover:text-green-600 transition-all hover:scale-105 shadow-sm">
+      <Icon name="bx:share-alt" class="w-5 h-5" />
+      <span class="hidden sm:inline">Поділитися</span>
+      <span class="sm:hidden">Share</span>
+    </button>
+  </div>
+)}
+
+{/* АНІМОВАНІ ЛІЧИЛЬНИКИ */}
+{type === 'counter' && (
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-8 not-prose">
+    {items.map((item: any, idx: number) => (
+      <div class="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200 hover:shadow-xl transition-all group" style={`animation-delay: ${idx * 100}ms`}>
+        <div
+          class="counter text-4xl sm:text-5xl font-black bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform"
+          data-target={item.value}
+          data-suffix={item.suffix || ''}
+          data-prefix={item.prefix || ''}
+        >
+          0{item.suffix || ''}
+        </div>
+        <div class="text-xs sm:text-sm font-bold text-slate-600 uppercase tracking-wide">
+          {item.label}
+        </div>
+      </div>
+    ))}
+  </div>
+)}
+
+{/* FLOATING CONTACT BUTTON */}
+{type === 'floating-contact' && (
+  <div class="fixed bottom-6 right-6 z-50 not-prose">
+    <button class="group w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full shadow-2xl shadow-blue-600/50 flex items-center justify-center hover:scale-110 transition-all duration-300 animate-bounce">
+      <Icon name="bx:phone-call" class="w-7 h-7 sm:w-8 sm:h-8 text-white group-hover:rotate-12 transition-transform" />
+    </button>
+    <div class="absolute bottom-full right-0 mb-3 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+      <div class="bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-lg whitespace-nowrap shadow-xl">
+        Зателефонувати зараз
+      </div>
+    </div>
+  </div>
+)}
+
+{/* SCROLL PROGRESS BAR */}
+{type === 'scroll-progress' && (
+  <div class="fixed top-0 left-0 w-full h-1 bg-slate-100 z-50 not-prose">
+    <div class="scroll-progress h-full bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 transition-all duration-300" style="width: 0%"></div>
+  </div>
+)}
+
+{/* TESTIMONIAL CAROUSEL */}
+{type === 'testimonial-carousel' && (
+  <div class="my-12 not-prose" x-data="{ activeSlide: 0, autoplay: true }" x-init="
+    setInterval(() => {
+      if (autoplay) {
+        activeSlide = (activeSlide + 1) % {items.length}
+      }
+    }, 5000)
+  ">
+    <div class="relative">
+      {/* Slides */}
+      <div class="overflow-hidden rounded-3xl">
+        {items.map((testimonial: any, idx: number) => (
+          <div
+            x-show={`activeSlide === ${idx}`}
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="opacity-0 transform translate-x-full"
+            x-transition:enter-end="opacity-100 transform translate-x-0"
+            x-transition:leave="transition ease-in duration-500"
+            x-transition:leave-start="opacity-100 transform translate-x-0"
+            x-transition:leave-end="opacity-0 transform -translate-x-full"
+            class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-3xl p-8 sm:p-12"
+          >
+            <div class="flex flex-col sm:flex-row gap-6 items-start">
+              {testimonial.image && (
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden flex-shrink-0 shadow-xl">
+                  <img src={testimonial.image} alt={testimonial.name} class="w-full h-full object-cover" />
+                </div>
+              )}
+              <div class="flex-1">
+                <div class="text-6xl text-blue-600/20 font-black leading-none mb-3">"</div>
+                <p class="text-base sm:text-lg text-slate-700 italic leading-relaxed mb-4">
+                  {testimonial.text}
+                </p>
+                <div>
+                  <div class="font-black text-base sm:text-lg text-slate-800">{testimonial.name}</div>
+                  <div class="text-xs sm:text-sm text-blue-600 font-bold">{testimonial.condition}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Navigation */}
+      <div class="flex items-center justify-center gap-2 mt-6">
+        {items.map((_: any, idx: number) => (
+          <button
+            x-on:click={`activeSlide = ${idx}; autoplay = false`}
+            x-bind:class={`activeSlide === ${idx} ? 'bg-blue-600 w-8' : 'bg-slate-300 w-2'`}
+            class="h-2 rounded-full transition-all duration-300"
+          ></button>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+{/* QUICK LINKS - ШВИДКІ ЛІНКИ */}
+{type === 'quick-links' && (
+  <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 my-6 not-prose">
+    {items.map((link: any, idx: number) => (
+      <a
+        href={link.href || '#'}
+        class="flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all group"
+        style={`animation-delay: ${idx * 80}ms`}
+      >
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-2xl shadow-lg shadow-blue-600/30 group-hover:scale-110 group-hover:rotate-12 transition-all">
+          <span class="grayscale brightness-[3]">{link.icon}</span>
+        </div>
+        <span class="text-xs sm:text-sm font-bold text-slate-700 text-center">{link.label}</span>
+      </a>
+    ))}
+  </div>
+)}
+
+{/* ЗАГАДКА/ПОЯСНЕННЯ (спочатку розмите) */}
+{type === 'reveal' && (
+  <div class="my-6 not-prose" x-data="{ revealed: false }">
+    <div
+      x-bind:class="revealed ? '' : 'blur-sm select-none'"
+      class="p-6 bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border-2 border-slate-200 transition-all duration-500"
+    >
+      <slot />
+    </div>
+    <button
+      x-show="!revealed"
+      x-on:click="revealed = true"
+      class="mt-3 px-6 py-2 bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:shadow-xl hover:scale-105 transition-all text-sm sm:text-base"
+    >
+      <Icon name="bx:show" class="w-5 h-5 inline mr-2" />
+      Показати інформацію
+    </button>
+  </div>
+)}
+
+<script>
+  // Checklist localStorage
+  document.addEventListener('DOMContentLoaded', () => {
+    const checklists = document.querySelectorAll('[data-checklist-id]');
+
+    checklists.forEach(checklist => {
+      const id = checklist.getAttribute('data-checklist-id');
+      const items = checklist.querySelectorAll('.checklist-item');
+      const clearBtn = checklist.querySelector('.clear-checklist');
+
+      // Load saved state
+      items.forEach(item => {
+        const itemId = item.getAttribute('data-item-id');
+        const saved = localStorage.getItem(`checklist-${id}-${itemId}`);
+        if (saved === 'true') {
+          (item as HTMLInputElement).checked = true;
+        }
+      });
+
+      // Save on change
+      items.forEach(item => {
+        item.addEventListener('change', (e) => {
+          const itemId = item.getAttribute('data-item-id');
+          localStorage.setItem(`checklist-${id}-${itemId}`, (e.target as HTMLInputElement).checked.toString());
+        });
+      });
+
+      // Clear all
+      clearBtn?.addEventListener('click', () => {
+        items.forEach(item => {
+          const itemId = item.getAttribute('data-item-id');
+          localStorage.removeItem(`checklist-${id}-${itemId}`);
+          (item as HTMLInputElement).checked = false;
+        });
+      });
+    });
+
+    // Animated counters
+    const counters = document.querySelectorAll('.counter');
+    const observerOptions = {
+      threshold: 0.5,
+      rootMargin: '0px'
+    };
+
+    const animateCounter = (counter: Element) => {
+      const target = parseInt(counter.getAttribute('data-target') || '0');
+      const suffix = counter.getAttribute('data-suffix') || '';
+      const prefix = counter.getAttribute('data-prefix') || '';
+      const duration = 2000;
+      const start = 0;
+      const increment = target / (duration / 16);
+      let current = start;
+
+      const updateCounter = () => {
+        current += increment;
+        if (current < target) {
+          counter.textContent = prefix + Math.floor(current) + suffix;
+          requestAnimationFrame(updateCounter);
+        } else {
+          counter.textContent = prefix + target + suffix;
+        }
+      };
+
+      updateCounter();
+    };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    counters.forEach(counter => counterObserver.observe(counter));
+
+    // Scroll progress
+    const scrollProgress = document.querySelector('.scroll-progress');
+    if (scrollProgress) {
+      window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        (scrollProgress as HTMLElement).style.width = scrolled + '%';
+      });
+    }
+
+    // Print button
+    const printBtn = document.querySelector('.print-button');
+    printBtn?.addEventListener('click', () => window.print());
+
+    // Share button
+    const shareBtn = document.querySelector('.share-button');
+    shareBtn?.addEventListener('click', async () => {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: document.title,
+            url: window.location.href
+          });
+        } catch (err) {
+          console.log('Share cancelled');
+        }
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(window.location.href);
+        alert('Посилання скопійовано в буфер обміну!');
+      }
+    });
+
+    // Download PDF (mock)
+    const downloadBtn = document.querySelector('.download-pdf');
+    downloadBtn?.addEventListener('click', () => {
+      alert('PDF завантажується... (функція в розробці)');
+    });
+  });
+</script>
+
+<style>
+  @media print {
+    .not-prose, nav, footer, button, .fixed {
+      display: none !important;
+    }
+  }
+</style>
