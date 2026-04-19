@@ -1,6 +1,11 @@
 ---
 // Footer.astro
+
+import { Image } from "astro:assets";
+
+import fullLogo from "../assets/full-logo.png"; 
 ---
+
 
 <footer id="footer-section" class="mt-20 border-t border-slate-200 py-16 px-5 relative overflow-hidden">
   <!-- Плаваючі геометричні фігури на фоні -->
@@ -20,8 +25,8 @@
       <!-- Логотип -->
       <div class="mb-8 logo-container">
         <div class="logo-wrapper">
-          <img
-            src="../../assets/full-logo.png"
+          <Image
+            src={fullLogo}
             alt="Логотип"
             class="h-16 md:h-20 w-auto object-contain drop-shadow-lg"
           />
