@@ -4,7 +4,7 @@ description: "Контактне опромінення пухлин."
 ---
 
 import UI from '../../components/ServiceUI.astro';
-import Content from '../../components/ContentBlocks.astro';
+import Blocks from '../../components/ContentBlocks.astro';
 
 <UI 
   type="hero"
@@ -28,16 +28,16 @@ import Content from '../../components/ContentBlocks.astro';
   
   Брахітерапія (від грецького "brachys" — близький) — це метод **внутрішньопорожнинної або внутрішньотканинної променевої терапії**, коли радіоактивне джерело розміщується безпосередньо всередині або впритул до пухлини.
   
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="🎯" 
     title="Чому це ефективніше?"
   >
     На відміну від зовнішнього опромінення (коли промені йдуть ззовні крізь здорові тканини), при брахітерапії джерело знаходиться **в міліметрах від ракових клітин**. Завдяки цьому пухлина отримує максимально високу дозу, а оточуючі здорові органи практично не опромінюються.
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="emoji-cards"
     items={[
       { icon: "💪", title: "Максимальна доза в пухлину" },
@@ -47,14 +47,14 @@ import Content from '../../components/ContentBlocks.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="info" 
     icon="🔬" 
     title="Сучасна брахітерапія"
   >
     Використовує мікроскопічні радіоактивні зерна (Іридій-192, Цезій-137, Іод-125), які вводяться через спеціальні аплікатори або голки під контролем УЗД, КТ або МРТ.
-  </Content>
+  </Blocks>
 
 </UI>
 
@@ -126,7 +126,7 @@ import Content from '../../components/ContentBlocks.astro';
 
 <UI type="accordion" title="Показання до брахітерапії" icon="📋">
   
-  <Content 
+  <Blocks 
     type="card-grid"
     items={[
       {
@@ -178,7 +178,7 @@ import Content from '../../components/ContentBlocks.astro';
 
 <UI type="accordion" title="Переваги брахітерапії" icon="✨">
 
-  <Content 
+  <Blocks 
     type="info-boxes"
     items={[
       {
@@ -218,16 +218,16 @@ import Content from '../../components/ContentBlocks.astro';
 
 <UI type="accordion" title="Побічні ефекти та безпека" icon="🛡️">
   
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="success" 
     icon="✅" 
     title="Безпека для оточуючих"
   >
     **HDR-терапія:** джерело повністю видаляється після кожного сеансу — ви НЕ радіоактивні. Можете обіймати близьких без обмежень.
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="warning" 
     icon="⚠️" 
@@ -237,9 +237,9 @@ import Content from '../../components/ContentBlocks.astro';
     - Уникайте тривалого близького контакту з вагітними та маленькими дітьми (не тримайте на колінах більше 30 хвилин на день)
     - Через 2-3 місяці активність падає настільки, що обмежень немає
     - Повідомте лікаря, якщо плануєте перетинати кордон або летіти літаком (зерна можуть спрацювати в металодетекторі — візьміть довідку)
-  </Content>
+  </Blocks>
 
-  <Content 
+  <Blocks 
     type="mobile-tabs"
     items={[
       {
@@ -290,7 +290,7 @@ import Content from '../../components/ContentBlocks.astro';
     ]}
   />
 
-  <Content 
+  <Blocks 
     type="highlight" 
     variant="danger" 
     icon="🚫" 
@@ -299,13 +299,13 @@ import Content from '../../components/ContentBlocks.astro';
     - Інфекція місця імплантації (< 2%)
     - Міграція зерен (LDR) у легені або інші органи (< 1%, зазвичай безсимптомно)
     - Нориці (свищі) між органами (< 5%, частіше при поєднанні з хіміотерапією)
-  </Content>
+  </Blocks>
 
 </UI>
 
 <UI type="accordion" title="Що потрібно знати" icon="📝">
   
-  <Content 
+  <Blocks 
     type="steps"
     items={[
       {
@@ -339,29 +339,29 @@ import Content from '../../components/ContentBlocks.astro';
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
-  <Content type="expandable" title="Чи це больно?" icon="😰">
+  <Blocks type="expandable" title="Чи це больно?" icon="😰">
     Сама процедура опромінення — безболісна. Дискомфорт можливий лише від аплікаторів (відчуття тиску). Імплантація виконується під анестезією, тому під час введення аплікаторів ви нічого не відчуваєте.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Скільки коштує?" icon="💰">
+  <Blocks type="expandable" title="Скільки коштує?" icon="💰">
     Брахітерапія входить до програми медичних гарантій при певних діагнозах (рак шийки матки, простати). Комерційна вартість — від 50,000 до 150,000 грн залежно від типу та кількості фракцій. Точну вартість уточнюйте при консультації.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи можна повторити брахітерапію?" icon="🔄">
+  <Blocks type="expandable" title="Чи можна повторити брахітерапію?" icon="🔄">
     Так, при рецидиві в іншій локалізації. Повторне опромінення тієї самої зони можливе, але з обмеженнями по дозі. Рішення приймається індивідуально.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Як швидко з'явиться ефект?" icon="⏰">
+  <Blocks type="expandable" title="Як швидко з'явиться ефект?" icon="⏰">
     Пухлина зменшується поступово протягом 2-6 місяців. Максимальний ефект — через 1 рік. Не очікуйте миттєвого результату. Це нормальний процес відповіді пухлини на опромінення.
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Чи зможу я мати дітей після брахітерапії матки?" icon="👶">
+  <Blocks type="expandable" title="Чи зможу я мати дітей після брахітерапії матки?" icon="👶">
     На жаль, ні. Гінекологічна брахітерапія призводить до безпліддя. Якщо ви плануєте вагітність, обговоріть збереження фертильності (кріоконсервація яйцеклітин) ДО початку лікування. Це дуже важливо!
-  </Content>
+  </Blocks>
 
-  <Content type="expandable" title="Що робити, якщо зерно випало (LDR простати)?" icon="⚠️">
+  <Blocks type="expandable" title="Що робити, якщо зерно випало (LDR простати)?" icon="⚠️">
     Візьміть його пінцетом, покладіть у скляну банку і віднесіть в клініку. Не викидайте в унітаз. Один втрачений зерно не критично для результату лікування. Повідомте лікаря на наступному візиті.
-  </Content>
+  </Blocks>
 
 </UI>
 
