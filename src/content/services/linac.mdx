@@ -15,15 +15,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
   text="Мегавольтна терапія — це золотий стандарт сучасної онкології. Наше відділення оснащене лінійним прискорювачем Elekta Versa HD, що дозволяє знищувати пухлини з точністю до міліметра, зберігаючи здорові органи."
 />
 
-<UI 
-  type="stats" 
-  stats={[
-    { value: "95%", label: "Точність" },
-    { value: "1-2мм", label: "Прецизійність" },
-    { value: "30+", label: "Років досвіду" },
-    { value: "5000+", label: "Пацієнтів" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Що таке мегавольтна терапія?" icon="⚡" variant="highlight">
   
@@ -44,7 +36,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
       { icon: "⚡", title: "Високоенергетичні промені 4-25 МеВ" },
       { icon: "🎯", title: "Точність позиціювання < 1 мм" },
       { icon: "🖥️", title: "Інтегрована система візуалізації" },
-      { icon: "🤖", title: "Роботизований стіл з 6 ступенями свободи" }
+      
     ]}
   />
 
@@ -143,15 +135,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 </UI>
 
-<UI 
-  type="badges"
-  badges={[
-    { icon: "✓", text: "Неінвазивно", variant: "success" },
-    { icon: "🎯", text: "Точність 1-2мм", variant: "primary" },
-    { icon: "⚡", text: "Без болю", variant: "success" },
-    { icon: "🏥", text: "Амбулаторно", variant: "primary" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Переваги методу" icon="✨">
 
@@ -188,7 +172,6 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 </UI>
 
-<UI type="video-placeholder" src="/gifs/contouring.gif" title="Віртуальне моделювання та планування дози" />
 
 <UI type="accordion" title="За лаштунками точності" icon="🔬">
   
@@ -303,9 +286,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 </UI>
 
-<UI type="quote" subtitle="Світлана, 62 роки, рак молочної залози">
-  Коли мені сказали про діагноз, я думала, що це кінець. Але завдяки точності мегавольтної терапії, я пройшла курс без жахливих побічних ефектів. Зараз у ремісії вже 3 роки, і живу повноцінним життям!
-</UI>
+
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
@@ -322,7 +303,7 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
   </Blocks>
 
   <Blocks type="expandable" title="Скільки це коштує?" icon="💰">
-    Лікування в нашому центрі проводиться за програмою медичних гарантій (безкоштовно за направленням) або на комерційній основі. Точну вартість можна дізнатися на консультації.
+    Лікування в нашому центрі проводиться за програмою медичних гарантій (безкоштовно за направленням).
   </Blocks>
 
   <Blocks type="expandable" title="Чи можна працювати під час лікування?" icon="💼">
@@ -335,12 +316,4 @@ import TeamShowcase from '../../components/TeamShowcase.astro';
 
 </UI>
 
-<UI type="gradient-section" title="Запишіться на консультацію">
-  Наші онкологи та медичні фізики готові відповісти на всі ваші запитання та розробити індивідуальний план лікування.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** info@clinic.ua  
-  📍 **Адреса:** м. Київ, вул. Прикладна, 1
-  
-  Перша консультація онколога — безкоштовно!
-</UI>
+

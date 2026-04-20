@@ -8,7 +8,7 @@ import Blocks from '../../components/ContentBlocks.astro';
 import Interactive from '../../components/Interactive.astro';
 
 <Interactive type="scroll-progress" />
-<Interactive type="floating-contact" />
+
 
 <UI 
   type="hero"
@@ -18,15 +18,7 @@ import Interactive from '../../components/Interactive.astro';
   text="Сучасний метод фізіотерапії, що використовує магнітне поле для лікування рубців, суглобів та реабілітації після променевої терапії. Безболісна процедура з доведеною ефективністю."
 />
 
-<Interactive 
-  type="counter"
-  items={[
-    { value: 95, suffix: "%", label: "Ефективність лікування" },
-    { value: 15, label: "Сеансів у курсі" },
-    { value: 30, label: "Років досвіду" },
-    { value: 0, label: "Побічних ефектів" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Що таке магнітотерапія?" icon="🧲" variant="highlight">
   <Blocks type="highlight" variant="info">
@@ -198,15 +190,7 @@ import Interactive from '../../components/Interactive.astro';
   ]}
 />
 
-<Interactive 
-  type="progress-circle"
-  items={[
-    { value: 80, label: "П'яткова шпора" },
-    { value: 75, label: "Артроз колін" },
-    { value: 70, label: "Келоїдні рубці" },
-    { value: 85, label: "Лімфостаз" }
-  ]}
-/>
+
 
 <UI 
   type="comparison"
@@ -234,14 +218,7 @@ import Interactive from '../../components/Interactive.astro';
   }}
 />
 
-<Interactive type="reveal">
-  <div class="p-6 text-center">
-    <h3 class="text-xl sm:text-2xl font-black text-slate-800 mb-4">🧠 Цікавий факт</h3>
-    <p class="text-base sm:text-lg text-slate-700 leading-relaxed">
-      Магнітне поле Землі становить всього 25-65 мікротесла, а терапевтичні апарати використовують поле до 100 мілітесла — у **1000-4000 разів потужніше**! При цьому вони абсолютно безпечні для організму, оскільки діють локально і короткочасно.
-    </p>
-  </div>
-</Interactive>
+
 
 <UI type="accordion" title="Типи магнітотерапії" icon="🔬">
   <Blocks type="card-grid" items={[
@@ -317,7 +294,7 @@ import Interactive from '../../components/Interactive.astro';
   </Blocks>
 </UI>
 
-<UI type="video-placeholder" src="/hero/mlt.jpg" title="Як проходить сеанс магнітотерапії" />
+
 
 <UI type="accordion" title="Процедура та відчуття" icon="🌟">
   <Blocks type="steps" items={[
@@ -479,29 +456,6 @@ import Interactive from '../../components/Interactive.astro';
   </Blocks>
 </UI>
 
-<Interactive 
-  type="testimonial-carousel"
-  items={[
-    {
-      name: "Оксана М.",
-      condition: "Рубці після променевої терапії, 54 роки",
-      text: "Після курсу променевої терапії у мене з'явилися ущільнення на шкірі. Лікар призначив магнітотерапію в комбінації з лазером. Вже після 10 сеансів шкіра стала набагато м'якшою! Продовжую курси кожні півроку для профілактики.",
-      image: null
-    },
-    {
-      name: "Віктор П.",
-      condition: "Артроз колінного суглоба, 62 роки",
-      text: "Боротьба з артрозом коліна тривала роками. Після курсу магнітотерапії (15 сеансів) біль зменшився на 70%! Можу знову ходити без тростини. Проходжу підтримуючі курси кожні півроку.",
-      image: null
-    },
-    {
-      name: "Тетяна К.",
-      condition: "П'яткова шпора, 48 років",
-      text: "Кожен крок був мукою через п'яткову шпору. Після магнітотерапії + ортопедичні устілки — біль майже зник! Пройшла 12 сеансів, результат утримується вже 8 місяців. Рекомендую всім!",
-      image: null
-    }
-  ]}
-/>
 
 <UI type="accordion" title="Комбінація з іншими методами" icon="🤝">
   <Blocks type="card-grid" items={[
@@ -557,12 +511,6 @@ import Interactive from '../../components/Interactive.astro';
   - **Стандартний курс:** 10-15 процедур щодня або через день
   - **При хронічних захворюваннях:** 2-3 курси на рік з інтервалом 3-6 місяців
   - **Профілактика:** 1 курс на рік
-  
-  ### Вартість
-  
-  - Один сеанс: 150-300 грн
-  - Курс з 10 сеансів: 1200-2500 грн
-  - Деякі клініки пропонують знижки при оплаті всього курсу відразу
   
   ### Де проводиться?
   
@@ -652,26 +600,3 @@ import Interactive from '../../components/Interactive.astro';
   ]} />
 </UI>
 
-<Interactive 
-  type="quick-links"
-  items={[
-    { icon: "📅", label: "Записатися на прийом", href: "#" },
-    { icon: "💬", label: "Онлайн консультація", href: "#" },
-    { icon: "📞", label: "Зателефонувати", href: "tel:+380XXXXXXXXX" },
-    { icon: "💰", label: "Ціни та знижки", href: "#" },
-    { icon: "📍", label: "Як нас знайти", href: "#" },
-    { icon: "📄", label: "Завантажити брошуру", href: "#" }
-  ]}
-/>
-
-<Interactive type="action-buttons" />
-
-<UI type="gradient-section" title="Запишіться на консультацію">
-  Наші фізіотерапевти допоможуть визначити, чи підходить вам магнітотерапія, та розроблять індивідуальний план лікування.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** info@clinic.ua  
-  📍 **Адреса:** м. Київ, вул. Прикладна, 1
-  
-  Перша консультація — безкоштовно!
-</UI>

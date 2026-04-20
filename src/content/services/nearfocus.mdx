@@ -17,25 +17,7 @@ import Interactive from '../../components/Interactive.astro';
   text="Ідеальне рішення для лікування раку шкіри та інших поверхневих патологій. Рентгенівське випромінювання низької енергії діє тільки на верхні шари тканин, не зачіпаючи внутрішні органи."
 />
 
-<UI 
-  type="badges"
-  badges={[
-    { icon: "💎", text: "Косметичний ефект 95%", variant: "success" },
-    { icon: "🎯", text: "Тільки 0-5мм глибина", variant: "primary" },
-    { icon: "⚡", text: "10-20 сеансів", variant: "primary" },
-    { icon: "😌", text: "Безболісно", variant: "success" }
-  ]}
-/>
 
-<Interactive 
-  type="progress-circle"
-  items={[
-    { value: 95, label: "Ефективність при базаліомі" },
-    { value: 90, label: "Плоскоклітинний рак" },
-    { value: 92, label: "Косметичний результат" },
-    { value: 96, label: "Задоволеність" }
-  ]}
-/>
 
 <UI type="accordion" title="Принцип дії близькофокусної терапії" icon="📡" variant="highlight">
   
@@ -201,7 +183,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<UI type="video-placeholder" src="/hero/nearfocus.jpg" title="Процедура близькофокусної терапії базаліоми носа" />
+
 
 <UI type="accordion" title="Процедура та відчуття" icon="🌟">
 
@@ -231,21 +213,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive 
-  type="testimonial-carousel"
-  items={[
-    {
-      name: "Микола, 72 роки",
-      condition: "Базаліома носа",
-      text: "У мене була базаліома на носі — в найпомітнішому місці. Лікар запропонував два варіанти: операцію з пластикою або променеву терапію. Я обрав опромінення, бо не хотів рубця на обличчі. Пройшов 15 сеансів, і через пів року навіть плями не залишилося! Дуже вдячний!"
-    },
-    {
-      name: "Галина, 68 років",
-      condition: "Келоїдний рубець",
-      text: "Після видалення келоїда на вусі мені одразу зробили 3 сеанси опромінення. Минуло 2 роки — жодного рецидиву! Раніше рубець виростав знову вже через пів року."
-    }
-  ]}
-/>
+
 
 <UI type="accordion" title="Побічні ефекти" icon="⚠️">
 
@@ -267,41 +235,13 @@ import Interactive from '../../components/Interactive.astro';
     ]}
   />
 
-  <Interactive type="reveal">
-    <h4 class="font-bold text-lg mb-3">🔬 Науковий факт</h4>
-    <p class="text-sm mb-2">
-      Дослідження показують, що косметичний результат після близькофокусної терапії базаліоми обличчя оцінюється як "відмінний" або "добрий" у **92% пацієнтів** через 5 років після лікування.
-    </p>
-    <p class="text-sm">
-      Це порівнянно або краще, ніж після хірургічного видалення, особливо для пухлин на носі, повіках та вухах, де операція залишає помітні рубці.
-    </p>
-  </Interactive>
+  
 
 </UI>
 
-<Interactive 
-  type="counter"
-  items={[
-    { value: 95, suffix: "%", label: "Контроль базаліом" },
-    { value: 15, suffix: "-30К", label: "Вартість курсу (грн)" },
-    { value: 10, suffix: "-20", label: "Сеансів на курс" },
-    { value: 2, suffix: "%", label: "Рецидивів" }
-  ]}
-/>
 
-<Interactive 
-  type="quick-links"
-  items={[
-    { icon: "📞", label: "Консультація дерматоонколога", href: "tel:+380XXXXXXXXX" },
-    { icon: "📧", label: "Email", href: "mailto:derma@clinic.ua" },
-    { icon: "📄", label: "Завантажити буклет PDF", href: "#" },
-    { icon: "🎥", label: "Відео про процедуру", href: "#" },
-    { icon: "📅", label: "Онлайн-запис", href: "#" },
-    { icon: "💬", label: "Чат з консультантом", href: "#" }
-  ]}
-/>
 
-<Interactive type="action-buttons" />
+
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
@@ -327,11 +267,4 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<UI type="gradient-section" title="Збережіть красу та здоров'я">
-  Близькофокусна терапія — ваш шанс позбутися раку шкіри без рубців та операцій.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** derma@clinic.ua  
-  
-  Запишіться на консультацію дерматоонколога сьогодні!
-</UI>
+

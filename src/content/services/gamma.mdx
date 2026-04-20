@@ -8,7 +8,7 @@ import Blocks from '../../components/ContentBlocks.astro';
 import Interactive from '../../components/Interactive.astro';
 
 <Interactive type="scroll-progress" />
-<Interactive type="floating-contact" />
+
 
 <UI 
   type="hero"
@@ -18,25 +18,7 @@ import Interactive from '../../components/Interactive.astro';
   text="Класичний метод променевої терапії, перевірений часом. Ми використовуємо гамма-установки для лікування широкого спектру онкологічних захворювань, забезпечуючи стабільну та надійну доставку дози."
 />
 
-<UI 
-  type="badges"
-  badges={[
-    { icon: "☢️", text: "Кобальт-60", variant: "primary" },
-    { icon: "🛡️", text: "Надійність 99.9%", variant: "success" },
-    { icon: "💰", text: "Доступна вартість", variant: "primary" },
-    { icon: "🌍", text: "50+ років досвіду", variant: "success" }
-  ]}
-/>
 
-<Interactive 
-  type="counter"
-  items={[
-    { value: 99, suffix: "%", label: "Надійність роботи" },
-    { value: 50, suffix: "+", label: "Років досвіду" },
-    { value: 20, suffix: "-35", label: "Сеансів на курс" },
-    { value: 10000, suffix: "+", label: "Вилікуваних пацієнтів" }
-  ]}
-/>
 
 <UI type="accordion" title="Принцип дії гамма-терапії" icon="☢️" variant="highlight">
   
@@ -46,7 +28,7 @@ import Interactive from '../../components/Interactive.astro';
     type="emoji-cards"
     items={[
       { icon: "⚡", title: "Стабільна енергія 1.17 та 1.33 МеВ" },
-      { icon: "🔌", title: "Не потребує електроенергії" },
+    
       { icon: "🛡️", title: "Високий ступінь надійності" },
       { icon: "⚙️", title: "Простіше в експлуатації" }
     ]}
@@ -123,15 +105,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive 
-  type="progress-circle"
-  items={[
-    { value: 92, label: "Рак молочної залози" },
-    { value: 85, label: "Рак легень" },
-    { value: 88, label: "Рак прямої кишки" },
-    { value: 95, label: "Контроль болю при метастазах" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Показання до гамма-терапії" icon="📋">
   
@@ -319,26 +293,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive 
-  type="testimonial-carousel"
-  items={[
-    {
-      name: "Марія, 58 років",
-      condition: "Рак молочної залози",
-      text: "Після операції мені призначили курс гамма-терапії. Спочатку було страшно, але вся команда була настільки підтримуючою та професійною. Процедури безболісні, і я навіть продовжувала працювати. Сьогодні в ремісії 5 років — і я вдячна кожному дню!"
-    },
-    {
-      name: "Петро, 65 років",
-      condition: "Метастази в кістках",
-      text: "Після лікування біль зменшився на 80%. Я знову можу ходити без милиць і насолоджуватися життям. Дякую докторам за професіоналізм!"
-    },
-    {
-      name: "Олена, 52 роки",
-      condition: "Рак прямої кишки",
-      text: "Завдяки передопераційному опроміненню пухлина зменшилася вдвічі, і операція пройшла успішно. Зараз живу повноцінним життям і навіть подорожую!"
-    }
-  ]}
-/>
+
 
 <UI type="accordion" title="Що потрібно знати перед лікуванням" icon="📝">
   
@@ -368,7 +323,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive type="action-buttons" />
+
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
@@ -394,23 +349,5 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive 
-  type="quick-links"
-  items={[
-    { icon: "📞", label: "Зателефонувати", href: "tel:+380XXXXXXXXX" },
-    { icon: "📧", label: "Написати Email", href: "mailto:info@clinic.ua" },
-    { icon: "📅", label: "Записатися онлайн", href: "#booking" },
-    { icon: "🗺️", label: "Як доїхати", href: "#map" },
-    { icon: "❓", label: "FAQ", href: "#faq" },
-    { icon: "📄", label: "Документи", href: "#docs" }
-  ]}
-/>
 
-<UI type="gradient-section" title="Маєте запитання про гамма-терапію?">
-  Наші спеціалісти готові відповісти на всі ваші запитання та допомогти визначити оптимальний метод лікування.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** info@clinic.ua  
-  
-  Консультація онколога-радіолога — безкоштовно!
-</UI>
+

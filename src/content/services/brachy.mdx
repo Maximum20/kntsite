@@ -14,15 +14,6 @@ import Blocks from '../../components/ContentBlocks.astro';
   text="Максимальна доза в пухлину при мінімальному навантаженні на оточуючі тканини. Джерело випромінювання підводиться безпосередньо в зону лікування, що дозволяє досягти неймовірної точності."
 />
 
-<UI 
-  type="stats" 
-  stats={[
-    { value: "98%", label: "Ефективність" },
-    { value: "2-5", label: "Сеансів HDR" },
-    { value: "< 5%", label: "Ускладнень" },
-    { value: "90%+", label: "Контроль пухлини" }
-  ]}
-/>
 
 <UI type="accordion" title="Що таке брахітерапія?" icon="🎯" variant="highlight">
   
@@ -65,7 +56,7 @@ import Blocks from '../../components/ContentBlocks.astro';
     leftTitle: "HDR — Високопотужнісна",
     leftText: "Джерело вводиться на кілька хвилин за сеанс, потім видаляється. Зазвичай 2-5 сеансів. Пацієнт НЕ залишається радіоактивним.",
     leftItems: [
-      "Іридій-192 (висока активність)",
+      "Кобальт-60 (висока активність)",
       "2-5 сеансів по 10-30 хвилин",
       "Амбулаторно (йдете додому після)",
       "Точний контроль дози",
@@ -84,15 +75,7 @@ import Blocks from '../../components/ContentBlocks.astro';
   }}
 />
 
-<UI 
-  type="badges"
-  badges={[
-    { icon: "🎯", text: "Точність < 1мм", variant: "primary" },
-    { icon: "⚡", text: "2-5 днів курс", variant: "success" },
-    { icon: "💪", text: "Органозберігаюча", variant: "primary" },
-    { icon: "✓", text: "Підвищує виживаність", variant: "success" }
-  ]}
-/>
+
 
 <UI 
   type="timeline"
@@ -174,7 +157,7 @@ import Blocks from '../../components/ContentBlocks.astro';
 
 </UI>
 
-<UI type="video-placeholder" src="/hero/brachy.png" title="Процес HDR-брахітерапії шийки матки" />
+
 
 <UI type="accordion" title="Переваги брахітерапії" icon="✨">
 
@@ -333,9 +316,6 @@ import Blocks from '../../components/ContentBlocks.astro';
 
 </UI>
 
-<UI type="quote" subtitle="Олена, 52 роки, рак шийки матки">
-  Коли лікар сказав про брахітерапію, я злякалася — адже радіоактивні джерела всередині тіла! Але все пройшло набагато легше, ніж я думала. Всього 5 сеансів протягом двох тижнів, і я в ремісії вже 4 роки. Дякую команді за професіоналізм та підтримку!
-</UI>
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
@@ -344,7 +324,7 @@ import Blocks from '../../components/ContentBlocks.astro';
   </Blocks>
 
   <Blocks type="expandable" title="Скільки коштує?" icon="💰">
-    Брахітерапія входить до програми медичних гарантій при певних діагнозах (рак шийки матки, простати). Комерційна вартість — від 50,000 до 150,000 грн залежно від типу та кількості фракцій. Точну вартість уточнюйте при консультації.
+    Брахітерапія входить до програми медичних гарантій (НСЗУ).
   </Blocks>
 
   <Blocks type="expandable" title="Чи можна повторити брахітерапію?" icon="🔄">
@@ -365,11 +345,4 @@ import Blocks from '../../components/ContentBlocks.astro';
 
 </UI>
 
-<UI type="gradient-section" title="Дізнайтеся більше про брахітерапію">
-  Запишіться на консультацію до онколога-радіолога, щоб дізнатися, чи підходить вам цей метод лікування.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** brachy@clinic.ua  
-  
-  Індивідуальний підхід до кожного пацієнта!
-</UI>
+

@@ -17,15 +17,7 @@ import Interactive from '../../components/Interactive.astro';
   text="Це найважливіший перший крок. На сучасному комп'ютерному томографі ми створюємо цифрову копію вашого тіла, щоб фізики могли розрахувати кожен міліметр проходження променя."
 />
 
-<UI 
-  type="badges"
-  badges={[
-    { icon: "🎯", text: "Точність < 1мм", variant: "primary" },
-    { icon: "🗺️", text: "3D-моделювання", variant: "success" },
-    { icon: "⏱️", text: "30-60 хвилин", variant: "primary" },
-    { icon: "🎨", text: "Індивідуальний план", variant: "success" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Що таке КТ-розмітка?" icon="🎯" variant="highlight">
   
@@ -82,7 +74,7 @@ import Interactive from '../../components/Interactive.astro';
   ]}
 />
 
-<UI type="video-placeholder" src="/gifs/contouring.gif" title="Процес контурування органів та пухлини" />
+
 
 <UI type="accordion" title="Що далі? Процес планування" icon="🔬">
   
@@ -123,15 +115,7 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive 
-  type="counter"
-  items={[
-    { value: 1, suffix: "-5мм", label: "Товщина зрізів КТ" },
-    { value: 3, suffix: "-5", label: "Татуаж-міток" },
-    { value: 100, suffix: "-300", label: "Зрізів контурування" },
-    { value: 5, suffix: "-10", label: "Днів до першого сеансу" }
-  ]}
-/>
+
 
 <UI type="accordion" title="Особливості для різних локалізацій" icon="🎨">
 
@@ -226,21 +210,7 @@ import Interactive from '../../components/Interactive.astro';
   ]}
 />
 
-<Interactive 
-  type="testimonial-carousel"
-  items={[
-    {
-      name: "Ірина, 45 років",
-      condition: "Рак молочної залози",
-      text: "Спочатку я боялася КТ-розмітки — думала, що буде складно та довго. Але весь процес зайняв всього 40 хвилин! Персонал був дуже уважним, все пояснювали. Татуаж-мітки взагалі не відчула. Тепер розумію, що це дійсно важливий крок для точного лікування."
-    },
-    {
-      name: "Андрій, 62 роки",
-      condition: "Рак простати",
-      text: "Маска спочатку здалася дивною, але технологи все пояснили і підтримали. Тепер на кожному сеансі вкладають за 2 хвилини завдяки цій масці. Дуже розумно придумано!"
-    }
-  ]}
-/>
+
 
 <UI type="accordion" title="Поширені запитання" icon="❓">
 
@@ -266,23 +236,3 @@ import Interactive from '../../components/Interactive.astro';
 
 </UI>
 
-<Interactive type="action-buttons" />
-
-<Interactive 
-  type="quick-links"
-  items={[
-    { icon: "📞", label: "Записатися на КТ", href: "tel:+380XXXXXXXXX" },
-    { icon: "📧", label: "Email", href: "mailto:planning@clinic.ua" },
-    { icon: "📄", label: "Інструкції PDF", href: "#" },
-    { icon: "🎥", label: "Відео про процес", href: "#" }
-  ]}
-/>
-
-<UI type="gradient-section" title="Готові до першого кроку?">
-  КТ-розмітка — це фундамент успішного лікування. Наша команда забезпечить максимальну точність та комфорт під час процедури.
-  
-  📞 **Телефон:** +380 (XX) XXX-XX-XX  
-  📧 **Email:** planning@clinic.ua  
-  
-  Запишіться на КТ-розмітку сьогодні!
-</UI>
