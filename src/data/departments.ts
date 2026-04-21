@@ -1,7 +1,5 @@
 // src/data/departments.ts
 
-
-
 export const departments = [
 {
   id: "home",

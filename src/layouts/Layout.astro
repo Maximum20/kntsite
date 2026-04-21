@@ -7,9 +7,12 @@ import "@fontsource-variable/inter/index.css";
 import '@fontsource-variable/bricolage-grotesque/index.css';
 import "../styles/global.css";
 
-const { title } = Astro.props;
+const { title, hideSubNav = false } = Astro.props; // Додаємо hideSubNav
 const makeTitle = title ? title + " | Відділення променевої терапії" : "Відділення променевої терапії - №1";
+
 ---
+
+    
 
 <!DOCTYPE html>
 <html lang="uk" class="scroll-smooth">
@@ -21,9 +24,17 @@ const makeTitle = title ? title + " | Відділення променевої 
     <SEO title={makeTitle} description="Сучасна променева терапія у Дніпрі." />
   </head>
   
+
+
+    
+    
+
   <!-- Основний фон тепер не білий, а світло-сірий bg-slate-50 -->
   <body class="bg-slate-50 text-slate-900 antialiased min-h-screen relative overflow-x-hidden">
     
+    
+
+
     <!-- ДЕКОРАТИВНІ ЕЛЕМЕНТИ ФОНУ (Тепер яскравіші та анімовані) -->
     <div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <!-- Велика синя пляма зліва зверху -->
@@ -36,7 +47,7 @@ const makeTitle = title ? title + " | Відділення променевої 
       <div class="absolute bottom-[-10%] left-[10%] w-[700px] h-[700px] bg-indigo-400/15 rounded-full blur-[130px] animate-blob animation-delay-4000"></div>
     </div>
 
-    <Navbar />
+    <Navbar hideSubNav={hideSubNav} />
     <slot />
     <Footer />
     

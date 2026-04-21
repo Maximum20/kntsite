@@ -3,6 +3,7 @@ import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import fullLogo from "../../assets/full-logo.png"; 
+const { hideSubNav } = Astro.props;
 
 const menuitems = [
   { title: "Про відділення", path: "/about" },
@@ -92,52 +93,52 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
 
  
 
-<div id="dept-panel" class="flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500">
-  
-  {isServiceDetailPage ? (
-    /* ВАРІАНТ 1: Оновлена крутілка з затемненими назвами */
-    <div class="bg-white/80 backdrop-blur-2xl p-2 rounded-[3.5rem] border border-white/60 shadow-2xl flex items-center gap-2 pointer-events-auto">
-      
-      <a href={prevPath} class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-          <Icon name="bx:chevron-left" class="w-6 h-6" />
+{ !hideSubNav && (
+    <div id="dept-panel" class="flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500">
+      {isServiceDetailPage ? (
+        /* ВАРІАНТ 1: Крутілка */
+        <div class="bg-white/80 backdrop-blur-2xl p-2 rounded-[3.5rem] border border-white/60 shadow-2xl flex items-center gap-2 pointer-events-auto">
+          <a href={prevPath} class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+              <Icon name="bx:chevron-left" class="w-6 h-6" />
+            </div>
+            <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+              {prevTitle}
+            </span>
+          </a>
+
+          <div class="px-10 py-1 text-center min-w-[200px] border-x border-slate-100">
+            <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">Відділення</span>
+            <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">
+              {currentTitle}
+            </h2>
+          </div>
+
+          <a href={nextPath} class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right">
+            <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+              {nextTitle}
+            </span>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
+              <Icon name="bx:chevron-right" class="w-6 h-6" />
+            </div>
+          </a>
         </div>
-        <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
-          {prevTitle}
-        </span>
-      </a>
-
-      <div class="px-10 py-1 text-center min-w-[200px] border-x border-slate-100">
-        <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">Відділення</span>
-        <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">
-          {currentTitle}
-        </h2>
-      </div>
-
-      <a href={nextPath} class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right">
-        <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
-          {nextTitle}
-        </span>
-        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
-          <Icon name="bx:chevron-right" class="w-6 h-6" />
+      ) : (
+        /* ВАРІАНТ 2: Список для головної */
+        <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
+          {departments.map((dept) => (
+            <a 
+              href={`/services/${dept.id}`}
+              class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white"
+            >
+              {dept.btnTitle}
+            </a>
+          ))}
         </div>
-      </a>
-
-    </div>
-  ) : (
-    /* ВАРІАНТ 2: Список для головної (залишаємо як було) */
-    <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
-      {departments.map((dept) => (
-        <a 
-          href={`/services/${dept.id}`}
-          class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white"
-        >
-          {dept.btnTitle}
-        </a>
-      ))}
+      )}
     </div>
   )}
-</div>
+
 </header>
 
 <style>
