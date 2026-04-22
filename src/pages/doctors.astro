@@ -4,8 +4,8 @@ import { Icon } from "astro-icon/components";
 
 const doctors = [
   {
-    name: "Test",
-    surname: "Johnson",
+    name: "Тест",
+    surname: "Тест",
     role: "Радіаційний онколог",
     department: "Мегавольтна терапія",
     initials: "ТТ",
@@ -18,7 +18,7 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Fest",
+    name: "Тест",
     surname: "Тест",
     role: "Медичний фізик (інженер-радіолог)",
     department: "Мегавольтна терапія",
@@ -32,8 +32,8 @@ const doctors = [
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Tester",
-    surname: "Ternovyi",
+    name: "Тест",
+    surname: "Тест",
     role: "Радіаційний онколог",
     department: "Гамма-терапія",
     initials: "ЄП",
@@ -46,8 +46,8 @@ const doctors = [
     color: "from-slate-600 to-slate-800"
   },
   {
-    name: "Test",
-    surname: "Test",
+    name: "Тест",
+    surname: "Тест",
     role: "Радіаційний онколог",
     department: "Брахітерапія",
     initials: "ОК",
@@ -60,8 +60,8 @@ const doctors = [
     color: "from-slate-700 to-slate-600"
   },
   {
-    name: "Тест2",
-    surname: "Тест2",
+    name: "Тест",
+    surname: "Тест",
     role: "Медичний фізик (інженер-радіолог)",
     department: "КТ-розмітка",
     initials: "МП",
@@ -74,8 +74,8 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Тест2",
-    surname: "Тест2",
+    name: "Тест",
+    surname: "Тест",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -88,8 +88,8 @@ const doctors = [
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Тест1",
-    surname: "Тест1",
+    name: "Тест",
+    surname: "Тест",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -110,63 +110,57 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 <Layout title="Наші фахівці" hideSubNav={true}>
   <main class="relative min-h-screen w-full flex flex-col bg-transparent overflow-x-hidden pt-8 pb-20">
 
-    <!-- Animated Floating Particles Background -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden" id="particlesCanvas">
+    <!-- Animated Particles - Desktop Only -->
+    <div class="hidden md:block fixed inset-0 pointer-events-none overflow-hidden" id="particlesCanvas">
       <canvas id="particles" class="w-full h-full opacity-40"></canvas>
     </div>
 
-    <!-- Decorative Floating Shapes -->
-    <div class="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
+    <!-- Decorative Floating Shapes - Desktop Only -->
+    <div class="hidden lg:block fixed inset-0 pointer-events-none overflow-hidden opacity-20">
       <div class="floating-shape shape-1"></div>
       <div class="floating-shape shape-2"></div>
-      <div class="floating-shape shape-3"></div>
-      <div class="floating-shape shape-4"></div>
     </div>
 
-    <!-- Custom Cursor Trail -->
-    <div id="cursorTrail" class="pointer-events-none fixed top-0 left-0 w-full h-full z-50 mix-blend-screen"></div>
-
-    <!-- Header Navigation - Glass Style -->
-    <div class="relative z-20 px-6 md:px-12 flex justify-between items-center mb-8 animate-fade-in">
+    <!-- Header Navigation -->
+    <div class="relative z-20 px-6 md:px-12 flex justify-between items-center mb-8">
       <a href="/" class="inline-flex items-center gap-3 text-slate-600 hover:text-slate-800 transition-all duration-300 group">
-        <div class="w-11 h-11 rounded-2xl backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center group-hover:bg-white/80 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-slate-200/50">
+        <div class="w-11 h-11 rounded-2xl backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center group-hover:bg-white/80 transition-all duration-300 shadow-lg shadow-slate-200/50">
           <Icon name="bx:left-arrow-alt" class="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300 text-slate-700" />
         </div>
         <span class="hidden sm:block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-600">На головну</span>
       </a>
 
       <!-- Mobile Search Button -->
-      <button id="toggleFilters" class="md:hidden w-12 h-12 rounded-2xl backdrop-blur-xl bg-slate-800/90 border border-white/20 text-white flex items-center justify-center shadow-xl active:scale-95 hover:rotate-12 transition-all duration-200">
+      <button id="toggleFilters" class="md:hidden w-12 h-12 rounded-2xl backdrop-blur-xl bg-slate-800/90 border border-white/20 text-white flex items-center justify-center shadow-xl active:scale-95 transition-all duration-200">
         <Icon name="bx:search" class="w-6 h-6" />
       </button>
     </div>
 
-    <!-- Title Section with Animated Gradient -->
-    <div class="text-center mb-10 px-4 relative z-10 animate-slide-up">
+    <!-- Title Section -->
+    <div class="text-center mb-10 px-4 relative z-10">
       <h1 class="text-[clamp(2.5rem,5vw,5rem)] font-serif font-bold tracking-tight leading-tight mb-2 gradient-text">
         Наша команда
       </h1>
       <p class="text-slate-500 font-medium uppercase tracking-[0.3em] text-[9px] opacity-70">
         Відділення променевої терапії
       </p>
-      <!-- Decorative underline -->
-      <div class="w-20 h-1 bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-auto mt-4 rounded-full animate-pulse-slow"></div>
+      <div class="w-20 h-1 bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-auto mt-4 rounded-full"></div>
     </div>
 
     <!-- Collapsible Filter Section -->
-    <div id="filterPanel" class="hidden md:block relative z-30 max-w-6xl mx-auto w-full px-6 mb-10 animate-slide-up" style="animation-delay: 0.1s;">
-      <div class="backdrop-blur-2xl bg-white/70 border border-white/80 rounded-3xl shadow-2xl shadow-slate-200/30 overflow-hidden hover:shadow-slate-300/40 transition-shadow duration-500">
+    <div id="filterPanel" class="hidden md:block relative z-30 max-w-6xl mx-auto w-full px-6 mb-10">
+      <div class="backdrop-blur-2xl bg-white/70 border border-white/80 rounded-3xl shadow-2xl shadow-slate-200/30 overflow-hidden transition-shadow duration-300">
 
-        <!-- Search Bar (Always Visible) -->
+        <!-- Search Bar -->
         <div class="p-6 pb-4">
           <div class="relative group">
             <input
               type="text"
               id="nameSearch"
               placeholder="Пошук фахівця по імені або прізвищу..."
-              class="w-full px-5 py-3.5 backdrop-blur-xl bg-white/80 border border-slate-200/60 rounded-2xl text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200/50 transition-all shadow-sm group-hover:shadow-md"
+              class="w-full px-5 py-3.5 backdrop-blur-xl bg-white/80 border border-slate-200/60 rounded-2xl text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200/50 transition-all shadow-sm"
             />
-            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform group-focus-within:scale-110 group-focus-within:text-slate-600">
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" stroke-width="2"/>
                 <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
@@ -175,9 +169,9 @@ const roles = ["Радіаційний онколог", "Медичний фіз
           </div>
         </div>
 
-        <!-- Advanced Filters Toggle Button -->
+        <!-- Advanced Filters Toggle -->
         <div class="px-6 pb-5">
-          <button id="toggleAdvanced" class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800 font-semibold text-sm transition-all duration-300 group hover:gap-3">
+          <button id="toggleAdvanced" class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800 font-semibold text-sm transition-all duration-300 group">
             <span>Розширені фільтри</span>
             <svg class="w-4 h-4 transition-transform duration-300 group-[.open]:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
@@ -185,7 +179,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
           </button>
         </div>
 
-        <!-- Advanced Filters (Hidden by default) -->
+        <!-- Advanced Filters -->
         <div id="advancedFilters" class="hidden overflow-hidden transition-all duration-300">
           <div class="px-6 pb-6 pt-2 border-t border-slate-200/50">
 
@@ -228,7 +222,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 
           <!-- No Results -->
           <div id="noResults" class="hidden text-center py-32">
-            <div class="w-20 h-20 mx-auto mb-5 rounded-full backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center shadow-lg animate-bounce-slow">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-full backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center shadow-lg">
               <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10" stroke-width="2"/>
                 <path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/>
@@ -244,8 +238,8 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       </div>
     </div>
 
-    <!-- Floating Stats Badge (Easter Egg) -->
-    <div class="fixed bottom-6 right-6 z-20 backdrop-blur-xl bg-white/60 border border-white/80 rounded-2xl px-4 py-3 shadow-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+    <!-- Floating Stats Badge - Desktop Only -->
+    <div class="hidden lg:block fixed bottom-6 right-6 z-20 backdrop-blur-xl bg-white/60 border border-white/80 rounded-2xl px-4 py-3 shadow-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
       <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Наша команда</div>
       <div class="text-2xl font-black text-slate-800" id="teamCount">7</div>
       <div class="text-[9px] text-slate-400 uppercase tracking-wide">фахівців</div>
@@ -265,7 +259,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     scroll-behavior: smooth;
   }
 
-  /* Medical Typography */
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
@@ -288,7 +281,12 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: gradient-shift 8s ease infinite;
+  }
+
+  @media (min-width: 768px) {
+    .gradient-text {
+      animation: gradient-shift 8s ease infinite;
+    }
   }
 
   @keyframes gradient-shift {
@@ -296,7 +294,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     50% { background-position: 100% 50%; }
   }
 
-  /* Floating Shapes */
+  /* Floating Shapes - Desktop Only */
   .floating-shape {
     position: absolute;
     border-radius: 50%;
@@ -322,124 +320,34 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     animation: float-2 25s ease-in-out infinite;
   }
 
-  .shape-3 {
-    width: 200px;
-    height: 200px;
-    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
-    bottom: 20%;
-    left: 15%;
-    animation: float-3 18s ease-in-out infinite;
-  }
-
-  .shape-4 {
-    width: 350px;
-    height: 350px;
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-    top: 30%;
-    right: 30%;
-    animation: float-4 22s ease-in-out infinite;
-  }
-
   @keyframes float-1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(50px, -30px) scale(1.1); }
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(50px, -30px); }
   }
 
   @keyframes float-2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-60px, 40px) scale(1.15); }
-  }
-
-  @keyframes float-3 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(40px, 50px) scale(1.05); }
-  }
-
-  @keyframes float-4 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50% { transform: translate(-40px, -50px) scale(1.08); }
-  }
-
-  /* Page Animations */
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.8s ease-out;
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.8s ease-out;
-    animation-fill-mode: both;
-  }
-
-  @keyframes pulse-slow {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  .animate-pulse-slow {
-    animation: pulse-slow 4s ease-in-out infinite;
-  }
-
-  @keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-
-  .animate-bounce-slow {
-    animation: bounce-slow 2s ease-in-out infinite;
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-60px, 40px); }
   }
 
   /* Modern Filter Chips */
   .filter-chip {
     padding: 0.65rem 1.2rem;
-   /*backdrop-blur-xl*/;
     background: rgba(255, 255, 255, 0.6);
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-radius: 12px;
     font-size: 0.8rem;
     font-weight: 600;
     color: #475569;
-    text-transform: none;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .filter-chip::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .filter-chip:hover::before {
-    opacity: 1;
   }
 
   .filter-chip:hover {
     background: rgba(255, 255, 255, 0.9);
     border-color: #cbd5e1;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
   }
 
   .filter-chip.active {
@@ -449,11 +357,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
   }
 
-  .filter-chip:active {
-    transform: translateY(0);
-  }
-
-  /* iPhone Liquid Glass Card - SIMPLE ZOOM ONLY */
+  /* Optimized Card - Reduced blur on mobile */
   .liquid-card {
     position: relative;
     width: 100%;
@@ -461,17 +365,23 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     border-radius: 2rem;
     overflow: hidden;
     cursor: pointer;
-    backdrop-filter: blur(20px);
     background: rgba(255, 255, 255, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.08),
-      0 1px 3px rgba(0, 0, 0, 0.06),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Gradient Border Highlight */
+  @media (min-width: 768px) {
+    .liquid-card {
+      backdrop-filter: blur(20px);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.08),
+        0 1px 3px rgba(0, 0, 0, 0.06),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    }
+  }
+
   .liquid-card::after {
     content: '';
     position: absolute;
@@ -489,33 +399,29 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     mask-composite: exclude;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.3s ease;
   }
 
-  .liquid-card:hover::after {
-    opacity: 1;
+  @media (hover: hover) {
+    .liquid-card:hover::after {
+      opacity: 1;
+    }
+
+    .liquid-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .liquid-card:hover .card-portrait {
+      transform: scale(1.05);
+    }
   }
 
   @media (max-width: 768px) {
     .liquid-card {
       border-radius: 1.5rem;
       aspect-ratio: 10/16;
-    }
-  }
-
-  /* Hover - JUST ZOOM */
-  @media (hover: hover) {
-    .liquid-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.08),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
-      background: rgba(255, 255, 255, 0.85);
-    }
-
-    .liquid-card:hover .card-portrait {
-      transform: scale(1.05);
     }
   }
 
@@ -530,10 +436,10 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s ease;
   }
 
-  /* Dark Gradient Overlay - Better Text Visibility */
+  /* Dark Gradient Overlay */
   .glass-overlay {
     position: absolute;
     inset: 0;
@@ -555,7 +461,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     right: 0;
     z-index: 10;
     padding: 2rem 1.5rem 2rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s ease;
   }
 
   @media (max-width: 768px) {
@@ -564,7 +470,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     }
   }
 
-  /* Role Badge - Glass with glow */
+  /* Role Badge */
   .role-badge {
     display: inline-block;
     padding: 0.5rem 1.1rem;
@@ -575,22 +481,24 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: 0.9rem;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     position: relative;
   }
 
-  .role-badge::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 11px;
-    background: inherit;
-    filter: blur(8px);
-    opacity: 0.4;
-    z-index: -1;
+  @media (min-width: 768px) {
+    .role-badge::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 11px;
+      background: inherit;
+      filter: blur(8px);
+      opacity: 0.4;
+      z-index: -1;
+    }
   }
 
-  /* Doctor Name - Light Text on Dark Background */
+  /* Doctor Name */
   .doctor-name {
     font-family: 'Crimson Pro', serif;
     font-weight: 700;
@@ -601,7 +509,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 4px 24px rgba(0, 0, 0, 0.2);
   }
 
-  /* Tap Hint - Light Text */
+  /* Tap Hint */
   .card-hint {
     display: flex;
     align-items: center;
@@ -619,11 +527,10 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     position: absolute;
     inset: 0;
     z-index: 20;
-    backdrop-filter: blur(40px);
     background: linear-gradient(
       to bottom,
-      rgba(255, 255, 255, 0.88),
-      rgba(255, 255, 255, 0.92)
+      rgba(255, 255, 255, 0.92),
+      rgba(255, 255, 255, 0.95)
     );
     border: 1px solid rgba(255, 255, 255, 0.95);
     display: flex;
@@ -631,7 +538,18 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     overflow: hidden;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (min-width: 768px) {
+    .details-panel {
+      backdrop-filter: blur(40px);
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.88),
+        rgba(255, 255, 255, 0.92)
+      );
+    }
   }
 
   .liquid-card.is-expanded .details-panel {
@@ -652,11 +570,16 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       rgba(248, 250, 252, 0.6),
       rgba(255, 255, 255, 0.8)
     );
-    backdrop-filter: blur(20px);
     border-radius: 2rem 2rem 0 0;
     padding: 1.5rem 1.5rem 2rem;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+  }
+
+  @media (min-width: 768px) {
+    .details-inner {
+      backdrop-filter: blur(20px);
+    }
   }
 
   @media (max-width: 768px) {
@@ -684,7 +607,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(148, 163, 184, 0.1);
     overflow: hidden;
     flex-shrink: 0;
-    backdrop-filter: blur(10px);
   }
 
   /* Labels */
@@ -755,6 +677,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     cursor: pointer;
     transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .book-btn:hover {
@@ -766,7 +689,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     transform: translateY(0);
   }
 
-  /* Glass Navigation Buttons */
+  /* Glass Navigation */
   .glass-nav {
     width: 50px !important;
     height: 50px !important;
@@ -778,20 +701,16 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     position: absolute !important;
     top: 50% !important;
     z-index: 50 !important;
-    box-shadow:
-      0 8px 24px rgba(0, 0, 0, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
     cursor: pointer;
     transform: translateY(-50%) !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: all 0.3s ease !important;
   }
 
   .glass-nav:hover {
     background: rgba(255, 255, 255, 0.85) !important;
-    box-shadow:
-      0 12px 32px rgba(0, 0, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 1) !important;
-    transform: translateY(-50%) scale(1.1) rotate(5deg) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-50%) scale(1.1) !important;
   }
 
   .glass-nav::after {
@@ -832,28 +751,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
     border-radius: 10px;
   }
-
-  /* Cursor Trail Effect */
-  .cursor-dot {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, rgba(148, 163, 184, 0.4), transparent);
-    border-radius: 50%;
-    pointer-events: none;
-    animation: cursor-fade 1.5s ease-out forwards;
-  }
-
-  @keyframes cursor-fade {
-    0% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    100% {
-      opacity: 0;
-      transform: scale(2);
-    }
-  }
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
@@ -865,8 +762,13 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     role: ''
   };
 
-  // Particles Canvas Animation
+  // Check if mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+  // Particles - Desktop Only
   function initParticles() {
+    if (isMobile) return;
+
     const canvas = document.getElementById('particles');
     if (!canvas) return;
 
@@ -875,7 +777,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     canvas.height = window.innerHeight;
 
     const particles = [];
-    const particleCount = 50;
+    const particleCount = 30;
 
     class Particle {
       constructor() {
@@ -926,29 +828,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     });
   }
 
-  // Cursor Trail Effect
-  function initCursorTrail() {
-    const trail = document.getElementById('cursorTrail');
-    if (!trail) return;
-
-    let lastTime = 0;
-    const throttle = 50;
-
-    document.addEventListener('mousemove', (e) => {
-      const now = Date.now();
-      if (now - lastTime < throttle) return;
-      lastTime = now;
-
-      const dot = document.createElement('div');
-      dot.className = 'cursor-dot';
-      dot.style.left = e.pageX + 'px';
-      dot.style.top = e.pageY + 'px';
-      trail.appendChild(dot);
-
-      setTimeout(() => dot.remove(), 1500);
-    });
-  }
-
   function initSwiper() {
     if (mainSwiper) {
       mainSwiper.destroy(true, true);
@@ -960,7 +839,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       spaceBetween: 24,
       grabCursor: true,
       loop: false,
-      speed: 500,
+      speed: 400,
       navigation: {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev'
@@ -1011,13 +890,11 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       <div class="swiper-slide">
         <div class="liquid-card" data-card>
 
-          <!-- Image Wrap -->
           <div class="card-img-wrap">
             <img src="${doc.image}" alt="${doc.name} ${doc.surname}" class="card-portrait" loading="lazy" />
             <div class="glass-overlay"></div>
           </div>
 
-          <!-- Card Info -->
           <div class="card-info">
             <div class="role-badge bg-gradient-to-r ${doc.color}">
               ${doc.role}
@@ -1033,14 +910,11 @@ const roles = ["Радіаційний онколог", "Медичний фіз
             </div>
           </div>
 
-          <!-- Details Panel -->
           <div class="details-panel">
             <div class="details-inner">
 
-              <!-- Drag Handle -->
               <div class="drag-handle"></div>
 
-              <!-- Header -->
               <div class="flex items-center gap-3 mb-5">
                 <div class="detail-avatar">
                   <img src="${doc.image}" alt="${doc.name}" class="w-full h-full object-cover" loading="lazy" />
@@ -1055,12 +929,10 @@ const roles = ["Радіаційний онколог", "Медичний фіз
                 </div>
               </div>
 
-              <!-- Bio -->
               <p class="bio-text text-sm">
                 "${doc.bio}"
               </p>
 
-              <!-- Stats -->
               <div class="stats-grid">
                 <div>
                   <span class="detail-label">Досвід</span>
@@ -1074,13 +946,11 @@ const roles = ["Радіаційний онколог", "Медичний фіз
                 </div>
               </div>
 
-              <!-- Achievements -->
               <div class="mb-5">
                 <span class="detail-label">Досягнення</span>
                 <p class="detail-value text-sm">${doc.achievements}</p>
               </div>
 
-              <!-- Specializations -->
               <div class="mb-6">
                 <span class="detail-label mb-2 block">Ключові напрямки</span>
                 <div class="flex flex-wrap gap-2">
@@ -1090,7 +960,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
                 </div>
               </div>
 
-              <!-- Book Button -->
               <button class="book-btn">
                 Записатися на консультацію
               </button>
@@ -1107,7 +976,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       card.addEventListener('click', function(e) {
         if (e.target.closest('.book-btn')) return;
 
-        // Close other expanded cards
         document.querySelectorAll('[data-card].is-expanded').forEach(otherCard => {
           if (otherCard !== this) {
             otherCard.classList.remove('is-expanded');
@@ -1121,7 +989,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     initSwiper();
   }
 
-  // Filter logic
   function applyFilters() {
     const filtered = doctors.filter(doc => {
       const matchesName = !activeFilters.name ||
@@ -1135,7 +1002,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     renderDoctors(filtered);
   }
 
-  // Debounced search
   let searchTimeout;
   function handleSearch(value) {
     clearTimeout(searchTimeout);
@@ -1146,19 +1012,18 @@ const roles = ["Радіаційний онколог", "Медичний фіз
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    // Initialize effects
-    initParticles();
-    initCursorTrail();
+    // Initialize desktop effects only
+    if (!isMobile) {
+      initParticles();
+    }
 
     renderDoctors(doctors);
 
-    // Search input
     const nameSearch = document.getElementById('nameSearch');
     if (nameSearch) {
       nameSearch.addEventListener('input', (e) => handleSearch(e.target.value));
     }
 
-    // Advanced filters toggle
     const toggleAdvanced = document.getElementById('toggleAdvanced');
     const advancedFilters = document.getElementById('advancedFilters');
 
@@ -1176,7 +1041,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       });
     }
 
-    // Department chips
     const deptChips = document.querySelectorAll('#deptChips .filter-chip');
     deptChips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -1187,7 +1051,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       });
     });
 
-    // Role chips
     const roleChips = document.querySelectorAll('#roleChips .filter-chip');
     roleChips.forEach(chip => {
       chip.addEventListener('click', () => {
@@ -1198,7 +1061,6 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       });
     });
 
-    // Mobile toggle
     const toggleBtn = document.getElementById('toggleFilters');
     const filterPanel = document.getElementById('filterPanel');
 
