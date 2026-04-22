@@ -4,8 +4,8 @@ import { Icon } from "astro-icon/components";
 
 const doctors = [
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Test",
+    surname: "Johnson",
     role: "Радіаційний онколог",
     department: "Мегавольтна терапія",
     initials: "ТТ",
@@ -15,10 +15,10 @@ const doctors = [
     specializations: ["Променева терапія", "Онкологія", "IMRT/VMAT"],
     education: "Національний медичний університет, PhD",
     achievements: "Понад 500 успішних курсів лікування",
-    color: "from-slate-800 to-blue-950"
+    color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Тест",
+    name: "Fest",
     surname: "Тест",
     role: "Медичний фізик (інженер-радіолог)",
     department: "Мегавольтна терапія",
@@ -29,11 +29,11 @@ const doctors = [
     specializations: ["Дозиметрія", "Планування терапії", "Контроль якості"],
     education: "КНУ ім. Шевченка, фізика",
     achievements: "Сертифікація Elekta, IAEA",
-    color: "from-blue-900 to-slate-900"
+    color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Tester",
+    surname: "Ternovyi",
     role: "Радіаційний онколог",
     department: "Гамма-терапія",
     initials: "ЄП",
@@ -43,11 +43,11 @@ const doctors = [
     specializations: ["IMRT", "VMAT", "Brainlab навігація"],
     education: "Харківський медуніверситет",
     achievements: "Міжнародні стажування в Німеччині",
-    color: "from-slate-900 to-blue-900"
+    color: "from-slate-600 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Test",
+    surname: "Test",
     role: "Радіаційний онколог",
     department: "Брахітерапія",
     initials: "ОК",
@@ -57,11 +57,11 @@ const doctors = [
     specializations: ["Клінічна онкологія", "Хіміотерапія"],
     education: "Львівський медуніверситет",
     achievements: "Автор 20+ наукових публікацій",
-    color: "from-blue-950 to-slate-800"
+    color: "from-slate-700 to-slate-600"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Тест2",
+    surname: "Тест2",
     role: "Медичний фізик (інженер-радіолог)",
     department: "КТ-розмітка",
     initials: "МП",
@@ -71,11 +71,11 @@ const doctors = [
     specializations: ["Калібрування обладнання", "QA/QC"],
     education: "КПІ, медична фізика",
     achievements: "Впровадження нових протоколів безпеки",
-    color: "from-slate-800 to-slate-950"
+    color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Тест2",
+    surname: "Тест2",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -85,11 +85,11 @@ const doctors = [
     specializations: ["Томосинтез", "КТ", "МРТ"],
     education: "Одеський медуніверситет",
     achievements: "Діагностика ранніх стадій онкології",
-    color: "from-blue-900 to-blue-950"
+    color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Тест1",
+    surname: "Тест1",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -99,7 +99,7 @@ const doctors = [
     specializations: ["Томосинтез", "КТ", "МРТ"],
     education: "Одеський медуніверситет",
     achievements: "Діагностика ранніх стадій онкології",
-    color: "from-blue-900 to-blue-950"
+    color: "from-slate-600 to-slate-700"
   },
 ];
 
@@ -108,75 +108,147 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 ---
 
 <Layout title="Наші фахівці" hideSubNav={true}>
-  <main class="relative min-h-screen w-full flex flex-col font-['Bricolage_Grotesque_Variable'] bg-slate-50 overflow-x-hidden pt-8 pb-20">
+  <main class="relative min-h-screen w-full flex flex-col bg-transparent overflow-x-hidden pt-8 pb-20">
 
-    <div class="relative z-20 px-6 md:px-12 flex justify-between items-center">
-      <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-700 transition-all group">
-        <div class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-blue-600 group-hover:bg-blue-50 group-hover:scale-110 transition-all">
-          <Icon name="bx:left-arrow-alt" class="w-6 h-6 group-hover:-translate-x-1 transition-transform text-slate-600" />
+    <!-- Animated Floating Particles Background -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden" id="particlesCanvas">
+      <canvas id="particles" class="w-full h-full opacity-40"></canvas>
+    </div>
+
+    <!-- Decorative Floating Shapes -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
+      <div class="floating-shape shape-1"></div>
+      <div class="floating-shape shape-2"></div>
+      <div class="floating-shape shape-3"></div>
+      <div class="floating-shape shape-4"></div>
+    </div>
+
+    <!-- Custom Cursor Trail -->
+    <div id="cursorTrail" class="pointer-events-none fixed top-0 left-0 w-full h-full z-50 mix-blend-screen"></div>
+
+    <!-- Header Navigation - Glass Style -->
+    <div class="relative z-20 px-6 md:px-12 flex justify-between items-center mb-8 animate-fade-in">
+      <a href="/" class="inline-flex items-center gap-3 text-slate-600 hover:text-slate-800 transition-all duration-300 group">
+        <div class="w-11 h-11 rounded-2xl backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center group-hover:bg-white/80 group-hover:scale-105 group-hover:rotate-3 transition-all duration-300 shadow-lg shadow-slate-200/50">
+          <Icon name="bx:left-arrow-alt" class="w-6 h-6 group-hover:-translate-x-1 transition-transform duration-300 text-slate-700" />
         </div>
-        <span class="hidden sm:block text-[10px] font-black uppercase tracking-[0.2em]">На головну</span>
+        <span class="hidden sm:block text-[9px] font-semibold uppercase tracking-[0.2em] text-slate-600">На головну</span>
       </a>
 
-      <button id="toggleFilters" class="md:hidden w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-xl active:scale-90 transition-all">
+      <!-- Mobile Search Button -->
+      <button id="toggleFilters" class="md:hidden w-12 h-12 rounded-2xl backdrop-blur-xl bg-slate-800/90 border border-white/20 text-white flex items-center justify-center shadow-xl active:scale-95 hover:rotate-12 transition-all duration-200">
         <Icon name="bx:search" class="w-6 h-6" />
       </button>
     </div>
 
-    <div class="text-center mt-6 mb-4 px-4">
-      <h2 class="text-[clamp(2.2rem,4vh,5rem)] font-black text-slate-900 tracking-tighter uppercase italic leading-none">
+    <!-- Title Section with Animated Gradient -->
+    <div class="text-center mb-10 px-4 relative z-10 animate-slide-up">
+      <h1 class="text-[clamp(2.5rem,5vw,5rem)] font-serif font-bold tracking-tight leading-tight mb-2 gradient-text">
         Наша команда
-      </h2>
-      <p class="text-slate-500 font-bold uppercase tracking-widest text-[9px] mt-2 opacity-60">
+      </h1>
+      <p class="text-slate-500 font-medium uppercase tracking-[0.3em] text-[9px] opacity-70">
         Відділення променевої терапії
       </p>
+      <!-- Decorative underline -->
+      <div class="w-20 h-1 bg-gradient-to-r from-transparent via-slate-300 to-transparent mx-auto mt-4 rounded-full animate-pulse-slow"></div>
     </div>
 
-    <div id="filterPanel" class="hidden md:block relative z-30 max-w-[1400px] mx-auto w-full px-6 md:px-24 mb-6 transition-all duration-500">
-      <div class="bg-white p-5 md:p-6 rounded-3xl shadow-2xl border border-slate-100 flex flex-col md:flex-row gap-4">
-        
-        <div class="flex-[1.5] relative">
-          <Icon name="bx:search" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-          <input 
-            type="text" 
-            id="nameSearch" 
-            placeholder="Введіть ПІБ..." 
-            class="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-600 transition-all outline-none"
-          />
-        </div>
+    <!-- Collapsible Filter Section -->
+    <div id="filterPanel" class="hidden md:block relative z-30 max-w-6xl mx-auto w-full px-6 mb-10 animate-slide-up" style="animation-delay: 0.1s;">
+      <div class="backdrop-blur-2xl bg-white/70 border border-white/80 rounded-3xl shadow-2xl shadow-slate-200/30 overflow-hidden hover:shadow-slate-300/40 transition-shadow duration-500">
 
-        <div class="flex-1">
-          <select id="deptFilter" class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-600 transition-all outline-none cursor-pointer appearance-none">
-            <option value="">Усі відділення</option>
-            {departments.map(dept => <option value={dept}>{dept}</option>)}
-          </select>
-        </div>
-
-        <div class="flex-1">
-          <select id="roleFilter" class="w-full px-4 py-3 bg-slate-50 border-none rounded-2xl text-sm font-bold focus:ring-2 focus:ring-blue-600 transition-all outline-none cursor-pointer appearance-none">
-            <option value="">Усі посади</option>
-            {roles.map(role => <option value={role}>{role}</option>)}
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="flex-1 flex items-center justify-center relative z-10 w-full px-4 md:px-16 lg:px-24 xl:px-32 py-4">
-      <div class="relative w-full max-w-[1700px]">
-        
-        <div class="swiper main-swiper w-full overflow-hidden perspective">
-          <div class="swiper-wrapper" id="doctorsWrapper">
+        <!-- Search Bar (Always Visible) -->
+        <div class="p-6 pb-4">
+          <div class="relative group">
+            <input
+              type="text"
+              id="nameSearch"
+              placeholder="Пошук фахівця по імені або прізвищу..."
+              class="w-full px-5 py-3.5 backdrop-blur-xl bg-white/80 border border-slate-200/60 rounded-2xl text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200/50 transition-all shadow-sm group-hover:shadow-md"
+            />
+            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform group-focus-within:scale-110 group-focus-within:text-slate-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" stroke-width="2"/>
+                <path d="M21 21l-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+              </svg>
             </div>
-          
-          <div id="noResults" class="hidden text-center py-24">
-            <Icon name="bx:info-circle" class="w-16 h-16 text-slate-200 mx-auto mb-4" />
-            <p class="text-slate-400 font-black uppercase tracking-widest text-xs">Спеціалістів не знайдено</p>
           </div>
         </div>
 
-        <button class="swiper-button-prev custom-nav-btn lg:flex"></button>
-        <button class="swiper-button-next custom-nav-btn lg:flex"></button>
+        <!-- Advanced Filters Toggle Button -->
+        <div class="px-6 pb-5">
+          <button id="toggleAdvanced" class="w-full flex items-center justify-center gap-2 text-slate-600 hover:text-slate-800 font-semibold text-sm transition-all duration-300 group hover:gap-3">
+            <span>Розширені фільтри</span>
+            <svg class="w-4 h-4 transition-transform duration-300 group-[.open]:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Advanced Filters (Hidden by default) -->
+        <div id="advancedFilters" class="hidden overflow-hidden transition-all duration-300">
+          <div class="px-6 pb-6 pt-2 border-t border-slate-200/50">
+
+            <!-- Department Chips -->
+            <div class="mb-5">
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">Відділення</label>
+              <div class="flex flex-wrap gap-2" id="deptChips">
+                <button class="filter-chip active" data-dept="">Всі</button>
+                {departments.map(dept => (
+                  <button class="filter-chip" data-dept={dept}>{dept}</button>
+                ))}
+              </div>
+            </div>
+
+            <!-- Role Chips -->
+            <div>
+              <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-3">Посада</label>
+              <div class="flex flex-wrap gap-2" id="roleChips">
+                <button class="filter-chip active" data-role="">Всі</button>
+                {roles.map(role => (
+                  <button class="filter-chip" data-role={role}>{role}</button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
+    </div>
+
+    <!-- Swiper Container -->
+    <div class="flex-1 flex items-center justify-center relative z-10 w-full px-4 md:px-12 lg:px-20 xl:px-28 py-4">
+      <div class="relative w-full max-w-[1900px]">
+
+        <div class="swiper main-swiper w-full overflow-visible">
+          <div class="swiper-wrapper" id="doctorsWrapper">
+            <!-- Cards rendered by JS -->
+          </div>
+
+          <!-- No Results -->
+          <div id="noResults" class="hidden text-center py-32">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-full backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center shadow-lg animate-bounce-slow">
+              <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <p class="text-slate-400 font-semibold uppercase tracking-wider text-xs">Спеціалістів не знайдено</p>
+          </div>
+        </div>
+
+        <!-- Glass Navigation Buttons -->
+        <button class="swiper-button-prev glass-nav hidden lg:flex" aria-label="Previous"></button>
+        <button class="swiper-button-next glass-nav hidden lg:flex" aria-label="Next"></button>
+      </div>
+    </div>
+
+    <!-- Floating Stats Badge (Easter Egg) -->
+    <div class="fixed bottom-6 right-6 z-20 backdrop-blur-xl bg-white/60 border border-white/80 rounded-2xl px-4 py-3 shadow-xl opacity-0 hover:opacity-100 transition-opacity duration-300">
+      <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">Наша команда</div>
+      <div class="text-2xl font-black text-slate-800" id="teamCount">7</div>
+      <div class="text-[9px] text-slate-400 uppercase tracking-wide">фахівців</div>
     </div>
 
   </main>
@@ -184,73 +256,736 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 
 <style is:global>
   @import url('https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Crimson+Pro:wght@400;600;700&display=swap');
 
-  html, body { overflow-y: auto !important; height: auto !important; min-height: 100vh; scroll-behavior: smooth; }
+  html, body {
+    overflow-y: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+    scroll-behavior: smooth;
+  }
 
-  /* Картка Badoo */
-  .doctor-badoo-card {
+  /* Medical Typography */
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .font-serif {
+    font-family: 'Crimson Pro', 'Georgia', serif;
+  }
+
+  /* Animated Gradient Text */
+  .gradient-text {
+    background: linear-gradient(
+      90deg,
+      #475569 0%,
+      #1e293b 25%,
+      #0f172a 50%,
+      #1e293b 75%,
+      #475569 100%
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Floating Shapes */
+  .floating-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.3;
+  }
+
+  .shape-1 {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    top: 10%;
+    left: 5%;
+    animation: float-1 20s ease-in-out infinite;
+  }
+
+  .shape-2 {
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+    top: 60%;
+    right: 10%;
+    animation: float-2 25s ease-in-out infinite;
+  }
+
+  .shape-3 {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+    bottom: 20%;
+    left: 15%;
+    animation: float-3 18s ease-in-out infinite;
+  }
+
+  .shape-4 {
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    top: 30%;
+    right: 30%;
+    animation: float-4 22s ease-in-out infinite;
+  }
+
+  @keyframes float-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -30px) scale(1.1); }
+  }
+
+  @keyframes float-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 40px) scale(1.15); }
+  }
+
+  @keyframes float-3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(40px, 50px) scale(1.05); }
+  }
+
+  @keyframes float-4 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40px, -50px) scale(1.08); }
+  }
+
+  /* Page Animations */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.8s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.8s ease-out;
+    animation-fill-mode: both;
+  }
+
+  @keyframes pulse-slow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 4s ease-in-out infinite;
+  }
+
+  @keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 2s ease-in-out infinite;
+  }
+
+  /* Modern Filter Chips */
+  .filter-chip {
+    padding: 0.65rem 1.2rem;
+   /*backdrop-blur-xl*/;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    text-transform: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .filter-chip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter-chip:hover::before {
+    opacity: 1;
+  }
+
+  .filter-chip:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .filter-chip.active {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-color: #1e293b;
+    color: white;
+    box-shadow: 0 4px 12px rgba(30, 41, 59, 0.3);
+  }
+
+  .filter-chip:active {
+    transform: translateY(0);
+  }
+
+  /* iPhone Liquid Glass Card - SIMPLE ZOOM ONLY */
+  .liquid-card {
     position: relative;
     width: 100%;
     aspect-ratio: 3/4.5;
-    background: #020617;
-    border-radius: 2.2rem;
+    border-radius: 2rem;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.08),
+      0 1px 3px rgba(0, 0, 0, 0.06),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Gradient Border Highlight */
+  .liquid-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 2rem;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(226, 232, 240, 0.4),
+      rgba(203, 213, 225, 0.6),
+      rgba(226, 232, 240, 0.4)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .liquid-card:hover::after {
+    opacity: 1;
   }
 
   @media (max-width: 768px) {
-    .doctor-badoo-card { border-radius: 1.5rem; aspect-ratio: 10/16; }
+    .liquid-card {
+      border-radius: 1.5rem;
+      aspect-ratio: 10/16;
+    }
   }
 
-  .card-image-bg { position: absolute; inset: 0; z-index: 1; }
-  .doctor-img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s ease; }
-  .image-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(2, 6, 23, 0.98) 0%, rgba(2, 6, 23, 0.4) 30%, transparent 70%);
+  /* Hover - JUST ZOOM */
+  @media (hover: hover) {
+    .liquid-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.12),
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .liquid-card:hover .card-portrait {
+      transform: scale(1.05);
+    }
   }
 
-  .card-summary { position: absolute; bottom: 0; left: 0; right: 0; z-index: 10; transition: all 0.5s ease; text-align: left; }
-  .role-pill { display: inline-block; padding: 0.4rem 1.1rem; border-radius: 8px; font-size: 0.65rem; font-weight: 900; color: white; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 0.8rem; }
-  .name-text { font-weight: 900; color: white; line-height: 0.85; text-transform: uppercase; letter-spacing: -0.05em; text-align: left; }
+  /* Card Image Container */
+  .card-img-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
 
-  .tap-hint { display: flex; align-items: center; gap: 0.6rem; color: rgba(255, 255, 255, 0.3); font-size: 0.75rem; margin-top: 1.8rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; }
+  .card-portrait {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  .card-details { position: absolute; inset: 0; z-index: 20; background: white; transform: translateY(100%); transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; justify-content: flex-end; }
-  .doctor-badoo-card.is-expanded .card-details { transform: translateY(0); }
-  .doctor-badoo-card.is-expanded .card-summary { opacity: 0; transform: translateY(40px); }
+  /* Dark Gradient Overlay - Better Text Visibility */
+  .glass-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.5) 20%,
+      rgba(0, 0, 0, 0.2) 45%,
+      transparent 70%
+    );
+  }
 
-  .details-content { height: 94%; background: white; border-radius: 3rem 3rem 0 0; }
-  .drag-line { width: 50px; height: 5px; background: #f1f5f9; border-radius: 10px; margin: 0 auto 1.8rem; }
-  .detail-label { display: block; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.4rem; text-align: left; }
+  /* Card Info */
+  .card-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 2rem 1.5rem 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-  /* Навігація стрілок */
-  .custom-nav-btn { width: 60px !important; height: 60px !important; background: #020617 !important; color: white !important; border-radius: 12px !important; position: absolute !important; top: 50% !important; transform: translateY(-50%) !important; z-index: 50 !important; display: none; }
-  .swiper-button-prev { left: -75px !important; }
-  .swiper-button-next { right: -75px !important; }
+  @media (max-width: 768px) {
+    .card-info {
+      padding: 1.5rem 1.3rem 1.8rem;
+    }
+  }
 
-  @media (min-width: 1280px) { .custom-nav-btn { display: flex !important; } }
-  .swiper-slide { padding: 25px 0; }
+  /* Role Badge - Glass with glow */
+  .role-badge {
+    display: inline-block;
+    padding: 0.5rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.9rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  .role-badge::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 11px;
+    background: inherit;
+    filter: blur(8px);
+    opacity: 0.4;
+    z-index: -1;
+  }
+
+  /* Doctor Name - Light Text on Dark Background */
+  .doctor-name {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-align: left;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4), 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Tap Hint - Light Text */
+  .card-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.7rem;
+    margin-top: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* Details Panel */
+  .details-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    backdrop-filter: blur(40px);
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.88),
+      rgba(255, 255, 255, 0.92)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .liquid-card.is-expanded .details-panel {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .liquid-card.is-expanded .card-info {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  /* Details Inner */
+  .details-inner {
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(248, 250, 252, 0.6),
+      rgba(255, 255, 255, 0.8)
+    );
+    backdrop-filter: blur(20px);
+    border-radius: 2rem 2rem 0 0;
+    padding: 1.5rem 1.5rem 2rem;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 768px) {
+    .details-inner {
+      padding: 1.3rem 1.3rem 1.8rem;
+    }
+  }
+
+  /* Drag Handle */
+  .drag-handle {
+    width: 40px;
+    height: 4px;
+    background: linear-gradient(to right, #cbd5e1, #94a3b8, #cbd5e1);
+    border-radius: 10px;
+    margin: 0 auto 1.2rem;
+    opacity: 0.6;
+  }
+
+  /* Avatar */
+  .detail-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2.5px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(148, 163, 184, 0.1);
+    overflow: hidden;
+    flex-shrink: 0;
+    backdrop-filter: blur(10px);
+  }
+
+  /* Labels */
+  .detail-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: #64748b;
+    margin-bottom: 0.4rem;
+  }
+
+  .detail-value {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  /* Bio */
+  .bio-text {
+    font-style: italic;
+    font-weight: 500;
+    color: #475569;
+    border-left: 3px solid #94a3b8;
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    background: linear-gradient(to right, rgba(241, 245, 249, 0.6), transparent);
+    padding: 0.8rem 1rem;
+    border-radius: 0 8px 8px 0;
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 0;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  /* Specialization Tags */
+  .spec-badge {
+    padding: 0.5rem 0.9rem;
+    background: linear-gradient(135deg, #475569 0%, #334155 100%);
+    color: white;
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Book Button */
+  .book-btn {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 14px;
+    color: white;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .book-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .book-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Glass Navigation Buttons */
+  .glass-nav {
+    width: 50px !important;
+    height: 50px !important;
+    backdrop-filter: blur(20px) !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    color: #475569 !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 50% !important;
+    z-index: 50 !important;
+    box-shadow:
+      0 8px 24px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+    cursor: pointer;
+    transform: translateY(-50%) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .glass-nav:hover {
+    background: rgba(255, 255, 255, 0.85) !important;
+    box-shadow:
+      0 12px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+    transform: translateY(-50%) scale(1.1) rotate(5deg) !important;
+  }
+
+  .glass-nav::after {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+  }
+
+  .swiper-button-prev {
+    left: -70px !important;
+  }
+
+  .swiper-button-next {
+    right: -70px !important;
+  }
+
+  @media (min-width: 1280px) {
+    .glass-nav {
+      display: flex !important;
+    }
+  }
+
+  /* Swiper Slide */
+  .swiper-slide {
+    padding: 25px 0;
+    height: auto !important;
+  }
+
+  /* Custom Scrollbar */
+  .details-inner::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .details-inner::-webkit-scrollbar-track {
+    background: rgba(241, 245, 249, 0.5);
+  }
+
+  .details-inner::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
+    border-radius: 10px;
+  }
+
+  /* Cursor Trail Effect */
+  .cursor-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(148, 163, 184, 0.4), transparent);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: cursor-fade 1.5s ease-out forwards;
+  }
+
+  @keyframes cursor-fade {
+    0% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(2);
+    }
+  }
 </style>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script is:inline define:vars={{ doctors }}>
   let mainSwiper;
+  let activeFilters = {
+    name: '',
+    dept: '',
+    role: ''
+  };
+
+  // Particles Canvas Animation
+  function initParticles() {
+    const canvas = document.getElementById('particles');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const particleCount = 50;
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 3 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5 + 0.2;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+
+      draw() {
+        ctx.fillStyle = `rgba(148, 163, 184, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(particle => {
+        particle.update();
+        particle.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  }
+
+  // Cursor Trail Effect
+  function initCursorTrail() {
+    const trail = document.getElementById('cursorTrail');
+    if (!trail) return;
+
+    let lastTime = 0;
+    const throttle = 50;
+
+    document.addEventListener('mousemove', (e) => {
+      const now = Date.now();
+      if (now - lastTime < throttle) return;
+      lastTime = now;
+
+      const dot = document.createElement('div');
+      dot.className = 'cursor-dot';
+      dot.style.left = e.pageX + 'px';
+      dot.style.top = e.pageY + 'px';
+      trail.appendChild(dot);
+
+      setTimeout(() => dot.remove(), 1500);
+    });
+  }
 
   function initSwiper() {
-    if (mainSwiper) mainSwiper.destroy(true, true);
+    if (mainSwiper) {
+      mainSwiper.destroy(true, true);
+    }
+
     mainSwiper = new Swiper('.main-swiper', {
       slidesPerView: 1.15,
       centeredSlides: true,
-      spaceBetween: 20,
+      spaceBetween: 24,
       grabCursor: true,
       loop: false,
-      navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+      speed: 500,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev'
+      },
       breakpoints: {
-        768: { slidesPerView: 2, spaceBetween: 30, centeredSlides: false },
-        1024: { slidesPerView: 3, spaceBetween: 40, centeredSlides: false },
-        1600: { slidesPerView: 4, spaceBetween: 40, centeredSlides: false }
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 28,
+          centeredSlides: false
+        },
+        1024: {
+          slidesPerView: 3,
+          spaceBetween: 32,
+          centeredSlides: false
+        },
+        1920: {
+          slidesPerView: 3,
+          spaceBetween: 36,
+          centeredSlides: false
+        },
+        2560: {
+          slidesPerView: 4,
+          spaceBetween: 40,
+          centeredSlides: false
+        }
       }
     });
   }
@@ -258,79 +993,219 @@ const roles = ["Радіаційний онколог", "Медичний фіз
   function renderDoctors(list) {
     const wrapper = document.getElementById('doctorsWrapper');
     const noResults = document.getElementById('noResults');
-    if (list.length === 0) { wrapper.innerHTML = ''; noResults.classList.remove('hidden'); return; }
+    const teamCount = document.getElementById('teamCount');
+
+    if (teamCount) {
+      teamCount.textContent = list.length;
+    }
+
+    if (!list || list.length === 0) {
+      wrapper.innerHTML = '';
+      noResults.classList.remove('hidden');
+      return;
+    }
+
     noResults.classList.add('hidden');
+
     wrapper.innerHTML = list.map(doc => `
-      <div class="swiper-slide h-full">
-        <div class="doctor-badoo-card group" onclick="this.classList.toggle('is-expanded')">
-          <div class="card-image-bg">
-            <img src="${doc.image}" alt="${doc.name}" class="doctor-img" />
-            <div class="image-overlay"></div>
+      <div class="swiper-slide">
+        <div class="liquid-card" data-card>
+
+          <!-- Image Wrap -->
+          <div class="card-img-wrap">
+            <img src="${doc.image}" alt="${doc.name} ${doc.surname}" class="card-portrait" loading="lazy" />
+            <div class="glass-overlay"></div>
           </div>
-          <div class="card-summary p-8 md:p-10">
-            <div class="role-pill bg-gradient-to-r ${doc.color}">${doc.role}</div>
-            <h3 class="name-text text-[clamp(1.8rem,4vh,3rem)]">${doc.name} <br /> ${doc.surname}</h3>
-            <div class="tap-hint"><span>Детальна анкета</span></div>
+
+          <!-- Card Info -->
+          <div class="card-info">
+            <div class="role-badge bg-gradient-to-r ${doc.color}">
+              ${doc.role}
+            </div>
+            <h3 class="doctor-name text-[clamp(1.7rem,4vh,2.8rem)]">
+              ${doc.name}<br/>${doc.surname}
+            </h3>
+            <div class="card-hint">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+              <span>Детальна анкета</span>
+            </div>
           </div>
-          <div class="card-details">
-             <div class="details-content p-8 md:p-10 overflow-y-auto">
-                <div class="drag-line"></div>
-                <div class="flex items-center gap-5 mb-8">
-                  <div class="w-16 h-16 rounded-full border-4 border-slate-50 shadow-xl overflow-hidden flex-shrink-0">
-                    <img src="${doc.image}" class="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h4 class="font-black text-slate-900 uppercase leading-none text-lg">${doc.name} <br/> ${doc.surname}</h4>
-                    <span class="text-blue-700 font-extrabold text-[10px] uppercase tracking-widest">${doc.role}</span>
-                  </div>
+
+          <!-- Details Panel -->
+          <div class="details-panel">
+            <div class="details-inner">
+
+              <!-- Drag Handle -->
+              <div class="drag-handle"></div>
+
+              <!-- Header -->
+              <div class="flex items-center gap-3 mb-5">
+                <div class="detail-avatar">
+                  <img src="${doc.image}" alt="${doc.name}" class="w-full h-full object-cover" loading="lazy" />
                 </div>
-                <p class="bio-text italic text-slate-700 border-l-4 border-blue-600 pl-6 mb-8 leading-relaxed font-medium">"${doc.bio}"</p>
-                <div class="grid grid-cols-2 gap-6 mb-8 border-y border-slate-100 py-6">
-                  <div class="stat-item"><span class="detail-label">Досвід</span><p class="detail-value text-slate-900 text-xl font-black">${doc.experience}</p></div>
-                  <div class="stat-item"><span class="detail-label">Освіта</span><p class="detail-value text-slate-800 text-[10px] font-bold uppercase leading-tight">${doc.education}</p></div>
+                <div>
+                  <h4 class="font-bold text-slate-900 text-base leading-tight">
+                    ${doc.name} ${doc.surname}
+                  </h4>
+                  <span class="text-slate-600 font-semibold text-[10px] uppercase tracking-wide">
+                    ${doc.role}
+                  </span>
                 </div>
-                <div class="mb-8"><span class="detail-label">Досягнення</span><p class="detail-value text-slate-800 text-xs font-semibold">${doc.achievements}</p></div>
-                <div class="specializations mb-10"><span class="detail-label mb-4 block">Ключові напрямки</span><div class="flex flex-wrap gap-2">
-                  ${doc.specializations.map(spec => `<span class="px-3 py-1 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase">${spec}</span>`).join('')}
-                </div></div>
-                <button class="w-full py-4 rounded-xl text-white font-black uppercase tracking-widest shadow-2xl bg-gradient-to-r ${doc.color}">Записатися на консультацію</button>
-             </div>
+              </div>
+
+              <!-- Bio -->
+              <p class="bio-text text-sm">
+                "${doc.bio}"
+              </p>
+
+              <!-- Stats -->
+              <div class="stats-grid">
+                <div>
+                  <span class="detail-label">Досвід</span>
+                  <p class="detail-value text-xl font-bold">${doc.experience}</p>
+                </div>
+                <div>
+                  <span class="detail-label">Освіта</span>
+                  <p class="detail-value text-[10px] font-semibold uppercase leading-tight">
+                    ${doc.education}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Achievements -->
+              <div class="mb-5">
+                <span class="detail-label">Досягнення</span>
+                <p class="detail-value text-sm">${doc.achievements}</p>
+              </div>
+
+              <!-- Specializations -->
+              <div class="mb-6">
+                <span class="detail-label mb-2 block">Ключові напрямки</span>
+                <div class="flex flex-wrap gap-2">
+                  ${doc.specializations.map(spec =>
+                    `<span class="spec-badge">${spec}</span>`
+                  ).join('')}
+                </div>
+              </div>
+
+              <!-- Book Button -->
+              <button class="book-btn">
+                Записатися на консультацію
+              </button>
+
+            </div>
           </div>
+
         </div>
       </div>
     `).join('');
+
+    // Add click handlers
+    document.querySelectorAll('[data-card]').forEach(card => {
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('.book-btn')) return;
+
+        // Close other expanded cards
+        document.querySelectorAll('[data-card].is-expanded').forEach(otherCard => {
+          if (otherCard !== this) {
+            otherCard.classList.remove('is-expanded');
+          }
+        });
+
+        this.classList.toggle('is-expanded');
+      });
+    });
+
     initSwiper();
   }
 
-  function handleFilters() {
-    const nameVal = document.getElementById('nameSearch').value.trim().toLowerCase();
-    const deptVal = document.getElementById('deptFilter').value;
-    const roleVal = document.getElementById('roleFilter').value;
-
+  // Filter logic
+  function applyFilters() {
     const filtered = doctors.filter(doc => {
-      // Фікс пошуку: шукаємо збіг у імені АБО прізвищі
-      const matchesName = !nameVal || doc.name.toLowerCase().includes(nameVal) || doc.surname.toLowerCase().includes(nameVal);
-      const matchesDept = !deptVal || doc.department === deptVal;
-      const matchesRole = !roleVal || doc.role === roleVal;
+      const matchesName = !activeFilters.name ||
+        doc.name.toLowerCase().includes(activeFilters.name) ||
+        doc.surname.toLowerCase().includes(activeFilters.name);
+      const matchesDept = !activeFilters.dept || doc.department === activeFilters.dept;
+      const matchesRole = !activeFilters.role || doc.role === activeFilters.role;
       return matchesName && matchesDept && matchesRole;
     });
+
     renderDoctors(filtered);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    renderDoctors(doctors);
-    
-    // Ті самі слухачі подій
-    document.getElementById('nameSearch').addEventListener('input', handleFilters);
-    document.getElementById('deptFilter').addEventListener('change', handleFilters);
-    document.getElementById('roleFilter').addEventListener('change', handleFilters);
+  // Debounced search
+  let searchTimeout;
+  function handleSearch(value) {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      activeFilters.name = value.trim().toLowerCase();
+      applyFilters();
+    }, 200);
+  }
 
-    // Логіка для виїзної панелі на мобільних
+  document.addEventListener('DOMContentLoaded', () => {
+    // Initialize effects
+    initParticles();
+    initCursorTrail();
+
+    renderDoctors(doctors);
+
+    // Search input
+    const nameSearch = document.getElementById('nameSearch');
+    if (nameSearch) {
+      nameSearch.addEventListener('input', (e) => handleSearch(e.target.value));
+    }
+
+    // Advanced filters toggle
+    const toggleAdvanced = document.getElementById('toggleAdvanced');
+    const advancedFilters = document.getElementById('advancedFilters');
+
+    if (toggleAdvanced && advancedFilters) {
+      toggleAdvanced.addEventListener('click', () => {
+        const isHidden = advancedFilters.classList.contains('hidden');
+
+        if (isHidden) {
+          advancedFilters.classList.remove('hidden');
+          toggleAdvanced.classList.add('open');
+        } else {
+          advancedFilters.classList.add('hidden');
+          toggleAdvanced.classList.remove('open');
+        }
+      });
+    }
+
+    // Department chips
+    const deptChips = document.querySelectorAll('#deptChips .filter-chip');
+    deptChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        deptChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilters.dept = chip.dataset.dept;
+        applyFilters();
+      });
+    });
+
+    // Role chips
+    const roleChips = document.querySelectorAll('#roleChips .filter-chip');
+    roleChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        roleChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        activeFilters.role = chip.dataset.role;
+        applyFilters();
+      });
+    });
+
+    // Mobile toggle
     const toggleBtn = document.getElementById('toggleFilters');
     const filterPanel = document.getElementById('filterPanel');
-    toggleBtn?.addEventListener('click', () => {
-      filterPanel.classList.toggle('hidden');
-      filterPanel.classList.toggle('animate-fade-down'); // Можна додати анімацію
-    });
+
+    if (toggleBtn && filterPanel) {
+      toggleBtn.addEventListener('click', () => {
+        filterPanel.classList.toggle('hidden');
+      });
+    }
   });
 </script>
