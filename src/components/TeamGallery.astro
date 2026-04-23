@@ -1,0 +1,76 @@
+---
+import { Icon } from "astro-icon/components";
+
+const teamPhotos = [
+  {
+    url: "/hero/doctors/physicsteam.jpg",
+    title: "Інженерно-фізична група"
+  },
+  {
+    url: "/hero/doctors/postyka_hladush_pryhodko_drobynaSecond.jpg",
+    title: "Планування та верифікація"
+  },
+  {
+    url: "/hero/doctors/pavlenko_volokitin.jpg",
+    title: "Робочий процес"
+  }
+];
+---
+
+<section class="relative z-10 max-w-[1400px] mx-auto px-6 py-20">
+  <div class="mb-12 text-center md:text-left">
+    <h2 class="text-3xl md:text-5xl font-serif font-bold text-slate-900">Команда медичних фізиків</h2>
+    <div class="w-20 h-1.5 bg-slate-800 mt-6 rounded-full hidden md:block"></div>
+  </div>
+
+  <div class="relative group">
+    <div class="swiper team-swiper rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl border border-white/80 bg-white/50 backdrop-blur-md">
+      <div class="swiper-wrapper">
+        {teamPhotos.map((photo) => (
+          <div class="swiper-slide flex flex-col">
+            <div class="relative w-full">
+              <img 
+                src={photo.url} 
+                alt={photo.title}
+            
+                class="w-full h-auto block object-contain" 
+              />
+              
+              <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+              
+              <div class="absolute bottom-6 left-6 md:bottom-10 md:left-10">
+                <span class="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">
+                  {photo.title}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="team-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+        <Icon name="bx:left-arrow-alt" class="w-8 h-8" />
+      </div>
+      <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+        <Icon name="bx:right-arrow-alt" class="w-8 h-8" />
+      </div>
+      
+      <div class="team-pagination !bottom-4"></div>
+    </div>
+  </div>
+</section>
+
+<style is:global>
+  .team-pagination .swiper-pagination-bullet {
+    background: white !important;
+    opacity: 0.3;
+    width: 20px;
+    height: 4px;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+  }
+  .team-pagination .swiper-pagination-bullet-active {
+    opacity: 1;
+    width: 40px;
+  }
+</style>

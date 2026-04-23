@@ -1,12 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { Icon } from "astro-icon/components";
+import TeamGallery from '../components/TeamGallery.astro'; // Додай цей імпорт
 
 const doctors = [
   {
-    name: "Jupiter",
-    surname: "Sun",
-    role: "Радіаційний онколог",
+    name: "Сніжинська",
+    surname: "Валерія",
+    role: "Лікар з радіаційної онкології",
     department: "Мегавольтна терапія",
     initials: "ТТ",
     bio: "Експерт у галузі сучасної променевої терапії з досвідом лікування складних онкологічних патологій.",
@@ -18,24 +19,24 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Saturn",
-    surname: "Sirius",
-    role: "Медичний фізик (інженер-радіолог)",
-    department: "Мегавольтна терапія",
+    name: "Анна",
+    surname: "Трубіцина",
+    role: "Лікар-рентгенолог",
+    department: "КТ-розмітка",
     initials: "ВС",
-    bio: "Спеціаліст з дозиметричного планування та забезпечення точності опромінення на системах Elekta.",
+    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
     image: "/hero/doctors/trubitsyna.jpg",
-    experience: "12 років",
-    specializations: ["Дозиметрія", "Планування терапії", "Контроль якості"],
-    education: "КНУ ім. Шевченка, фізика",
-    achievements: "Сертифікація Elekta, IAEA",
+    experience: "8 років",
+    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
+    education: "-",
+    achievements: "Понад 2000 успішно проведених КТ-топометрій",
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Neptun",
-    surname: "Aldebaran",
-    role: "Радіаційний онколог",
-    department: "Гамма-терапія",
+    name: "Ольга",
+    surname: "Нестеренко",
+    role: "Старша медична сестра",
+    department: "Мегавольтна терапія",
     initials: "ЄП",
     bio: "Спеціаліст з сучасних методик опромінення IMRT та VMAT під контролем Brainlab.",
     image: "/hero/doctors/nesterenko.jpg",
@@ -46,24 +47,24 @@ const doctors = [
     color: "from-slate-600 to-slate-800"
   },
   {
-    name: "Mercury",
-    surname: "Moon",
-    role: "Радіаційний онколог",
-    department: "Брахітерапія",
+    name: "Аліна",
+    surname: "Діденко",
+    role: "Лікар-рентгенолог",
+    department: "КТ-розмітка",
     initials: "ОК",
-    bio: "Понад 15 років досвіду в клінічній онкології.",
+    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
     image: "/hero/doctors/didenko.jpg",
-    experience: "15 років",
-    specializations: ["Клінічна онкологія", "Хіміотерапія"],
-    education: "Львівський медуніверситет",
-    achievements: "Автор 20+ наукових публікацій",
-    color: "from-slate-700 to-slate-600"
+    experience: "8 років",
+    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
+    education: "-",
+    achievements: "Понад 2000 успішно проведених КТ-топометрій",
+    color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Pluto",
-    surname: "Antares",
-    role: "Медичний фізик (інженер-радіолог)",
-    department: "КТ-розмітка",
+    name: "Анна",
+    surname: "Галій",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
     initials: "МП",
     bio: "Забезпечення технічної точності променевої терапії.",
     image: "/hero/doctors/halii.jpg",
@@ -74,10 +75,10 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Earth",
-    surname: "Vega",
-    role: "Радіолог",
-    department: "Близький фокус",
+    name: "Ольга",
+    surname: "Мала",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
     initials: "СЛ",
     bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
     image: "/hero/doctors/mala.jpg",
@@ -88,10 +89,10 @@ const doctors = [
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Venus",
-    surname: "Helios",
-    role: "Радіолог",
-    department: "Близький фокус",
+    name: "Євгеній",
+    surname: "Підмогильний",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
     initials: "СЛ",
     bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
     image: "/hero/doctors/pidmohylnyi.jpg",
@@ -104,7 +105,7 @@ const doctors = [
 ];
 
 const departments = ["Мегавольтна терапія", "Гамма-терапія", "Брахітерапія", "Близький фокус", "КТ-розмітка", "Реабілітація"];
-const roles = ["Радіаційний онколог", "Медичний фізик (інженер-радіолог)", "Медична сестра", "Старша медична сестра", "Інженер-програміст"];
+const roles = ["Лікар з радіаційної онкології", "Лікар-рентгенолог", "Медичний фізик", "Медична сестра", "Старша медична сестра", "Інженер-програміст"];
 ---
 
 <Layout title="Наші фахівці" hideSubNav={true}>
@@ -139,7 +140,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     <!-- Title Section -->
     <div class="text-center mb-10 px-4 relative z-10">
       <h1 class="text-[clamp(2.5rem,5vw,5rem)] font-serif font-bold tracking-tight leading-tight mb-2 gradient-text">
-        Наша команда
+        Наша велика команда
       </h1>
       <p class="text-slate-500 font-medium uppercase tracking-[0.3em] text-[9px] opacity-70">
         Відділення променевої терапії
@@ -244,6 +245,12 @@ const roles = ["Радіаційний онколог", "Медичний фіз
       <div class="text-2xl font-black text-slate-800" id="teamCount">7</div>
       <div class="text-[9px] text-slate-400 uppercase tracking-wide">фахівців</div>
     </div>
+
+
+<div class="relative z-10 mt-10">
+       <TeamGallery />
+    </div>
+
 
   </main>
 </Layout>
@@ -424,10 +431,10 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     }
 
     .liquid-card:hover {
-      transform: translateY(-8px) scale(1.02);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-      background: rgba(255, 255, 255, 0.85);
-    }
+  transform: translateY(-8px); /* Прибрали scale */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+}
 
     .liquid-card:hover .card-portrait {
       transform: scale(1.05);
@@ -1001,9 +1008,7 @@ const roles = ["Радіаційний онколог", "Медичний фіз
                 </div>
               </div>
 
-              <button class="book-btn">
-                Записатися на консультацію
-              </button>
+              
 
             </div>
           </div>
@@ -1063,6 +1068,37 @@ const roles = ["Радіаційний онколог", "Медичний фіз
     }
 
     renderDoctors(doctors);
+
+
+
+    // Встав це всередині DOMContentLoaded у doctors.astro
+new Swiper('.team-swiper', {
+  slidesPerView: 1,
+  spaceBetween: 20,
+  loop: true,
+  speed: 800,
+  autoHeight: true, // ВАЖЛИВО: слайдер сам виставить висоту по фото
+  // Прибираємо ефект 'fade', краще залиш звичайне 'slide' для надійності пропорцій
+  pagination: { el: '.team-pagination', clickable: true },
+  navigation: { nextEl: '.team-next', prevEl: '.team-prev' },
+  fadeEffect: {
+    crossFade: true
+  },
+  pagination: {
+    el: '.team-pagination',
+    clickable: true,
+  },
+  navigation: {
+    nextEl: '.team-next',
+    prevEl: '.team-prev',
+  },
+  autoplay: {
+    delay: 5000,
+    disableOnInteraction: false,
+  }
+});
+
+
 
     const nameSearch = document.getElementById('nameSearch');
     if (nameSearch) {
