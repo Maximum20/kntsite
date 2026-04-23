@@ -4,8 +4,8 @@ import { Icon } from "astro-icon/components";
 
 const doctors = [
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Jupiter",
+    surname: "Sun",
     role: "Радіаційний онколог",
     department: "Мегавольтна терапія",
     initials: "ТТ",
@@ -18,8 +18,8 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Saturn",
+    surname: "Sirius",
     role: "Медичний фізик (інженер-радіолог)",
     department: "Мегавольтна терапія",
     initials: "ВС",
@@ -32,8 +32,8 @@ const doctors = [
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Neptun",
+    surname: "Aldebaran",
     role: "Радіаційний онколог",
     department: "Гамма-терапія",
     initials: "ЄП",
@@ -46,8 +46,8 @@ const doctors = [
     color: "from-slate-600 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Mercury",
+    surname: "Moon",
     role: "Радіаційний онколог",
     department: "Брахітерапія",
     initials: "ОК",
@@ -60,8 +60,8 @@ const doctors = [
     color: "from-slate-700 to-slate-600"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Pluto",
+    surname: "Antares",
     role: "Медичний фізик (інженер-радіолог)",
     department: "КТ-розмітка",
     initials: "МП",
@@ -74,8 +74,8 @@ const doctors = [
     color: "from-slate-600 to-slate-700"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Earth",
+    surname: "Vega",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -88,8 +88,8 @@ const doctors = [
     color: "from-slate-700 to-slate-800"
   },
   {
-    name: "Тест",
-    surname: "Тест",
+    name: "Venus",
+    surname: "Helios",
     role: "Радіолог",
     department: "Близький фокус",
     initials: "СЛ",
@@ -358,23 +358,30 @@ const roles = ["Радіаційний онколог", "Медичний фіз
   }
 
   /* Optimized Card - Reduced blur on mobile */
-  .liquid-card {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 3/4.5;
-    border-radius: 2rem;
-    overflow: hidden;
-    cursor: pointer;
-    background: rgba(255, 255, 255, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
-    -webkit-tap-highlight-color: transparent;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    touch-action: manipulation;
-  }
+ .liquid-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4.5;
+  border-radius: 2rem;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.9); /* Трохи щільніше для стабільності на мобільних */
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+  -webkit-tap-highlight-color: transparent;
+  
+  /* Фікс для iOS: примусовий рендеринг шару */
+  isolation: isolate; 
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+  
+  touch-action: manipulation;
+}
 
   /* Prevent flickering during transition */
   .liquid-card.is-expanded {
@@ -436,10 +443,13 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 
   /* Card Image Container */
   .card-img-wrap {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Додаємо ці два рядки */
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
 
   .card-portrait {
     width: 100%;
@@ -453,17 +463,28 @@ const roles = ["Радіаційний онколог", "Медичний фіз
 
   /* Dark Gradient Overlay */
   .glass-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.75) 0%,
-      rgba(0, 0, 0, 0.5) 20%,
-      rgba(0, 0, 0, 0.2) 45%,
-      transparent 70%
-    );
-  }
+  position: absolute;
+  inset: 0;
+  /* Піднімаємо z-index вище картинки */
+  z-index: 5; 
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.4) 35%,
+    transparent 75%
+  );
+  pointer-events: none;
+  
+  /* Мінімальний 3D-виліт, щоб не зникало на iOS */
+  -webkit-transform: translate3d(0, 0, 1px);
+  transform: translate3d(0, 0, 1px);
+  
+  /* Щоб уникнути мерехтіння */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+
 
   /* Card Info */
   .card-info {
