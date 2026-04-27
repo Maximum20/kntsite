@@ -7,6 +7,9 @@ import "@fontsource-variable/inter/index.css";
 import '@fontsource-variable/bricolage-grotesque/index.css';
 import "../styles/global.css";
 
+
+
+
 const { title, hideSubNav = false } = Astro.props; // Додаємо hideSubNav
 const makeTitle = title ? title + " | Відділення променевої терапії" : "Відділення променевої терапії - №1";
 
@@ -49,6 +52,9 @@ const makeTitle = title ? title + " | Відділення променевої 
 
     <Navbar hideSubNav={hideSubNav} />
     <slot />
+
+
+
     <Footer />
     
     <style is:global>

@@ -37,6 +37,29 @@ import HeroAbout from '../components/HeroAbout.astro';
 
     <News />
 
+
+<button 
+  id="scroll-to-top" 
+  class="fixed bottom-8 right-8 z-[100] 
+         /* Фонове скло з ніжно-блакитним відтінком */
+         bg-blue-50/30 backdrop-blur-xl 
+         /* Колір стрілочки та ідеальне коло */
+         text-blue-500 p-4 rounded-full 
+         /* Тонка блакитна рамка для чіткості */
+         border border-blue-100/50 
+         /* Дуже м'яка тінь */
+         shadow-lg shadow-blue-900/5
+         transition-all duration-700 
+         translate-y-20 opacity-0 
+         /* Ефекти при наведенні */
+         hover:bg-blue-100/40 hover:text-blue-600 hover:-translate-y-1 
+         active:scale-95"
+  aria-label="Вгору"
+>
+  <Icon name="bx:chevron-up" class="w-8 h-8" />
+</button>
+
+
   </main>
 </Layout>
 
@@ -44,6 +67,35 @@ import HeroAbout from '../components/HeroAbout.astro';
   const buttons = document.querySelectorAll('.dept-btn');
   const logoTrigger = document.querySelector('.logo-home-trigger');
   const dynamicZone = document.getElementById('dynamic-zone');
+
+
+
+// Логіка для розумної кнопки
+  let lastScrollTop = 0;
+  const toTopBtn = document.getElementById('scroll-to-top');
+
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    // 1. Якщо гортаємо ВГОРУ і ми відійшли від верху сторінки більше ніж на 400px — показуємо
+    if (scrollTop < lastScrollTop && scrollTop > 400) {
+      toTopBtn?.classList.remove('translate-y-20', 'opacity-0');
+    } 
+    // 2. Якщо гортаємо ВНИЗ або ми майже в самому верху — ховаємо
+    else {
+      toTopBtn?.classList.add('translate-y-20', 'opacity-0');
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  }, { passive: true });
+
+  // Плавний скрол при натисканні
+  toTopBtn?.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  });
 
 
 

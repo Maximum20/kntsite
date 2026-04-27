@@ -3,12 +3,12 @@ import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import fullLogo from "../../assets/full-logo.png"; 
+import Search from "../Search.astro"; // ПІДКЛЮЧАЄМО НОВИЙ ФАЙЛ
+
 const { hideSubNav } = Astro.props;
 
 const menuitems = [
-  { title: "Про відділення", path: "/about" },
-  { title: "Послуги", path: "/services" },
-  { title: "Лікарі", path: "/doctors" },
+  { title: "Персонал", path: "/doctors" },
   { title: "Новини", path: "#news" },
 ];
 
@@ -23,12 +23,10 @@ const departments = [
   { id: "mlt", btnTitle: "Реабілітація" }
 ];
 
-// --- ЛОГІКА ДЛЯ КРУТІЛКИ ---
 const { id: currentId } = Astro.params; 
 const currentIndex = departments.findIndex(d => d.id === currentId);
 const isServiceDetailPage = currentIndex !== -1;
 
-// Визначаємо індекси та назви (ОСЬ ЦЕ БУЛО ПРОПУЩЕНО)
 const prevIndex = isServiceDetailPage ? (currentIndex - 1 + departments.length) % departments.length : 0;
 const nextIndex = isServiceDetailPage ? (currentIndex + 1) % departments.length : 0;
 
@@ -62,80 +60,65 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
             </div>
           </div>
 
-          
+          <MenuItems class="hidden w-full xl:flex xl:w-auto mt-4 xl:mt-0 xl:ml-auto">
+            <ul class="flex flex-col xl:flex-row xl:items-center gap-1 2xl:gap-4">
+              
+              {/* НАША ЛУПА І СОЦМЕРЕЖІ ТЕПЕР ТУТ  <Search /> */}
+              <Search />
 
+              <div class="xl:hidden px-3 mt-4 mb-2 flex items-center gap-2">
+                <div class="w-6 h-px bg-slate-200"></div>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Навігація</p>
+              </div>
 
-<MenuItems class="hidden w-full xl:flex xl:w-auto mt-4 xl:mt-0 xl:ml-auto">
-  <ul class="flex flex-col xl:flex-row xl:items-center gap-1 2xl:gap-4">
-    
-    {/* --- ЗАГОЛОВОК: НАВІГАЦІЯ (тільки для мобілки) --- */}
-    <div class="xl:hidden px-3 mt-4 mb-2 flex items-center gap-2">
-      <div class="w-6 h-px bg-slate-200"></div>
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Навігація</p>
-    </div>
+              {menuitems.map((item) => (
+                <li>
+                  <a href={item.path} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
+                    <span>{item.title}</span>
+                  </a>
+                </li>
+              ))}
 
-    {/* Основні пункти: Про відділення, Послуги тощо */}
-    {menuitems.map((item) => (
-      <li>
-        <a href={item.path} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
-          <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
-          <span>{item.title}</span>
-        </a>
-      </li>
-    ))}
+              <div class="xl:hidden px-3 mt-6 mb-2 flex items-center gap-2">
+                <div class="w-6 h-px bg-slate-200"></div>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Детальніше про:</p>
+              </div>
 
-    {/* --- ЗАГОЛОВОК: ДЕТАЛЬНІШЕ ПРО (тільки для мобілки) --- */}
-    <div class="xl:hidden px-3 mt-6 mb-2 flex items-center gap-2">
-      <div class="w-6 h-px bg-slate-200"></div>
-      <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Детальніше про:</p>
-    </div>
+              {departments.map((dept) => (
+                <li class="xl:hidden">
+                  <a href={`/services/${dept.id}`} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
+                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
+                    <span>{dept.btnTitle}</span>
+                  </a>
+                </li>
+              ))}
 
-    {/* Список відділень — тепер з такими ж кружечками і шрифтом */}
-    {departments.map((dept) => (
-      <li class="xl:hidden">
-        <a href={`/services/${dept.id}`} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
-          <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
-          <span>{dept.btnTitle}</span>
-        </a>
-      </li>
-    ))}
+              <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1"></div>
+              
+              <li class="mt-4 xl:mt-0">
+                <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-slate-200 transition-all">
+                  <Icon name="bx:link-external" class="w-4 h-4 opacity-50" />
+                  <span>{mainClinic.title}</span>
+                </a>
+              </li>
 
-    <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1"></div>
-    
-    {/* Кнопка клініки */}
-    <li class="mt-4 xl:mt-0">
-      <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-slate-200 transition-all">
-        <Icon name="bx:link-external" class="w-4 h-4 opacity-50" />
-        <span>{mainClinic.title}</span>
-      </a>
-    </li>
-
-    {/* Кнопка зв'язку — додаємо hidden xl:flex, щоб СХОВАТИ в бургері */}
-    <li class="hidden xl:flex">
-      <a href="#contacts" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
-        <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
-        <span>Зв'язок</span>
-      </a>
-    </li>
-  </ul>
-</MenuItems>
-
-
-
-
-
-
+              <li class="hidden xl:flex">
+                <a href="#contacts" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                  <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
+                  <span>Зв'язок</span>
+                </a>
+              </li>
+            </ul>
+          </MenuItems>
         </Astronav>
       </div>
     </div>
   </div>
 
- 
-
-{ !hideSubNav && (
+  { !hideSubNav && (
     <div id="dept-panel" class="hidden xl:flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500">
       {isServiceDetailPage ? (
-        /* ВАРІАНТ 1: Крутілка */
         <div class="bg-white/80 backdrop-blur-2xl p-2 rounded-[3.5rem] border border-white/60 shadow-2xl flex items-center gap-2 pointer-events-auto">
           <a href={prevPath} class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all">
             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
@@ -145,14 +128,10 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
               {prevTitle}
             </span>
           </a>
-
           <div class="px-10 py-1 text-center min-w-[200px] border-x border-slate-100">
             <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">Відділення</span>
-            <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">
-              {currentTitle}
-            </h2>
+            <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">{currentTitle}</h2>
           </div>
-
           <a href={nextPath} class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right">
             <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
               {nextTitle}
@@ -163,37 +142,21 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
           </a>
         </div>
       ) : (
-        /* ВАРІАНТ 2: Список для головної */
         <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
           {departments.map((dept) => (
-            <a 
-              href={`/services/${dept.id}`}
-              class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white"
-            >
-              {dept.btnTitle}
-            </a>
+            <a href={`/services/${dept.id}`} class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white">{dept.btnTitle}</a>
           ))}
         </div>
       )}
     </div>
   )}
-
 </header>
 
 <style>
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-  .dept-hidden {
-    transform: translateY(-110%);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #dept-panel {
-    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear;
-    will-change: transform;
-  }
+  .dept-hidden { transform: translateY(-110%); opacity: 0; pointer-events: none; }
+  #dept-panel { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear; will-change: transform; }
 </style>
 
 <script>
@@ -205,7 +168,6 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
     if (window.innerWidth >= 1280) {
       const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       const distance = Math.abs(scrollTop - lastScrollTop);
-
       if (distance > threshold) {
         if (scrollTop > lastScrollTop && scrollTop > 80) {
           panel?.classList.add('dept-hidden');
@@ -216,20 +178,4 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
       }
     }
   }, { passive: true });
-
-  const buttons = document.querySelectorAll('.dept-btn');
-
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => {
-        b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
-        b.classList.add('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
-      });
-
-      btn.classList.add('active', 'bg-blue-600', 'text-white', 'shadow-lg', 'shadow-blue-200');
-      btn.classList.remove('text-slate-600', 'hover:bg-white/80', 'hover:text-blue-600');
-      
-      // Твій скрипт на головній підхопить data-target і покаже вітальне інфо
-    });
-  });
 </script>
