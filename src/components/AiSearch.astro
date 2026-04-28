@@ -1,0 +1,64 @@
+---
+// src/components/AiSearch.astro
+---
+<div class="ai-search-container border rounded-xl p-4 bg-slate-50 max-w-2xl mx-auto my-8 font-sans">
+  <h3 class="text-lg font-bold mb-2">AI Помічник</h3>
+  <div id="chat-output" class="min-h-[50px] mb-4 text-slate-700 whitespace-pre-wrap">
+    Тут з'явиться відповідь...
+  </div>
+  
+  <div class="flex gap-2">
+    <input 
+      type="text" 
+      id="chat-input" 
+      placeholder="Наприклад: Яка точність обладнання?" 
+      class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <button id="send-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+      Запитати
+    </button>
+  </div>
+</div>
+
+<script>
+  const btn = document.getElementById('send-btn');
+  const input = document.getElementById('chat-input') as HTMLInputElement;
+  const output = document.getElementById('chat-output');
+
+  async function askAi() {
+    const question = input.value;
+    if (!question || !output) return;
+
+    output.innerText = "Думаю...";
+    input.value = "";
+
+    try {
+      const response = await fetch('/api/chats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: [{ role: 'user', content: question }] }),
+      });
+
+      if (!response.body) return;
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      output.innerText = ""; 
+
+      // Читаємо потік частинами
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const textChunk = decoder.decode(value, { stream: true });
+        output.innerText += textChunk;
+      }
+    } catch (e) {
+      output.innerText = "Помилка зв'язку з сервером.";
+      console.error(e);
+    }
+  }
+
+  btn?.addEventListener('click', askAi);
+  input?.addEventListener('keypress', (e) => e.key === 'Enter' && askAi());
+</script>
