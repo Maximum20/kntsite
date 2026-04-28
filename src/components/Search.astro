@@ -12,15 +12,22 @@ const searchIndex = [
 ---
 
 {/* --- 1. КНОПКИ В ШАПЦІ (ТВОЄ МЕНЮ) --- */}
-<div class="hidden xl:flex items-center gap-2 mr-6 ml-4 bg-slate-50/50 p-1 rounded-full border border-slate-100">
-  <div class="flex items-center gap-2.5 px-3">
+{/* --- 1. КНОПКИ В ШАПЦІ --- */}
+<div class="flex items-center gap-2 mr-2 xl:mr-6 xl:ml-4 bg-slate-50/50 xl:bg-slate-50/50 p-1 rounded-full border border-slate-100 xl:border-slate-100">
+  
+  {/* Соціалки ховаємо на мобільних, показуємо тільки на xl */}
+  <div class="hidden xl:flex items-center gap-2.5 px-3">
     <a href="#" class="text-slate-400 hover:text-[#1877F2] transition-all hover:scale-110"><Icon name="bx:bxl-facebook-circle" class="w-5 h-5" /></a>
     <a href="#" class="text-slate-400 hover:text-[#0088cc] transition-all hover:scale-110"><Icon name="bx:bxl-telegram" class="w-5 h-5" /></a>
     <a href="#" class="text-slate-400 hover:text-[#E4405F] transition-all hover:scale-110"><Icon name="bx:bxl-instagram" class="w-5 h-5" /></a>
     <a href="#" class="text-slate-400 hover:text-[#FF0000] transition-all hover:scale-110"><Icon name="bx:bxl-youtube" class="w-5 h-5" /></a>
   </div>
-  <div class="w-px h-4 bg-slate-200 mx-1"></div>
-  <button id="search-trigger" class="relative flex items-center justify-center w-9 h-9 rounded-full bg-white shadow-sm text-blue-600 hover:bg-blue-600 hover:text-white transition-all group">
+
+  {/* Розділювач теж тільки для десктопа */}
+  <div class="hidden xl:block w-px h-4 bg-slate-200 mx-1"></div>
+
+  {/* Кнопка лупи тепер без hidden — вона видима всюди */}
+  <button id="search-trigger" class="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-sm text-blue-600 hover:bg-blue-600 hover:text-white transition-all group">
     <Icon name="bx:bx-search" class="w-4 h-4" />
     <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-500 rounded-full border-2 border-white animate-pulse"></span>
   </button>
