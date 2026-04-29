@@ -11,24 +11,34 @@ const searchIndex = [
 ---
 
 {/* --- 1. КНОПКИ В ШАПЦІ --- */}
-<div class="flex items-center xl:bg-white/60 xl:p-1.5 xl:rounded-full xl:border xl:border-slate-200/50 xl:shadow-sm xl:backdrop-blur-md mr-2 xl:mr-6 xl:ml-4 transition-all">
+<div class="flex items-center gap-3 mr-2 xl:mr-6 xl:ml-4">
   
-  {/* Соціалки: видимі тільки на великих екранах */}
-  <div class="hidden xl:flex items-center gap-4 px-3">
-    <a href="#" class="text-slate-400 hover:text-blue-600 transition-colors"><Icon name="bx:bxl-facebook-circle" class="w-5 h-5" /></a>
-    <a href="#" class="text-slate-400 hover:text-blue-400 transition-colors"><Icon name="bx:bxl-telegram" class="w-5 h-5" /></a>
-    <a href="#" class="text-slate-400 hover:text-pink-500 transition-colors"><Icon name="bx:bxl-instagram" class="w-5 h-5" /></a>
+  {/* БУЛЬБАШКА СОЦМЕРЕЖ (Окремо) */}
+  <div class="hidden xl:flex items-center gap-4 bg-white/60 p-2 px-4 rounded-full border border-slate-200/50 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:bg-white/80">
+    <a href="#" class="text-slate-400 hover:text-blue-600 transition-all hover:scale-110"><Icon name="bx:bxl-facebook-circle" class="w-5 h-5" /></a>
+    <a href="#" class="text-slate-400 hover:text-blue-400 transition-all hover:scale-110"><Icon name="bx:bxl-telegram" class="w-5 h-5" /></a>
+    <a href="#" class="text-slate-400 hover:text-pink-500 transition-all hover:scale-110"><Icon name="bx:bxl-instagram" class="w-5 h-5" /></a>
   </div>
 
-  {/* Розділювач: видимий тільки на великих екранах */}
-  <div class="hidden xl:block w-px h-4 bg-slate-200"></div>
+  {/* БУЛЬБАШКА ПОШУКУ З АНІМАЦІЄЮ ТЕКСТУ */}
+  <div class="flex items-center">
+    <button 
+      id="search-trigger" 
+      class="group relative flex items-center justify-start h-10 w-10 xl:hover:w-56 bg-blue-600 text-white rounded-full transition-all duration-500 ease-in-out overflow-hidden shadow-lg shadow-blue-500/20 active:scale-95"
+    >
+      {/* Іконка (Завжди зліва) */}
+      <div class="flex items-center justify-center min-w-[40px] h-10">
+        <Icon name="bx:bx-search" class="w-5 h-5" />
+      </div>
 
-  {/* Кнопка пошуку: на мобільних вона тепер "гола" (без білого фону навколо) */}
-  <button id="search-trigger" class="group relative flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-90">
-    <Icon name="bx:bx-search" class="w-4.5 h-4.5" />
-    {/* Зелена цятка — статус AI */}
-    <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></span>
-  </button>
+      {/* Текст (З'являється при розширенні) */}
+      <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-150 font-bold text-[13px] tracking-tight pr-6">
+        Інтелектуальний пошук
+      </span>
+
+  
+    </button>
+  </div>
 </div>
 
 {/* --- 2. ВІКНО ПОШУКУ (MODAL) --- */}
@@ -77,7 +87,7 @@ const searchIndex = [
         <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 no-scrollbar min-h-[250px]">
           <div class="flex justify-start">
             <div class="bg-blue-50 text-blue-700 p-4 rounded-2xl rounded-tl-none text-sm max-w-[90%] leading-relaxed border border-blue-100">
-              Вітаю, Максе! Я допоможу знайти потрібну інформацію. Що вас цікавить?
+              Вітаю! Я допоможу знайти потрібну інформацію. Що вас цікавить?
             </div>
           </div>
         </div>
