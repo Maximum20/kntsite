@@ -21,37 +21,36 @@ const {
 ---
 
 {type === 'hero' && (
-  <div class="relative mb-32 not-prose">
-    <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all mb-12 group">
-      <div class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:scale-110 transition-all">
-        <Icon name="bx:left-arrow-alt" class="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+  <div class="relative mb-10 lg:mb-32 not-prose px-1 lg:px-0">
+    <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all mb-6 lg:mb-12 group">
+      <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:scale-110 transition-all">
+        <Icon name="bx:left-arrow-alt" class="w-5 h-5 lg:w-6 lg:h-6 group-hover:-translate-x-1 transition-transform" />
       </div>
       <span class="text-[10px] font-black uppercase tracking-[0.2em]">На головну</span>
     </a>
 
-    <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+    <div class="grid lg:grid-cols-2 gap-6 lg:gap-20 items-center">
       <div class="relative order-2 lg:order-1 group/hero">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 rounded-[3.5rem] -rotate-2 scale-105 blur-2xl group-hover/hero:scale-110 transition-transform duration-700"></div>
-        <div class="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl opacity-20 group-hover/hero:rotate-12 transition-transform duration-500"></div>
-        <div class="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-pink-600 to-orange-600 rounded-full opacity-10 group-hover/hero:-rotate-12 transition-transform duration-500"></div>
-        <div class="relative rounded-[3.5rem] overflow-hidden shadow-2xl border-[14px] border-white bg-slate-100 aspect-[4/3] lg:aspect-square transform group-hover/hero:scale-[1.02] transition-transform duration-500">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 rounded-2xl lg:rounded-[3.5rem] -rotate-1 lg:-rotate-2 scale-105 blur-2xl group-hover/hero:scale-110 transition-transform duration-700"></div>
+        <div class="absolute -top-2 -right-2 lg:-top-6 lg:-right-6 w-12 h-12 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl lg:rounded-3xl opacity-20"></div>
+        <div class="relative rounded-2xl lg:rounded-[3.5rem] overflow-hidden shadow-xl border-4 lg:border-[14px] border-white bg-slate-100 aspect-[4/3] lg:aspect-square transform group-hover/hero:scale-[1.01] transition-transform duration-500">
           {src && <img src={src} alt={alt || title} class="w-full h-full object-cover" />}
         </div>
       </div>
 
-      <div class="order-1 lg:order-2">
+      <div class="order-1 lg:order-2 px-1 lg:px-0">
         {subtitle && (
-          <span class="inline-block text-blue-600 font-black uppercase tracking-[0.4em] text-xs mb-6 px-4 py-2 bg-blue-50 rounded-full animate-pulse">
+          <span class="inline-block text-blue-600 font-black uppercase tracking-[0.2em] lg:tracking-[0.4em] text-[10px] lg:text-xs mb-4 lg:mb-6 px-3 py-1.5 bg-blue-50 rounded-full">
             {subtitle}
           </span>
         )}
-        <h1 class="text-5xl md:text-7xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8 uppercase">
+        <h1 class="text-3xl md:text-7xl font-black text-slate-900 leading-[1] lg:leading-[0.9] tracking-tighter mb-4 lg:mb-8 uppercase">
           {title && title.split(' ').map((word: string, idx: number) => (
-            <span class="inline-block hover:text-blue-600 transition-colors duration-300" style={`animation-delay: ${idx * 100}ms`}>{word}<br/></span>
+            <span class="inline-block hover:text-blue-600 transition-colors duration-300" style={`animation-delay: ${idx * 100}ms`}>{word}<br class="hidden lg:block"/> </span>
           ))}
         </h1>
         {text && (
-          <p class="text-xl md:text-2xl text-slate-500 leading-relaxed font-medium">
+          <p class="text-base lg:text-2xl text-slate-500 leading-snug lg:leading-relaxed font-medium">
             {text}
           </p>
         )}
@@ -61,34 +60,36 @@ const {
 )}
 
 {type === 'accordion' && (
-  <details class={`group my-6 border-2 ${variant === 'highlight' ? 'border-blue-200 bg-gradient-to-br from-blue-50 to-white' : 'border-slate-200 bg-white'} rounded-[2.5rem] shadow-lg overflow-hidden not-prose transition-all duration-300 hover:shadow-2xl open:shadow-2xl open:ring-2 open:ring-blue-100 open:scale-[1.01]`}>
-    <summary class="flex justify-between items-center p-8 lg:p-10 cursor-pointer list-none hover:bg-slate-50/50 transition-all group-hover:pl-12">
-      <div class="flex items-center gap-5">
+  <details class={`group my-3 lg:my-6 border-2 ${variant === 'highlight' ? 'border-blue-100 bg-gradient-to-br from-blue-50/50 to-white' : 'border-slate-100 bg-white'} rounded-2xl lg:rounded-[2.5rem] shadow-md lg:shadow-lg overflow-hidden not-prose transition-all duration-300 open:shadow-xl`}>
+    <summary class="flex justify-between items-center p-4 lg:p-10 cursor-pointer list-none hover:bg-slate-50/50 transition-all">
+      <div class="flex items-center gap-3 lg:gap-5">
         {icon && (
-          <div class={`w-14 h-14 rounded-2xl ${variant === 'highlight' ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-xl shadow-blue-600/20' : 'bg-slate-100'} flex items-center justify-center text-3xl flex-shrink-0 group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
+          <div class={`w-10 h-10 lg:w-14 lg:h-14 rounded-lg lg:rounded-2xl ${variant === 'highlight' ? 'bg-gradient-to-br from-blue-600 to-blue-700 shadow-lg' : 'bg-slate-100'} flex items-center justify-center text-xl lg:text-3xl flex-shrink-0 transition-all duration-500 group-hover:rotate-6`}>
             <span class={variant === 'highlight' ? 'grayscale brightness-[3]' : ''}>{icon}</span>
           </div>
         )}
-        <h3 class="text-xl lg:text-2xl font-black text-slate-800 tracking-tight">{title}</h3>
+        <h3 class="text-base lg:text-2xl font-black text-slate-800 tracking-tight leading-tight">{title}</h3>
       </div>
-      <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center group-open:rotate-180 group-open:bg-blue-600 group-open:text-white transition-all duration-300 flex-shrink-0 ml-4">
-        <Icon name="bx:chevron-down" class="h-6 w-6" />
+      <div class="w-7 h-7 lg:w-10 lg:h-10 rounded-full bg-slate-50 flex items-center justify-center group-open:rotate-180 group-open:bg-blue-600 group-open:text-white transition-all duration-300 flex-shrink-0">
+        <Icon name="bx:chevron-down" class="h-4 w-4 lg:h-6 lg:w-6" />
       </div>
     </summary>
-    <div class="px-8 lg:px-10 pb-10 pt-4 text-slate-600 leading-relaxed border-t-2 border-slate-100">
-      <slot />
+    <div class="px-4 lg:px-10 pb-6 lg:pb-10 pt-2 text-slate-600 text-sm lg:text-base leading-relaxed border-t border-slate-50">
+      <div class="max-w-none">
+        <slot />
+      </div>
     </div>
   </details>
 )}
 
 {type === 'stats' && (
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 my-16 not-prose">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 my-8 lg:my-16 not-prose px-1 lg:px-0">
     {stats.map((stat: any, idx: number) => (
       <div class="relative group">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 rounded-[2rem] -rotate-1 scale-105 group-hover:scale-110 group-hover:rotate-1 transition-all duration-500"></div>
-        <div class="relative bg-white border-2 border-slate-200 rounded-[2rem] p-8 text-center shadow-lg group-hover:shadow-2xl group-hover:border-blue-300 transition-all hover:scale-105 cursor-default" style={`animation-delay: ${idx * 150}ms`}>
-          <div class="text-5xl lg:text-6xl font-black bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2 group-hover:scale-110 transition-transform">{stat.value}</div>
-          <div class="text-sm font-bold text-slate-500 uppercase tracking-wide">{stat.label}</div>
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 rounded-xl lg:rounded-[2rem] group-hover:scale-105 transition-all duration-500"></div>
+        <div class="relative bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-xl lg:rounded-[2rem] p-4 lg:p-8 text-center shadow-sm group-hover:shadow-xl group-hover:border-blue-200 transition-all cursor-default" style={`animation-delay: ${idx * 150}ms`}>
+          <div class="text-2xl lg:text-6xl font-black bg-gradient-to-br from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1 group-hover:scale-110 transition-transform">{stat.value}</div>
+          <div class="text-[9px] lg:text-sm font-bold text-slate-400 uppercase tracking-wider">{stat.label}</div>
         </div>
       </div>
     ))}
@@ -96,17 +97,17 @@ const {
 )}
 
 {type === 'timeline' && (
-  <div class="relative my-16 not-prose">
-    <div class="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full hidden lg:block"></div>
+  <div class="relative my-10 lg:my-16 not-prose px-1">
+    <div class="absolute left-6 lg:left-8 top-0 bottom-0 w-0.5 lg:w-1 bg-gradient-to-b from-blue-600 via-purple-600 to-pink-600 rounded-full hidden sm:block"></div>
 
     {items.map((item: any, index: number) => (
-      <div class="relative pl-0 lg:pl-24 mb-12 last:mb-0 group/timeline">
-        <div class="absolute left-0 lg:left-[1.75rem] top-2 w-16 h-16 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl lg:rounded-xl flex items-center justify-center text-white font-black text-2xl lg:text-xl shadow-xl shadow-blue-600/30 z-10 group-hover/timeline:scale-125 group-hover/timeline:rotate-12 transition-all duration-500">
+      <div class="relative pl-0 lg:pl-24 mb-6 lg:mb-12 last:mb-0 group/timeline">
+        <div class="absolute left-0 lg:left-[1.75rem] top-0 lg:top-2 w-10 h-10 lg:w-12 lg:h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg lg:rounded-xl flex items-center justify-center text-white font-black text-lg shadow-lg z-10 group-hover:scale-110 transition-all">
           {index + 1}
         </div>
-        <div class="ml-20 lg:ml-0 bg-white border-2 border-slate-200 rounded-[2rem] p-8 shadow-lg hover:shadow-2xl hover:border-blue-300 transition-all hover:translate-x-2 cursor-default">
-          <h4 class="text-2xl font-black text-slate-800 mb-3">{item.title}</h4>
-          <p class="text-slate-600 leading-relaxed">{item.text}</p>
+        <div class="ml-12 lg:ml-0 bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-2xl lg:rounded-[2rem] p-5 lg:p-8 shadow-sm hover:shadow-xl hover:border-blue-200 transition-all">
+          <h4 class="text-lg lg:text-2xl font-black text-slate-800 mb-1 lg:mb-3 leading-tight">{item.title}</h4>
+          <p class="text-xs lg:text-base text-slate-500 leading-relaxed">{item.text}</p>
         </div>
       </div>
     ))}
@@ -114,18 +115,17 @@ const {
 )}
 
 {type === 'callout' && (
-  <div class={`relative my-12 not-prose overflow-hidden rounded-[2.5rem] group/callout ${variant === 'warning' ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 hover:border-amber-300' : variant === 'success' ? 'bg-gradient-to-br from-emerald-50 to-green-50 border-2 border-emerald-200 hover:border-emerald-300' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 hover:border-blue-300'} hover:shadow-2xl transition-all`}>
-    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-white/50 to-transparent rounded-full -translate-y-32 translate-x-32 group-hover/callout:scale-150 transition-transform duration-700"></div>
-    <div class="p-8 lg:p-10 relative">
-      <div class="flex items-start gap-5">
+  <div class={`relative my-6 lg:my-12 not-prose overflow-hidden rounded-2xl lg:rounded-[2.5rem] group/callout ${variant === 'warning' ? 'bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100' : variant === 'success' ? 'bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-100' : 'bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100'} transition-all px-1 lg:px-0`}>
+    <div class="p-5 lg:p-10 relative">
+      <div class="flex flex-row items-start gap-3 lg:gap-5">
         {icon && (
-          <div class={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0 group-hover/callout:scale-110 group-hover/callout:rotate-12 transition-all duration-500 ${variant === 'warning' ? 'bg-amber-100' : variant === 'success' ? 'bg-emerald-100' : 'bg-blue-100'}`}>
+          <div class={`w-10 h-10 lg:w-14 lg:h-14 rounded-lg lg:rounded-2xl flex items-center justify-center text-xl lg:text-3xl flex-shrink-0 ${variant === 'warning' ? 'bg-amber-100' : variant === 'success' ? 'bg-emerald-100' : 'bg-blue-100'}`}>
             {icon}
           </div>
         )}
         <div class="flex-1">
-          {title && <h4 class="text-2xl font-black text-slate-800 mb-3">{title}</h4>}
-          <div class="text-slate-600 leading-relaxed">
+          {title && <h4 class="text-base lg:text-2xl font-black text-slate-800 mb-1 lg:mb-3 leading-tight">{title}</h4>}
+          <div class="text-sm lg:text-base text-slate-600 leading-relaxed">
             <slot />
           </div>
         </div>
@@ -135,63 +135,58 @@ const {
 )}
 
 {type === 'two-column' && (
-  <div class="grid lg:grid-cols-2 gap-8 my-12 not-prose">
-    <div class="bg-white border-2 border-slate-200 rounded-[2.5rem] p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-blue-300 transition-all hover:-translate-y-2">
+  <div class="grid lg:grid-cols-2 gap-4 lg:gap-8 my-8 lg:my-12 not-prose px-1 lg:px-0">
+    <div class="bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-2xl lg:rounded-[2.5rem] p-5 lg:p-10 shadow-sm hover:shadow-xl transition-all">
       <slot name="left" />
     </div>
-    <div class="bg-white border-2 border-slate-200 rounded-[2.5rem] p-8 lg:p-10 shadow-lg hover:shadow-2xl hover:border-purple-300 transition-all hover:-translate-y-2">
+    <div class="bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-2xl lg:rounded-[2.5rem] p-5 lg:p-10 shadow-sm hover:shadow-xl transition-all">
       <slot name="right" />
     </div>
   </div>
 )}
 
 {type === 'image' && (
-  <div class="my-16 not-prose">
+  <div class="my-8 lg:my-16 not-prose px-1 lg:px-0">
     <div class="relative group/img">
-      <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 rounded-[3rem] rotate-1 scale-105 blur-xl opacity-0 group-hover/img:opacity-100 transition-opacity duration-500"></div>
+      <div class="absolute inset-0 bg-blue-600/5 rounded-2xl lg:rounded-[3rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
       {src && (
         <img
           src={src}
           alt={alt}
-          class="relative w-full rounded-[3rem] shadow-2xl border-[8px] border-white object-cover transform group-hover/img:scale-[1.02] transition-transform duration-500"
+          class="relative w-full rounded-2xl lg:rounded-[3rem] shadow-lg border-2 lg:border-[8px] border-white object-cover"
         />
       )}
     </div>
     {alt && (
-      <p class="text-center text-sm text-slate-500 mt-4 italic">{alt}</p>
+      <p class="text-center text-[10px] lg:text-sm text-slate-400 mt-3 italic px-4 uppercase tracking-widest">{alt}</p>
     )}
   </div>
 )}
 
 {type === 'feature-grid' && (
-  <div class="grid md:grid-cols-2 gap-6 my-16 not-prose">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 lg:gap-6 my-8 lg:my-16 not-prose px-1 lg:px-0">
     {items.map((item: any, idx: number) => (
-      <div class="relative group/feature">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 rounded-[2rem] rotate-1 scale-105 group-hover/feature:scale-110 group-hover/feature:-rotate-1 transition-all duration-500"></div>
-        <div class="relative bg-white border-2 border-slate-200 rounded-[2rem] p-8 shadow-lg group-hover/feature:shadow-2xl group-hover/feature:border-blue-300 transition-all hover:-translate-y-2" style={`animation-delay: ${idx * 100}ms`}>
-          {item.icon && (
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-2xl mb-4 shadow-lg shadow-blue-600/30 group-hover/feature:scale-110 group-hover/feature:rotate-12 transition-all duration-500">
-              <span class="grayscale brightness-[3]">{item.icon}</span>
-            </div>
-          )}
-          <h4 class="text-xl font-black text-slate-800 mb-3">{item.title}</h4>
-          <p class="text-slate-600 leading-relaxed">{item.text}</p>
-        </div>
+      <div class="relative bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-xl lg:rounded-[2rem] p-5 lg:p-8 shadow-sm hover:shadow-lg transition-all" style={`animation-delay: ${idx * 100}ms`}>
+        {item.icon && (
+          <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-lg bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center text-lg lg:text-2xl mb-3 shadow-md">
+            <span class="grayscale brightness-[3]">{item.icon}</span>
+          </div>
+        )}
+        <h4 class="text-base lg:text-xl font-black text-slate-800 mb-1 lg:mb-3 leading-tight">{item.title}</h4>
+        <p class="text-sm lg:text-base text-slate-500 leading-relaxed">{item.text}</p>
       </div>
     ))}
   </div>
 )}
 
 {type === 'gradient-section' && (
-  <div class="relative my-20 not-prose overflow-hidden rounded-[3.5rem] group/gradient">
-    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 opacity-90 group-hover/gradient:opacity-100 transition-opacity"></div>
-    <div class="absolute inset-0 opacity-5 mix-blend-overlay"></div>
-    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-48 translate-x-48 group-hover/gradient:scale-150 transition-transform duration-1000"></div>
-    <div class="relative p-12 lg:p-16 text-white">
+  <div class="relative my-10 lg:my-20 not-prose overflow-hidden rounded-2xl lg:rounded-[3.5rem] group/gradient">
+    <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 opacity-95"></div>
+    <div class="relative p-6 lg:p-16 text-white text-center lg:text-left">
       {title && (
-        <h3 class="text-4xl lg:text-5xl font-black mb-6 leading-tight">{title}</h3>
+        <h3 class="text-2xl lg:text-5xl font-black mb-4 lg:mb-6 leading-tight uppercase tracking-tighter">{title}</h3>
       )}
-      <div class="prose prose-invert prose-lg max-w-none">
+      <div class="prose prose-invert prose-sm lg:prose-lg max-w-none">
         <slot />
       </div>
     </div>
@@ -199,39 +194,39 @@ const {
 )}
 
 {type === 'tabs' && (
-  <div class="my-16 not-prose" x-data="{ activeTab: 0 }">
-    <div class="flex gap-3 mb-8 overflow-x-auto pb-2">
+  <div class="my-8 lg:my-16 not-prose px-1" x-data="{ activeTab: 0 }">
+    <div class="flex gap-2 mb-4 overflow-x-auto pb-2 no-scrollbar scroll-smooth">
       {tabs.map((tab: any, idx: number) => (
         <button
           x-on:click={`activeTab = ${idx}`}
-          x-bind:class={`activeTab === ${idx} ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-xl shadow-blue-600/30 scale-105' : 'bg-white text-slate-600 hover:bg-slate-50'`}
-          class="px-8 py-4 rounded-2xl font-black text-lg border-2 border-slate-200 transition-all duration-300 whitespace-nowrap flex items-center gap-3"
+          x-bind:class={`activeTab === ${idx} ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-500 border-slate-100 hover:bg-slate-50'`}
+          class="px-4 py-2 lg:px-8 lg:py-4 rounded-lg lg:rounded-2xl font-black text-[11px] lg:text-lg border-2 transition-all whitespace-nowrap flex items-center gap-2"
         >
-          {tab.icon && <span class="text-2xl">{tab.icon}</span>}
+          {tab.icon && <span class="text-lg lg:text-2xl">{tab.icon}</span>}
           {tab.title}
         </button>
       ))}
     </div>
     {tabs.map((tab: any, idx: number) => (
-      <div x-show={`activeTab === ${idx}`} x-transition class="bg-white border-2 border-slate-200 rounded-[2.5rem] p-8 lg:p-10 shadow-xl">
-        <h4 class="text-3xl font-black text-slate-800 mb-6">{tab.title}</h4>
-        <div class="text-slate-600 leading-relaxed prose max-w-none" set:html={tab.content} />
+      <div x-show={`activeTab === ${idx}`} x-transition class="bg-white border border-slate-100 lg:border-2 lg:border-slate-200 rounded-2xl lg:rounded-[2.5rem] p-5 lg:p-10 shadow-md">
+        <h4 class="text-xl lg:text-3xl font-black text-slate-800 mb-3 lg:mb-6 leading-tight">{tab.title}</h4>
+        <div class="text-sm lg:text-base text-slate-500 leading-relaxed prose max-w-none" set:html={tab.content} />
       </div>
     ))}
   </div>
 )}
 
 {type === 'progress-bars' && (
-  <div class="my-16 not-prose space-y-6">
+  <div class="my-8 lg:my-16 not-prose space-y-4 lg:space-y-6 px-1 lg:px-0">
     {progress.map((item: any) => (
       <div>
-        <div class="flex justify-between mb-3">
-          <span class="font-black text-lg text-slate-800">{item.label}</span>
-          <span class="font-black text-lg text-blue-600">{item.value}%</span>
+        <div class="flex justify-between mb-1.5 lg:mb-3">
+          <span class="font-black text-sm lg:text-lg text-slate-800">{item.label}</span>
+          <span class="font-black text-sm lg:text-lg text-blue-600">{item.value}%</span>
         </div>
-        <div class="h-4 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+        <div class="h-2.5 lg:h-4 bg-slate-100 rounded-full overflow-hidden shadow-inner">
           <div
-            class="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-1000 ease-out shadow-lg"
+            class="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-1000 ease-out shadow-sm"
             style={`width: ${item.value}%`}
           ></div>
         </div>
@@ -241,61 +236,55 @@ const {
 )}
 
 {type === 'comparison' && (
-  <div class="grid md:grid-cols-2 gap-8 my-16 not-prose">
-    <div class="relative group/comp">
-      <div class="absolute -inset-1 bg-gradient-to-br from-blue-600 to-purple-600 rounded-[2.5rem] opacity-20 group-hover/comp:opacity-30 transition-opacity"></div>
-      <div class="relative bg-white border-2 border-blue-200 rounded-[2.5rem] p-10 shadow-xl">
-        <div class="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-xl shadow-blue-600/30">
-          <span class="grayscale brightness-[3]">{comparison.leftIcon}</span>
-        </div>
-        <h4 class="text-3xl font-black text-slate-800 mb-4">{comparison.leftTitle}</h4>
-        <p class="text-slate-600 leading-relaxed mb-6">{comparison.leftText}</p>
-        {comparison.leftItems && (
-          <ul class="space-y-3">
-            {comparison.leftItems.map((item: string) => (
-              <li class="flex items-start gap-3">
-                <Icon name="bx:check-circle" class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                <span class="text-slate-700">{item}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 my-8 lg:my-16 not-prose px-1 lg:px-0">
+    <div class="relative bg-white border border-blue-100 lg:border-2 lg:border-blue-200 rounded-2xl lg:rounded-[2.5rem] p-5 lg:p-10 shadow-sm">
+      <div class="w-10 h-10 lg:w-16 lg:h-16 bg-blue-600 rounded-lg lg:rounded-2xl flex items-center justify-center text-xl lg:text-3xl mb-4 text-white shadow-blue-200 shadow-lg">
+        {comparison.leftIcon}
       </div>
+      <h4 class="text-xl lg:text-3xl font-black text-slate-800 mb-2 leading-tight">{comparison.leftTitle}</h4>
+      <p class="text-sm lg:text-base text-slate-500 mb-4 leading-relaxed">{comparison.leftText}</p>
+      {comparison.leftItems && (
+        <ul class="space-y-2 text-sm lg:text-base">
+          {comparison.leftItems.map((item: string) => (
+            <li class="flex items-start gap-2">
+              <Icon name="bx:check-circle" class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <span class="text-slate-600">{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
 
-    <div class="relative group/comp">
-      <div class="absolute -inset-1 bg-gradient-to-br from-purple-600 to-pink-600 rounded-[2.5rem] opacity-20 group-hover/comp:opacity-30 transition-opacity"></div>
-      <div class="relative bg-white border-2 border-purple-200 rounded-[2.5rem] p-10 shadow-xl">
-        <div class="w-16 h-16 bg-gradient-to-br from-purple-600 to-purple-700 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-xl shadow-purple-600/30">
-          <span class="grayscale brightness-[3]">{comparison.rightIcon}</span>
-        </div>
-        <h4 class="text-3xl font-black text-slate-800 mb-4">{comparison.rightTitle}</h4>
-        <p class="text-slate-600 leading-relaxed mb-6">{comparison.rightText}</p>
-        {comparison.rightItems && (
-          <ul class="space-y-3">
-            {comparison.rightItems.map((item: string) => (
-              <li class="flex items-start gap-3">
-                <Icon name="bx:check-circle" class="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
-                <span class="text-slate-700">{item}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+    <div class="relative bg-white border border-purple-100 lg:border-2 lg:border-purple-200 rounded-2xl lg:rounded-[2.5rem] p-5 lg:p-10 shadow-sm">
+      <div class="w-10 h-10 lg:w-16 lg:h-16 bg-purple-600 rounded-lg lg:rounded-2xl flex items-center justify-center text-xl lg:text-3xl mb-4 text-white shadow-purple-200 shadow-lg">
+        {comparison.rightIcon}
       </div>
+      <h4 class="text-xl lg:text-3xl font-black text-slate-800 mb-2 leading-tight">{comparison.rightTitle}</h4>
+      <p class="text-sm lg:text-base text-slate-500 mb-4 leading-relaxed">{comparison.rightText}</p>
+      {comparison.rightItems && (
+        <ul class="space-y-2 text-sm lg:text-base">
+          {comparison.rightItems.map((item: string) => (
+            <li class="flex items-start gap-2">
+              <Icon name="bx:check-circle" class="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+              <span class="text-slate-600">{item}</span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   </div>
 )}
 
 {type === 'badges' && (
-  <div class="flex flex-wrap gap-3 my-8 not-prose">
+  <div class="flex flex-wrap gap-2 my-6 lg:my-8 not-prose px-1 lg:px-0">
     {badges.map((badge: any) => (
-      <span class={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-black text-sm uppercase tracking-wide shadow-lg transition-all hover:scale-110 ${
-        badge.variant === 'primary' ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-blue-600/30' :
-        badge.variant === 'success' ? 'bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-emerald-600/30' :
-        badge.variant === 'warning' ? 'bg-gradient-to-r from-amber-600 to-amber-700 text-white shadow-amber-600/30' :
-        'bg-slate-100 text-slate-700'
+      <span class={`inline-flex items-center gap-1.5 px-3 py-1.5 lg:px-5 lg:py-2.5 rounded-full font-black text-[9px] lg:text-sm uppercase tracking-wider shadow-sm ${
+        badge.variant === 'primary' ? 'bg-blue-600 text-white shadow-blue-200' :
+        badge.variant === 'success' ? 'bg-emerald-600 text-white' :
+        badge.variant === 'warning' ? 'bg-amber-500 text-white' :
+        'bg-slate-100 text-slate-500'
       }`}>
-        {badge.icon && <span class="text-lg">{badge.icon}</span>}
+        {badge.icon && <span class="text-base lg:text-lg">{badge.icon}</span>}
         {badge.text}
       </span>
     ))}
@@ -303,37 +292,36 @@ const {
 )}
 
 {type === 'quote' && (
-  <div class="relative my-16 not-prose">
-    <div class="absolute -top-6 -left-6 text-[120px] font-black text-blue-600/10 leading-none">"</div>
-    <div class="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-l-8 border-blue-600 rounded-[2.5rem] p-10 lg:p-12 shadow-xl">
-      <blockquote class="text-2xl lg:text-3xl font-medium text-slate-700 italic leading-relaxed mb-6">
+  <div class="relative my-10 lg:my-16 not-prose px-1">
+    <div class="absolute -top-3 lg:-top-6 left-1 lg:-left-6 text-[50px] lg:text-[120px] font-black text-blue-600/10 leading-none">"</div>
+    <div class="relative bg-gradient-to-br from-blue-50 to-indigo-50 border-l-4 lg:border-l-8 border-blue-600 rounded-xl lg:rounded-[2.5rem] p-6 lg:p-12 shadow-md">
+      <blockquote class="text-lg lg:text-3xl font-medium text-slate-700 italic leading-snug lg:leading-relaxed mb-3 lg:mb-6">
         <slot />
       </blockquote>
       {subtitle && (
-        <cite class="text-lg font-black text-blue-600 not-italic">— {subtitle}</cite>
+        <cite class="text-sm lg:text-lg font-black text-blue-600 not-italic">— {subtitle}</cite>
       )}
     </div>
   </div>
 )}
 
 {type === 'video-placeholder' && (
-  <div class="relative my-16 not-prose group/video">
-    <div class="aspect-video bg-gradient-to-br from-slate-200 to-slate-300 rounded-[3rem] overflow-hidden shadow-2xl border-[8px] border-white relative cursor-pointer group-hover/video:scale-[1.02] transition-transform duration-500">
+  <div class="relative my-8 lg:my-16 not-prose group/video px-1">
+    <div class="aspect-video bg-slate-100 rounded-xl lg:rounded-[3rem] overflow-hidden shadow-lg border-2 lg:border-[8px] border-white relative">
       {src && <img src={src} alt={alt} class="w-full h-full object-cover" />}
-      <div class="absolute inset-0 bg-black/30 group-hover/video:bg-black/20 transition-colors flex items-center justify-center">
-        <div class="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-2xl group-hover/video:scale-110 transition-transform">
-          <Icon name="bx:play" class="w-12 h-12 text-blue-600 ml-1" />
+      <div class="absolute inset-0 bg-black/20 flex items-center justify-center">
+        <div class="w-12 h-12 lg:w-24 lg:h-24 bg-white rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform cursor-pointer">
+          <Icon name="bx:play" class="w-6 h-6 lg:w-12 lg:h-12 text-blue-600 ml-0.5" />
         </div>
       </div>
     </div>
     {title && (
-      <p class="text-center text-lg font-bold text-slate-700 mt-6">{title}</p>
+      <p class="text-center text-sm lg:text-lg font-bold text-slate-700 mt-4 px-4">{title}</p>
     )}
   </div>
 )}
 
 <script>
-  // Alpine.js для табів (якщо потрібно)
   if (typeof window !== 'undefined' && !window.Alpine) {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
@@ -341,3 +329,8 @@ const {
     document.head.appendChild(script);
   }
 </script>
+
+<style>
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
