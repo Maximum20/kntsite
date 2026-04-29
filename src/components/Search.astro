@@ -1,7 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
 
-// Дані для пошуку
 const searchIndex = [
   { title: "Мегавольтна терапія (Лінійні прискорювачі)", tags: ["лінійник", "linac", "електа", "elekta", "versa", "опромінення", "пухлина"], url: "/services/linac", category: "відділення" },
   { title: "КТ-розмітка (Симуляція)", tags: ["кт", "комп'ютерна томографія", "симуляція", "планування"], url: "/services/ct", category: "послуга" },
@@ -11,80 +10,84 @@ const searchIndex = [
 ];
 ---
 
-{/* --- 1. КНОПКИ В ШАПЦІ (ТВОЄ МЕНЮ) --- */}
 {/* --- 1. КНОПКИ В ШАПЦІ --- */}
-<div class="flex items-center gap-2 mr-2 xl:mr-6 xl:ml-4 bg-slate-50/50 xl:bg-slate-50/50 p-1 rounded-full border border-slate-100 xl:border-slate-100">
+<div class="flex items-center xl:bg-white/60 xl:p-1.5 xl:rounded-full xl:border xl:border-slate-200/50 xl:shadow-sm xl:backdrop-blur-md mr-2 xl:mr-6 xl:ml-4 transition-all">
   
-  {/* Соціалки ховаємо на мобільних, показуємо тільки на xl */}
-  <div class="hidden xl:flex items-center gap-2.5 px-3">
-    <a href="#" class="text-slate-400 hover:text-[#1877F2] transition-all hover:scale-110"><Icon name="bx:bxl-facebook-circle" class="w-5 h-5" /></a>
-    <a href="#" class="text-slate-400 hover:text-[#0088cc] transition-all hover:scale-110"><Icon name="bx:bxl-telegram" class="w-5 h-5" /></a>
-    <a href="#" class="text-slate-400 hover:text-[#E4405F] transition-all hover:scale-110"><Icon name="bx:bxl-instagram" class="w-5 h-5" /></a>
-    <a href="#" class="text-slate-400 hover:text-[#FF0000] transition-all hover:scale-110"><Icon name="bx:bxl-youtube" class="w-5 h-5" /></a>
+  {/* Соціалки: видимі тільки на великих екранах */}
+  <div class="hidden xl:flex items-center gap-4 px-3">
+    <a href="#" class="text-slate-400 hover:text-blue-600 transition-colors"><Icon name="bx:bxl-facebook-circle" class="w-5 h-5" /></a>
+    <a href="#" class="text-slate-400 hover:text-blue-400 transition-colors"><Icon name="bx:bxl-telegram" class="w-5 h-5" /></a>
+    <a href="#" class="text-slate-400 hover:text-pink-500 transition-colors"><Icon name="bx:bxl-instagram" class="w-5 h-5" /></a>
   </div>
 
-  {/* Розділювач теж тільки для десктопа */}
-  <div class="hidden xl:block w-px h-4 bg-slate-200 mx-1"></div>
+  {/* Розділювач: видимий тільки на великих екранах */}
+  <div class="hidden xl:block w-px h-4 bg-slate-200"></div>
 
-  {/* Кнопка лупи тепер без hidden — вона видима всюди */}
-  <button id="search-trigger" class="relative flex items-center justify-center w-8 h-8 md:w-9 md:h-9 rounded-full bg-white shadow-sm text-blue-600 hover:bg-blue-600 hover:text-white transition-all group">
-    <Icon name="bx:bx-search" class="w-4 h-4" />
-    <span class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-blue-500 rounded-full border-2 border-white animate-pulse"></span>
+  {/* Кнопка пошуку: на мобільних вона тепер "гола" (без білого фону навколо) */}
+  <button id="search-trigger" class="group relative flex items-center justify-center w-9 h-9 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 active:scale-90">
+    <Icon name="bx:bx-search" class="w-4.5 h-4.5" />
+    {/* Зелена цятка — статус AI */}
+    <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-white animate-pulse"></span>
   </button>
 </div>
 
 {/* --- 2. ВІКНО ПОШУКУ (MODAL) --- */}
-<div id="search-modal" class="fixed inset-0 z-[999] hidden bg-slate-900/40 backdrop-blur-2xl items-start justify-center pt-20 px-4 font-sans">
-  <div class="bg-white/90 backdrop-blur-3xl w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/60 animate-in zoom-in-95 duration-300 flex flex-col max-h-[85vh]">
+<div id="search-modal" class="fixed inset-0 z-[999] hidden bg-slate-900/40 backdrop-blur-2xl items-start justify-center pt-12 md:pt-24 px-4 font-sans">
+  <div class="bg-white w-full max-w-2xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[80vh] border border-slate-100">
     
-    {/* TABS З ПЛАВАЮЧОЮ ЛІНІЄЮ */}
-    <div class="relative flex border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
-      <button id="tab-offline" class="flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 z-10 text-blue-600">Офлайн пошук</button>
-      <button id="tab-ai" class="flex-1 py-5 text-[10px] font-black uppercase tracking-widest transition-colors duration-300 z-10 text-slate-400 hover:text-blue-600">AI Помічник (Gemini)</button>
-      
-      {/* ПЛАВАЮЧИЙ ПІДКРЕСЛЮВАЧ */}
-      <div id="tab-indicator" class="absolute bottom-0 left-0 h-0.5 bg-blue-600 transition-all duration-300 ease-out" style="width: 50%; transform: translateX(0);"></div>
+    {/* СУЧАСНІ ВКЛАДКИ (Segmented Control) */}
+    <div class="p-4 bg-slate-50/50 border-b border-slate-100">
+      <div class="relative flex bg-slate-200/50 p-1 rounded-xl">
+        <button id="tab-offline" class="relative flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-blue-600">Пошук</button>
+        <button id="tab-ai" class="relative flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-slate-500">AI Асистент</button>
+        <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-transform duration-300 ease-out"></div>
+      </div>
     </div>
 
-    <div class="p-8 flex flex-col flex-1 overflow-hidden">
+    <div class="p-6 md:p-8 flex flex-col flex-1 overflow-hidden">
       {/* Search Input */}
-      <div class="flex items-center gap-4 bg-white/50 px-6 py-5 rounded-2xl border border-slate-200 focus-within:ring-2 ring-blue-500/20 transition-all shadow-inner flex-shrink-0">
-        <Icon name="bx:bx-search" class="w-6 h-6 text-blue-500" />
-        <input id="search-input" type="text" placeholder="Шукайте лікаря або відділення..." class="bg-transparent border-none outline-none w-full font-bold text-slate-700 placeholder:text-slate-400" autocomplete="off" />
+      <div class="relative flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-2xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50 transition-all flex-shrink-0">
+        <Icon name="bx:bx-search" class="w-5 h-5 text-slate-400" />
+        <input id="search-input" type="text" placeholder="Шукайте лікаря або відділення..." class="bg-transparent border-none outline-none w-full font-medium text-slate-700 placeholder:text-slate-400 text-base" autocomplete="off" />
         <div id="ai-loader" class="hidden">
            <div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
       
       {/* OFFLINE SECTION */}
-      <div id="offline-content" class="mt-8 overflow-y-auto no-scrollbar transition-all duration-300 opacity-100 translate-x-0">
+      <div id="offline-content" class="mt-6 overflow-y-auto no-scrollbar transition-all duration-300">
         <div id="suggestions-box">
-          <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-4 px-2 text-left">Вас може зацікавити:</p>
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Швидкі посилання:</p>
           <div class="flex flex-wrap gap-2">
-            <button class="tag-btn px-5 py-2.5 rounded-full bg-white text-slate-600 text-xs font-bold border border-slate-100 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm active:scale-95" data-query="#лікар">Знайти лікаря</button>
-            <button class="tag-btn px-5 py-2.5 rounded-full bg-white text-slate-600 text-xs font-bold border border-slate-100 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm active:scale-95" data-query="#відділення">Про відділення</button>
-            <button class="tag-btn px-5 py-2.5 rounded-full bg-white text-slate-600 text-xs font-bold border border-slate-100 hover:border-blue-400 hover:text-blue-600 transition-all shadow-sm active:scale-95" data-query="лінійний прискорювач">Лінійні прискорювачі</button>
+            {["#лікар", "#відділення", "лінійний прискорювач"].map(q => (
+              <button class="tag-btn px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-blue-600 hover:text-white transition-all active:scale-95" data-query={q}>
+                {q.replace('#', '')}
+              </button>
+            ))}
           </div>
         </div>
 
-        <div id="results-list" class="mt-6 space-y-2 hidden">
-          {/* Сюди JS підставлятиме результати */}
+        <div id="results-list" class="mt-6 space-y-3 hidden">
+          {/* JS Results */}
         </div>
       </div>
 
       {/* AI SECTION */}
-      <div id="ai-content" class="mt-8 hidden flex flex-col flex-1 overflow-hidden transition-all duration-300 opacity-0 translate-x-10">
-        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 no-scrollbar min-h-[300px]">
+      <div id="ai-content" class="mt-6 hidden flex flex-col flex-1 overflow-hidden transition-all duration-300 opacity-0 translate-x-4">
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 no-scrollbar min-h-[250px]">
           <div class="flex justify-start">
-            <div class="bg-blue-600 text-white p-4 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-md leading-relaxed">
-              Вітаю! Я ваш інтелектуальний помічник. Запитуйте про обладнання, процедури або лікарів.
+            <div class="bg-blue-50 text-blue-700 p-4 rounded-2xl rounded-tl-none text-sm max-w-[90%] leading-relaxed border border-blue-100">
+              Вітаю, Максе! Я допоможу знайти потрібну інформацію. Що вас цікавить?
             </div>
           </div>
         </div>
 
-        <button id="clear-chat" class="text-[10px] uppercase font-black text-slate-400 hover:text-red-500 transition-all mb-2 self-end px-2">
-          Очистити історію
-        </button>
+        <div class="flex justify-between items-center px-1">
+          <span class="text-[10px] text-slate-400 font-medium">Gemini 1.5 Flash</span>
+          <button id="clear-chat" class="text-[10px] uppercase font-bold text-slate-400 hover:text-red-500 transition-colors">
+            Очистити чат
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -92,7 +95,7 @@ const searchIndex = [
 </div>
 
 <script define:vars={{ searchIndex }}>
-  // 1. ТЕЛЕПОРТ
+  // ТЕЛЕПОРТ (залишаємо без змін)
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('search-modal');
     if (modal) document.body.appendChild(modal);
@@ -119,43 +122,24 @@ const searchIndex = [
   let currentTab = 'offline';
   let chatHistory = [];
 
-  // --- Логіка плавного перемикання вкладок ---
   const switchToTab = (tab) => {
     currentTab = tab;
-    
     if (tab === 'ai') {
-      // Анімація лінії
       indicator.style.transform = 'translateX(100%)';
-      
-      // Стилі тексту
-      tAI.classList.replace('text-slate-400', 'text-blue-600');
-      tOff.classList.replace('text-blue-600', 'text-slate-400');
-      
-      // Контент
+      tAI.classList.replace('text-slate-500', 'text-blue-600');
+      tOff.classList.replace('text-blue-600', 'text-slate-500');
       cOff.classList.add('hidden');
       cAI.classList.remove('hidden');
-      
-      // Плавна поява контенту AI
-      setTimeout(() => {
-        cAI.style.opacity = '1';
-        cAI.style.transform = 'translateX(0)';
-      }, 10);
-      
-      input.placeholder = "Напишіть ваше запитання до AI...";
+      setTimeout(() => { cAI.style.opacity = '1'; cAI.style.transform = 'translateX(0)'; }, 10);
+      input.placeholder = "Запитайте будь-що...";
     } else {
-      // Анімація лінії назад
       indicator.style.transform = 'translateX(0)';
-      
-      // Стилі тексту
-      tOff.classList.replace('text-slate-400', 'text-blue-600');
-      tAI.classList.replace('text-blue-600', 'text-slate-400');
-      
-      // Контент
+      tOff.classList.replace('text-slate-500', 'text-blue-600');
+      tAI.classList.replace('text-blue-600', 'text-slate-500');
       cAI.classList.add('hidden');
       cOff.classList.remove('hidden');
       cAI.style.opacity = '0';
       cAI.style.transform = 'translateX(10px)';
-      
       input.placeholder = "Шукайте лікаря або відділення...";
     }
     input.focus();
@@ -164,7 +148,6 @@ const searchIndex = [
   tOff?.addEventListener('click', () => switchToTab('offline'));
   tAI?.addEventListener('click', () => switchToTab('ai'));
 
-  // --- Відкриття/закриття ---
   trigger?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
     modal?.classList.add('flex');
@@ -179,7 +162,6 @@ const searchIndex = [
   };
   close?.addEventListener('click', hideModal);
 
-  // --- Пошук (Твоя логіка) ---
   function performSearch(query) {
     const rawQ = query.toLowerCase().trim();
     if (rawQ.length < 2) {
@@ -198,27 +180,26 @@ const searchIndex = [
   function renderResults(results) {
     if (!resultsList) return;
     resultsList.innerHTML = results.length === 0 
-      ? `<p class="text-xs text-slate-400 p-4 text-center">Нічого не знайдено</p>`
+      ? `<p class="text-sm text-slate-400 py-8 text-center">Нічого не знайдено</p>`
       : results.map(item => `
-          <a href="${item.url}" class="group block p-4 rounded-2xl bg-white border border-slate-100 hover:border-blue-400 hover:bg-blue-50/30 transition-all shadow-sm">
-            <div class="flex items-center justify-between">
-              <div class="flex flex-col text-left">
-                <span class="text-[10px] font-black uppercase text-blue-500 mb-1">${item.category}</span>
-                <span class="font-bold text-slate-700">${item.title}</span>
-              </div>
-              <div class="text-slate-300 group-hover:text-blue-600 transition-all">➔</div>
+          <a href="${item.url}" class="group flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-all">
+            <div class="flex flex-col">
+              <span class="text-[9px] font-bold uppercase text-blue-500 tracking-tighter mb-0.5">${item.category}</span>
+              <span class="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors">${item.title}</span>
+            </div>
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-slate-300 group-hover:text-blue-600 shadow-sm transition-all">
+               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" /></svg>
             </div>
           </a>
         `).join('');
   }
 
-  // --- Чат з AI ---
   function appendBubble(role, content) {
     const isAi = role === 'assistant';
     const div = document.createElement('div');
-    div.className = `flex ${isAi ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-1 duration-300`;
+    div.className = `flex ${isAi ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`;
     div.innerHTML = `
-      <div class="${isAi ? 'bg-blue-600 text-white rounded-tl-none' : 'bg-slate-100 text-slate-700 rounded-tr-none'} p-4 rounded-2xl text-sm max-w-[85%] shadow-sm leading-relaxed whitespace-pre-wrap text-left">
+      <div class="${isAi ? 'bg-slate-100 text-slate-700 rounded-tl-none border border-slate-200' : 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-100'} p-4 rounded-2xl text-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
         ${content}
       </div>
     `;
@@ -261,7 +242,7 @@ const searchIndex = [
       }
       chatHistory.push({ role: 'assistant', content: fullResponse });
     } catch (err) {
-      aiBubble.innerText = "Помилка зв'язку.";
+      aiBubble.innerText = "Помилка з'єднання.";
     } finally {
       aiLoader?.classList.add('hidden');
       input.disabled = false;
@@ -269,7 +250,6 @@ const searchIndex = [
     }
   }
 
-  // Обробка подій
   input?.addEventListener('input', (e) => {
     if (currentTab === 'offline') performSearch(e.target.value);
   });
@@ -283,7 +263,7 @@ const searchIndex = [
 
   clearChatBtn?.addEventListener('click', () => {
     chatHistory = [];
-    chatMessages.innerHTML = `<div class="flex justify-start"><div class="bg-blue-600 text-white p-4 rounded-2xl rounded-tl-none text-sm max-w-[85%] shadow-md leading-relaxed">Історію очищено.</div></div>`;
+    chatMessages.innerHTML = `<div class="flex justify-start"><div class="bg-blue-50 text-blue-700 p-4 rounded-2xl rounded-tl-none text-sm max-w-[90%] border border-blue-100">Чат очищено. Чим я можу допомогти?</div></div>`;
   });
 
   document.querySelectorAll('.tag-btn').forEach(btn => {
@@ -300,4 +280,5 @@ const searchIndex = [
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   #chat-messages { scroll-behavior: smooth; }
+  input:focus { outline: none; }
 </style>
