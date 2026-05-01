@@ -1,0 +1,126 @@
+---
+import type { Doctor } from '../types';
+
+interface Props {
+  doctor: Doctor;
+}
+
+const { doctor } = Astro.props;
+
+// Логіка для автоматичного зменшення шрифту
+// Якщо ім'я або прізвище довше за 10 символів — вважаємо його довгим
+const isLongName = doctor.name.length > 10 || doctor.surname.length > 10;
+
+// Класи для закритої картки
+const closedTitleClass = isLongName 
+  ? "text-2xl md:text-3xl" 
+  : "text-3xl md:text-4xl";
+
+// Класи для розгорнутої картки
+const expandedTitleClass = isLongName 
+  ? "text-xl md:text-2xl" 
+  : "text-2xl md:text-3xl";
+---
+
+<div
+  class="doctor-card group relative h-[550px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-white/20 bg-slate-200 transition-all duration-500 hover:-translate-y-2"
+  data-name={`${doctor.name} ${doctor.surname}`}
+  data-role={doctor.role}
+  data-dept={doctor.department}
+>
+  <!-- Фонове зображення -->
+  <div class="absolute inset-0 overflow-hidden">
+    <img
+      src={doctor.image}
+      alt={`${doctor.name} ${doctor.surname}`}
+      class="card-image w-full h-full object-cover transition-transform duration-700 pointer-events-none group-[.is-expanded]:scale-110"
+      referrerpolicy="no-referrer"
+    />
+    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
+  </div>
+  
+  <!-- Текст на закритій картці -->
+  <div class="card-closed absolute inset-0 p-8 flex flex-col justify-end transition-all duration-500 group-[.is-expanded]:opacity-0 group-[.is-expanded]:pointer-events-none">
+    <div class={`inline-block self-start bg-gradient-to-r ${doctor.color} text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-4 shadow-lg`}>
+      {doctor.role}
+    </div>
+    
+    <!-- Динамічний шрифт тут -->
+    <h3 class={`font-serif ${closedTitleClass} font-bold text-white leading-[1.1] mb-4`}>
+      {doctor.name}<br/>{doctor.surname}
+    </h3>
+    
+    <div class="flex items-center gap-2 text-white/70">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      <span class="text-[10px] font-bold tracking-widest uppercase">Детальна анкетка</span>
+    </div>
+  </div>
+
+  <!-- РОЗГОРНУТА АНКЕТА -->
+  <div class="card-expanded absolute inset-0 z-30 bg-white flex flex-col translate-y-full group-[.is-expanded]:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
+    <div class="pt-4 flex justify-center">
+       <div class="w-12 h-1 bg-slate-200 rounded-full"></div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar text-[#1a2b3b]">
+      <div class="flex items-center gap-4 md:gap-6 mb-8">
+        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white shadow-xl bg-slate-100 flex-shrink-0">
+          <img src={doctor.image} alt={doctor.name} class="w-full h-full object-cover" referrerpolicy="no-referrer" />
+        </div>
+        <div class="min-w-0">
+          <!-- Динамічний шрифт тут -->
+          <h4 class={`${expandedTitleClass} font-serif font-bold leading-tight text-[#1a2b3b] break-words`}>
+            {doctor.name}<br/>{doctor.surname}
+          </h4>
+          <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mt-1">
+            {doctor.role}
+          </span>
+        </div>
+      </div>
+
+      <div class="space-y-8">
+        <div class="relative p-5 md:p-6 bg-[#f8fafc] rounded-3xl border-l-[6px] border-[#94a3b8]">
+          <p class="italic text-base md:text-lg text-slate-600 leading-relaxed font-serif pl-2">
+            "{doctor.bio}"
+          </p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 md:gap-8 border-b border-slate-100 pb-8">
+          <div>
+            <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-2 text-[9px] md:text-[10px] font-bold">Досвід</span>
+            <p class="text-2xl md:text-3xl font-bold">{doctor.experience}</p>
+          </div>
+          <div>
+            <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-2 text-[9px] md:text-[10px] font-bold">Відділення</span>
+            <p class="text-xs md:text-sm font-bold uppercase tracking-wide leading-tight">{doctor.department}</p>
+          </div>
+        </div>
+
+        <div class="border-b border-slate-100 pb-8">
+           <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-4 text-[9px] md:text-[10px] font-bold">Освіта</span>
+           <p class="text-xs md:text-sm font-medium text-slate-700 leading-relaxed">{doctor.education}</p>
+        </div>
+
+        <div class="pb-8">
+           <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-4 text-[9px] md:text-[10px] font-bold">Ключові напрямки</span>
+           <div class="flex flex-wrap gap-2">
+             {doctor.specializations.map((spec) => (
+               <span class="px-2 py-1 md:px-3 md:py-1.5 bg-[#1a2b3b] text-white text-[8px] md:text-[9px] font-bold rounded-lg uppercase tracking-wide">
+                 {spec}
+               </span>
+             ))}
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .doctor-card:global(.is-expanded) {
+    z-index: 50;
+  }
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
+

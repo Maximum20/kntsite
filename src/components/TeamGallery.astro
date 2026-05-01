@@ -17,6 +17,9 @@ const teamPhotos = [
 ];
 ---
 
+<!-- Підключаємо Swiper CSS прямо тут для надійності -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
 <section class="relative z-10 max-w-[1400px] mx-auto px-6 py-20">
   <div class="mb-12 text-center md:text-left">
     <h2 class="text-3xl md:text-5xl font-serif font-bold text-slate-900">Команда медичних фізиків</h2>
@@ -32,7 +35,6 @@ const teamPhotos = [
               <img 
                 src={photo.url} 
                 alt={photo.title}
-            
                 class="w-full h-auto block object-contain" 
               />
               
@@ -48,14 +50,16 @@ const teamPhotos = [
         ))}
       </div>
 
-      <div class="team-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+      <!-- Кнопки навігації -->
+      <div class="team-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
         <Icon name="bx:left-arrow-alt" class="w-8 h-8" />
       </div>
-      <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 flex items-center justify-center text-white cursor-pointer hover:bg-white/20 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+      <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
         <Icon name="bx:right-arrow-alt" class="w-8 h-8" />
       </div>
       
-      <div class="team-pagination !bottom-4"></div>
+      <!-- Пагінація -->
+      <div class="team-pagination !bottom-8"></div>
     </div>
   </div>
 </section>
@@ -63,14 +67,54 @@ const teamPhotos = [
 <style is:global>
   .team-pagination .swiper-pagination-bullet {
     background: white !important;
-    opacity: 0.3;
-    width: 20px;
-    height: 4px;
-    border-radius: 2px;
+    opacity: 0.5;
+    width: 12px;
+    height: 6px;
+    border-radius: 4px;
     transition: all 0.3s ease;
   }
   .team-pagination .swiper-pagination-bullet-active {
     opacity: 1;
-    width: 40px;
+    width: 30px;
+    background: white !important;
+  }
+  
+  /* Фікс для слайдів, щоб не стрибали при завантаженні */
+  .team-swiper:not(.swiper-initialized) .swiper-slide:not(:first-child) {
+    display: none;
   }
 </style>
+
+<script>
+  import Swiper from 'swiper';
+  import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+
+  function initTeamSwiper() {
+    new Swiper('.team-swiper', {
+      modules: [Navigation, Pagination, Autoplay],
+      slidesPerView: 1,
+      spaceBetween: 0,
+      loop: true,
+      speed: 1000,
+      grabCursor: true,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      },
+      pagination: {
+        el: '.team-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.team-next',
+        prevEl: '.team-prev',
+      },
+    });
+  }
+
+  // Запуск при завантаженні
+  initTeamSwiper();
+
+  // Якщо використовуєш View Transitions в Astro
+  document.addEventListener('astro:after-swap', initTeamSwiper);
+</script>

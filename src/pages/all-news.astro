@@ -1,0 +1,203 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from "astro-icon/components";
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro'; 
+
+const allNews = await getCollection('news') || [];
+const sortedNews = allNews.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Підготовка даних для пошуку в JS
+const newsData = sortedNews.map(item => ({
+  id: item.id,
+  title: item.data.title,
+  description: item.data.description,
+  date: item.data.date.toLocaleDateString('uk-UA'),
+  url: `/news/${item.id}`
+}));
+---
+
+<Layout title="Архів публікацій | Центр">
+  <main class="py-16 md:py-24">
+    <div class="container mx-auto px-5">
+      
+      <!-- Header Section -->
+      <div class="flex flex-col items-center text-center mb-16">
+        <a href="/" class="group flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors mb-6 font-bold uppercase text-[10px] tracking-[0.2em]">
+          <Icon name="bx:left-arrow-alt" class="w-5 h-5 transition-transform group-hover:-translate-x-1" /> 
+          На головну
+        </a>
+        <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6">
+          Архів <span class="text-blue-600">публікацій</span>
+        </h1>
+        <p class="text-lg text-slate-500 max-w-2xl font-medium">
+          Повний літопис подій, досягнень та оновлень нашого медичного центру.
+        </p>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="max-w-3xl mx-auto mb-20 relative z-50">
+        <div class="relative group">
+          <input
+            type="text"
+            id="newsSearch"
+            autocomplete="off"
+            placeholder="Пошук за назвою або змістом..."
+            class="w-full pl-6 pr-14 py-5 backdrop-blur-xl bg-white/40 border border-slate-200/50 rounded-3xl text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/5 transition-all shadow-xl shadow-slate-200/20"
+          />
+          <div class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-blue-600">
+            <Icon name="bx:search" class="w-7 h-7" />
+          </div>
+        </div>
+        
+        <!-- Dropdown / Live Results -->
+        <div id="searchDropdown" class="hidden absolute left-0 right-0 top-full mt-3 max-h-[400px] overflow-y-auto bg-white/95 backdrop-blur-2xl border border-slate-100 rounded-3xl shadow-2xl z-[100] custom-scrollbar">
+          <div id="dropdownResults" class="p-4 space-y-2"></div>
+        </div>
+      </div>
+
+      <!-- News Feed (Different Style) -->
+      <div id="newsGrid" class="grid gap-16 max-w-5xl mx-auto">
+        {sortedNews.map((item, index) => (
+          <article 
+            class="news-card group relative grid md:grid-cols-[1fr_1.5fr] gap-8 items-center border-b border-slate-100 pb-16 last:border-0"
+            data-title={item.data.title.toLowerCase()}
+            data-desc={item.data.description.toLowerCase()}
+          >
+            <!-- Image Side -->
+            <div class="relative aspect-[4/3] overflow-hidden rounded-[2.5rem]">
+              {item.data.image && (
+                <Image 
+                  src={item.data.image} 
+                  alt={item.data.title} 
+                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                />
+              )}
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+
+            <!-- Content Side -->
+            <div class="flex flex-col">
+              <div class="flex items-center gap-4 mb-4">
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">Новина</span>
+                <span class="text-slate-400 font-bold text-xs flex items-center gap-1">
+                  <Icon name="bx:calendar" class="w-4 h-4" />
+                  {item.data.date.toLocaleDateString('uk-UA')}
+                </span>
+              </div>
+              
+              <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors leading-tight">
+                <a href={`/news/${item.id}`}>{item.data.title}</a>
+              </h2>
+              
+              <p class="text-slate-500 leading-relaxed mb-6 line-clamp-3 font-medium">
+                {item.data.description}
+              </p>
+              
+              <div>
+                <a href={`/news/${item.id}`} class="inline-flex items-center gap-2 font-bold text-slate-900 hover:text-blue-600 transition-all text-sm group/btn">
+                  Детальніше 
+                  <span class="w-8 h-[2px] bg-slate-200 transition-all group-hover/btn:w-12 group-hover/btn:bg-blue-600"></span>
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <!-- No Results State -->
+      <div id="noResults" class="hidden text-center py-20">
+        <Icon name="bx:search" class="w-16 h-16 text-slate-200 mx-auto mb-4" />
+        <p class="text-slate-400 font-bold text-xl">Нічого не знайдено за вашим запитом</p>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script is:inline define:vars={{ newsData }}>
+  function initNewsSearch() {
+    const searchInput = document.getElementById('newsSearch');
+    const newsGrid = document.getElementById('newsGrid');
+    const newsCards = document.querySelectorAll('.news-card');
+    const noResults = document.getElementById('noResults');
+    const dropdown = document.getElementById('searchDropdown');
+    const dropdownResults = document.getElementById('dropdownResults');
+
+    function applySearch() {
+      const query = searchInput.value.toLowerCase().trim();
+      let hasMatches = false;
+
+      newsCards.forEach(card => {
+        const title = card.dataset.title || '';
+        const desc = card.dataset.desc || '';
+        const isMatch = title.includes(query) || desc.includes(query);
+
+        if (isMatch) {
+          card.style.display = 'grid';
+          hasMatches = true;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      noResults.classList.toggle('hidden', hasMatches);
+    }
+
+    function renderDropdown() {
+      const query = searchInput.value.toLowerCase().trim();
+      if (query.length < 2) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      const filtered = newsData.filter(n => 
+        n.title.toLowerCase().includes(query) || 
+        n.description.toLowerCase().includes(query)
+      ).slice(0, 5);
+
+      if (filtered.length === 0) {
+        dropdown.classList.add('hidden');
+        return;
+      }
+
+      dropdownResults.innerHTML = filtered.map(n => `
+        <a href="${n.url}" class="flex flex-col p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
+          <div class="text-xs font-black text-blue-500 uppercase tracking-widest mb-1">${n.date}</div>
+          <div class="text-sm font-bold text-slate-900 group-hover:text-blue-600">${n.title}</div>
+        </a>
+      `).join('');
+
+      dropdown.classList.remove('hidden');
+    }
+
+    searchInput.addEventListener('input', () => {
+      applySearch();
+      renderDropdown();
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  }
+
+  initNewsSearch();
+  document.addEventListener('astro:after-swap', initNewsSearch);
+</script>
+
+<style>
+  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  
+  /* Плавна поява карток при фільтрації */
+  .news-card {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
