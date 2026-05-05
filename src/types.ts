@@ -11,4 +11,6 @@ export interface Doctor {
   education: string;
   achievements: string;
   color: string;
+
+  badge?: string;
 }

@@ -32,17 +32,46 @@ import TeamGallery from '@components/TeamGallery.astro';
     <!-- Вставляємо наш новий компонент пошуку -->
     <SearchBar />
 
-    <div class="container mx-auto">
-      <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto pb-20">
-        {doctors.map(doctor => (
-          <DoctorCard doctor={doctor} />
-        ))}
-      </div>
-
-      <div id="noResults" class="hidden text-center py-20">
-        <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено...</p>
-      </div>
+   <div class="container mx-auto px-4">
+  <!-- 1. АКЦЕНТ: Завідувачка + Текстовий блок поруч -->
+  <div class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-20 max-w-6xl mx-auto">
+    <div class="w-full max-w-[400px] shrink-0 relative z-10">
+      {doctors.filter(d => d.surname === "Сніжинська").map(boss => (
+        <DoctorCard doctor={boss} />
+      ))}
     </div>
+    
+    <div class="text-center lg:text-left max-w-xl">
+      <span class="text-amber-500 font-bold tracking-widest uppercase text-xs md:text-sm mb-3 block">
+        Очільниця команди
+      </span>
+      <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1a365d] mb-6 leading-tight">
+        Керівництво відділення
+      </h2>
+      <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+        Робота нашого відділення побудована на високих міжнародних стандартах. 
+        Ми об'єднали кращих спеціалістів, щоб забезпечити максимальну точність, 
+        безпеку та комфорт для кожного пацієнта під час променевої терапії.
+      </p>
+    </div>
+  </div>
+
+  <!-- 2. СІТКА: Всі інші лікарі -->
+  <div class="text-center mb-10">
+    <h3 class="text-2xl font-serif font-bold text-[#1a365d]">Спеціалісти відділення</h3>
+  </div>
+
+  <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto pb-20">
+    {doctors.filter(d => d.surname !== "Сніжинська").map(doctor => (
+      <DoctorCard doctor={doctor} />
+    ))}
+  </div>
+
+  <!-- Повідомлення про відсутність результатів -->
+  <div id="noResults" class="hidden text-center py-20">
+    <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено...</p>
+  </div>
+</div>
 
 <TeamGallery />
 

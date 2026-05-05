@@ -25,6 +25,7 @@ const expandedTitleClass = isLongName
 <div
   class="doctor-card group relative h-[550px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-white/20 bg-slate-200 transition-all duration-500 hover:-translate-y-2"
   data-name={`${doctor.name} ${doctor.surname}`}
+  
   data-role={doctor.role}
   data-dept={doctor.department}
 >
@@ -36,14 +37,23 @@ const expandedTitleClass = isLongName
       class="card-image w-full h-full object-cover transition-transform duration-700 pointer-events-none group-[.is-expanded]:scale-110"
       referrerpolicy="no-referrer"
     />
-    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-80 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
+    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/100 via-black/0 to-transparent opacity-100 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
   </div>
   
   <!-- Текст на закритій картці -->
   <div class="card-closed absolute inset-0 p-8 flex flex-col justify-end transition-all duration-500 group-[.is-expanded]:opacity-0 group-[.is-expanded]:pointer-events-none">
-    <div class={`inline-block self-start bg-gradient-to-r ${doctor.color} text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-4 shadow-lg`}>
-      {doctor.role}
+  
+  {/* --- ДОДАЄМО ЦЕЙ БЛОК --- */}
+  {doctor.badge && (
+    <div class="inline-block self-start bg-amber-500 text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-2 shadow-lg ring-1 ring-white/20">
+      {doctor.badge}
     </div>
+  )}
+  {/* ------------------------ */}
+
+  <div class={`inline-block self-start bg-gradient-to-r ${doctor.color} text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-4 shadow-lg`}>
+    {doctor.role}
+  </div>
     
     <!-- Динамічний шрифт тут -->
     <h3 class={`font-serif ${closedTitleClass} font-bold text-white leading-[1.1] mb-4`}>

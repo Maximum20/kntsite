@@ -4,6 +4,7 @@ export const doctors: Doctor[] = [
   {
     name: "Валерія",
     surname: "Сніжинська",
+    badge: "В.о. завідувачки відділенням променевої терапії №1", // <--- Додано
     role: "Лікар з радіаційної онкології",
     department: "Мегавольтна терапія",
     initials: "ТТ",
@@ -14,48 +15,6 @@ export const doctors: Doctor[] = [
     education: "Національний медичний університет, PhD",
     achievements: "Понад 500 успішних курсів лікування",
     color: "from-slate-600 to-slate-700"
-  },
-  {
-    name: "Анна",
-    surname: "Трубіцина",
-    role: "Лікар-рентгенолог",
-    department: "КТ-розмітка",
-    initials: "ВС",
-    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
-    image: "/hero/doctors/trubitsyna.jpg",
-    experience: "8 років",
-    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
-    education: "-",
-    achievements: "Понад 2000 успішно проведених КТ-топометрій",
-    color: "from-slate-700 to-slate-800"
-  },
-  {
-    name: "Ольга",
-    surname: "Нестеренко",
-    role: "Старша медична сестра",
-    department: "Мегавольтна терапія",
-    initials: "ЄП",
-    bio: "Спеціаліст з сучасних методик опромінення IMRT та VMAT під контролем Brainlab.",
-    image: "/hero/doctors/nesterenko.jpg",
-    experience: "18 років",
-    specializations: ["IMRT", "VMAT", "Brainlab навігація"],
-    education: "Харківський медуніверситет",
-    achievements: "Міжнародні стажування в Німеччині",
-    color: "from-slate-600 to-slate-800"
-  },
-  {
-    name: "Аліна",
-    surname: "Діденко",
-    role: "Лікар-рентгенолог",
-    department: "КТ-розмітка",
-    initials: "ОК",
-    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
-    image: "/hero/doctors/didenko.jpg",
-    experience: "8 років",
-    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
-    education: "-",
-    achievements: "Понад 2000 успішно проведених КТ-топометрій",
-    color: "from-slate-700 to-slate-800"
   },
   {
     name: "Анна",
@@ -85,6 +44,23 @@ export const doctors: Doctor[] = [
     achievements: "Діагностика ранніх стадій онкології",
     color: "from-slate-700 to-slate-800"
   },
+{
+    name: "Олександра",
+    surname: "Землянська",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
+    initials: "СЛ",
+    bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
+    image: "/hero/doctors/zemlyanska.jpg",
+    experience: "14 років",
+    specializations: ["Томосинтез", "КТ", "МРТ"],
+    education: "Одеський медуніверситет",
+    achievements: "Діагностика ранніх стадій онкології",
+    color: "from-slate-600 to-slate-700"
+  },
+
+  
+
   {
     name: "Євгеній",
     surname: "Підмогильний",
@@ -98,6 +74,97 @@ export const doctors: Doctor[] = [
     education: "Одеський медуніверситет",
     achievements: "Діагностика ранніх стадій онкології",
     color: "from-slate-600 to-slate-700"
+  },
+
+  {
+    name: "Лариса",
+    surname: "Рижова",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
+    initials: "СЛ",
+    bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
+    image: "/hero/doctors/ryzhova.jpg",
+    experience: "14 років",
+    specializations: ["Томосинтез", "КТ", "МРТ"],
+    education: "Одеський медуніверситет",
+    achievements: "Діагностика ранніх стадій онкології",
+    color: "from-slate-600 to-slate-700"
+  },
+
+  {
+    name: "Володимир",
+    surname: "Гончар",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
+    initials: "СЛ",
+    bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
+    image: "/hero/doctors/honchar.jpg",
+    experience: "14 років",
+    specializations: ["Томосинтез", "КТ", "МРТ"],
+    education: "Одеський медуніверситет",
+    achievements: "Діагностика ранніх стадій онкології",
+    color: "from-slate-600 to-slate-700"
+  },
+
+{
+    name: "Альона",
+    surname: "Лук'яшко",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
+    initials: "СЛ",
+    bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
+    image: "/hero/doctors/lukyashko.jpg",
+    experience: "14 років",
+    specializations: ["Томосинтез", "КТ", "МРТ"],
+    education: "Одеський медуніверситет",
+    achievements: "Діагностика ранніх стадій онкології",
+    color: "from-slate-600 to-slate-700"
+  },
+  
+  {
+    name: "Анна",
+    surname: "Трубіцина",
+    role: "Лікар-рентгенолог",
+    department: "КТ-розмітка",
+    initials: "ВС",
+    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
+    image: "/hero/doctors/trubitsyna.jpg",
+    experience: "8 років",
+    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
+    education: "-",
+    achievements: "Понад 2000 успішно проведених КТ-топометрій",
+    color: "from-slate-700 to-slate-800"
+  },
+
+  {
+    name: "Аліна",
+    surname: "Діденко",
+    role: "Лікар-рентгенолог",
+    department: "КТ-розмітка",
+    initials: "ОК",
+    bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
+    image: "/hero/doctors/didenko.jpg",
+    experience: "8 років",
+    specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
+    education: "-",
+    achievements: "Понад 2000 успішно проведених КТ-топометрій",
+    color: "from-slate-700 to-slate-800"
+  },
+  
+  
+   {
+    name: "Ольга",
+    surname: "Нестеренко",
+    role: "Старша медична сестра",
+    department: "Мегавольтна терапія",
+    initials: "ЄП",
+    bio: "Спеціаліст з сучасних методик опромінення IMRT та VMAT під контролем Brainlab.",
+    image: "/hero/doctors/nesterenko.jpg",
+    experience: "18 років",
+    specializations: ["IMRT", "VMAT", "Brainlab навігація"],
+    education: "Харківський медуніверситет",
+    achievements: "Міжнародні стажування в Німеччині",
+    color: "from-slate-600 to-slate-800"
   },
 
 ];
