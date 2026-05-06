@@ -5,10 +5,15 @@ import SearchBar from '../components/SearchBar.astro';
 import { Icon } from "astro-icon/components";
 import { doctors } from '../data'; 
 import TeamGallery from '@components/TeamGallery.astro';
+
+// Фільтруємо завідувачку для окремого блоку
+const boss = doctors.find(d => d.surname === "Сніжинська");
+// Всі інші для сітки
+const specialists = doctors.filter(d => d.surname !== "Сніжинська");
 ---
 
 <Layout title="Наша команда" hideSubNav={true}>
-  <main class="min-h-screen py-8 px-4 md:px-8">
+  <main class="min-h-screen py-8 px-4 md:px-8 bg-slate-50/50">
     
     <!-- Навігація -->
     <div class="relative z-20 px-2 md:px-12 flex items-center mb-12">
@@ -25,70 +30,80 @@ import TeamGallery from '@components/TeamGallery.astro';
         Наша велика команда
       </h1>
       <p class="text-[10px] md:text-xs font-bold tracking-[0.4em] text-slate-400 uppercase">
+        Професіоналізм • Турбота • Технології
       </p>
     </header>
 
     <!-- Компонент пошуку -->
     <SearchBar />
 
-    <div class="container mx-auto px-4">
-      <div id="headSection" class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-24 max-w-6xl mx-auto px-2">
-  
-  <!-- Картка лікаря -->
-  <div class="w-full max-w-[400px] shrink-0 relative z-10">
-    {doctors.filter(d => d.surname === "Сніжинська").map(boss => (
-      <DoctorCard doctor={boss} />
-    ))}
-  </div>
-  
-  <!-- Текстовий контейнер -->
-  <div class="relative w-full max-w-xl">
-    <!-- Декоративний елемент на фоні (опціонально) -->
-    <div class="absolute -top-10 -left-10 w-32 h-32 bg-slate-100 rounded-full blur-3xl opacity-50 -z-10"></div>
-    
-    <div class="bg-white/60 backdrop-blur-md p-8 md:p-12 rounded-[3rem] border border-white shadow-xl shadow-slate-200/50 relative">
+    <div class="container mx-auto px-4 mt-16">
       
-      <span class="inline-block text-amber-600 font-black tracking-[0.2em] uppercase text-[10px] mb-4 px-4 py-1.5 bg-amber-50 rounded-full">
-        Очільниця команди
-      </span>
+      <!-- 1. АКЦЕНТНИЙ БЛОК: Завідувачка -->
+      {boss && (
+        <div id="headSection" class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-24 max-w-6xl mx-auto px-2">
+          <div class="w-full max-w-[400px] shrink-0 relative z-10">
+            <DoctorCard doctor={boss} />
+          </div>
+          
+          <div class="relative w-full max-w-xl">
+            <div class="absolute -top-10 -left-10 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-40 -z-10"></div>
+            
+            <div class="bg-white/70 backdrop-blur-md p-8 md:p-12 rounded-[3rem] border border-white shadow-xl shadow-slate-200/50 relative">
+              <span class="inline-block text-amber-600 font-black tracking-[0.2em] uppercase text-[10px] mb-4 px-4 py-1.5 bg-amber-50 rounded-full">
+                Очільниця команди
+              </span>
 
-      <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1a365d] mb-6 leading-tight">
-        Керівництво відділення
-      </h2>
+              <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1a365d] mb-6 leading-tight">
+                Керівництво відділення
+              </h2>
 
-      <div class="space-y-6">
-        <p class="text-slate-600 text-base md:text-lg leading-relaxed font-medium italic border-l-4 border-[#1a365d]/20 pl-6">
-          "Робота нашого відділення побудована на високих міжнародних стандартах. 
-          Ми об'єднали кращих спеціалістів, щоб забезпечити максимальну точність, 
-          безпеку та комфорт для кожного пацієнта під час променевої терапії."
-        </p>
+              <div class="space-y-6">
+                <p class="text-slate-600 text-base md:text-lg leading-relaxed font-medium italic border-l-4 border-[#1a365d]/20 pl-6">
+                  "Робота нашого відділення побудована на високих міжнародних стандартах. 
+                  Ми об'єднали кращих спеціалістів, щоб забезпечити точність та безпеку для кожного пацієнта."
+                </p>
 
-        <!-- Підпис з ім'ям -->
-        <div class="pt-4 mt-8 border-t border-slate-100">
-          <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Завідувачка відділення</span>
-          <p class="font-serif text-xl md:text-2xl font-bold text-[#1a365d]">
-            Сніжинська Валерія Іванівна
-          </p>
+                <div class="pt-4 mt-8 border-t border-slate-100">
+                  <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Завідувачка відділення</span>
+                  <p class="font-serif text-xl md:text-2xl font-bold text-[#1a365d]">
+                    Сніжинська Валерія Іванівна
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+      )}
 
-      <!-- 2. СІТКА: Всі інші лікарі -->
-      <div id="specialistsTitle" class="text-center mb-10">
+      <!-- 2. СІТКА: Спеціалісти з пагінацією -->
+      <div id="specialistsTitle" class="text-center mb-12">
         <h3 class="text-2xl font-serif font-bold text-[#1a365d]">Спеціалісти відділення</h3>
       </div>
 
-      <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto pb-20">
-        {doctors.filter(d => d.surname !== "Сніжинська").map(doctor => (
-          <DoctorCard doctor={doctor} />
+      <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
+        {specialists.map((doctor, index) => (
+          <div class={`doctor-wrapper transition-all duration-500 ${index >= 6 ? 'hidden opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <DoctorCard doctor={doctor} />
+          </div>
         ))}
       </div>
 
-      <!-- Повідомлення про відсутність результатів -->
+      <!-- Кнопка "Показати ще" -->
+      <div id="loadMoreContainer" class="text-center py-16">
+        <button 
+          id="loadMoreBtn" 
+          class="inline-flex items-center gap-3 px-10 py-4 bg-[#1a365d] text-white font-bold rounded-2xl hover:bg-[#254a7c] transition-all shadow-xl shadow-blue-900/10 active:scale-95"
+        >
+          <span>Показати ще фахівців</span>
+          <Icon name="bx:chevron-down" class="w-5 h-5" />
+        </button>
+      </div>
+
+      <!-- Повідомлення про відсутність результатів (для пошуку) -->
       <div id="noResults" class="hidden text-center py-20">
-        <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено...</p>
+        <Icon name="bx:search-alt" class="w-16 h-16 text-slate-200 mx-auto mb-4" />
+        <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено за вашим запитом...</p>
       </div>
     </div>
 
@@ -97,11 +112,25 @@ import TeamGallery from '@components/TeamGallery.astro';
   </main>
 </Layout>
 
+<style>
+  .doctor-wrapper.is-visible {
+    display: block !important;
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
 <script>
-  function initCards() {
+  function initTeamPage() {
+    // 1. Логіка карток (відкриття анкет)
     const cards = document.querySelectorAll('.doctor-card');
     cards.forEach(card => {
-      card.addEventListener('click', () => {
+      card.addEventListener('click', (e) => {
+        // Якщо клікнули на посилання всередині або кнопку, не закриваємо
         if (card.classList.contains('is-expanded')) {
           card.classList.remove('is-expanded');
         } else {
@@ -110,7 +139,36 @@ import TeamGallery from '@components/TeamGallery.astro';
         }
       });
     });
+
+    // 2. Логіка "Показати ще"
+    const grid = document.getElementById('doctorsGrid');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    
+    if (grid && loadMoreBtn) {
+      const itemsPerRow = 3; 
+      const rowsToLoad = 2;
+      const step = itemsPerRow * rowsToLoad; // Додаємо по 6 карток
+
+      loadMoreBtn.addEventListener('click', () => {
+        const hiddenItems = grid.querySelectorAll('.doctor-wrapper.hidden');
+        
+        Array.from(hiddenItems).slice(0, step).forEach(item => {
+          item.classList.remove('hidden');
+          // Невелика затримка для красивого ефекту появи
+          setTimeout(() => item.classList.add('is-visible'), 10);
+        });
+
+        // Ховаємо кнопку, якщо карток більше немає
+        if (grid.querySelectorAll('.doctor-wrapper.hidden').length === 0) {
+          loadMoreContainer?.classList.add('hidden');
+        }
+      });
+    }
   }
-  initCards();
-  document.addEventListener('astro:after-swap', initCards);
+
+  // Запуск логіки
+  initTeamPage();
+  // Перезапуск при навігації в Astro
+  document.addEventListener('astro:after-swap', initTeamPage);
 </script>
