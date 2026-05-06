@@ -107,6 +107,21 @@ export const doctors: Doctor[] = [
   },
 
 {
+    name: "Євгенія",
+    surname: "Примакова",
+    role: "Лікар з радіаційної онкології",
+    department: "Мегавольтна терапія",
+    initials: "СЛ",
+    bio: "Спеціалізується на томосинтезі та цифровій радіографії.",
+    image: "/hero/doctors/prymakova.jpg",
+    experience: "14 років",
+    specializations: ["Томосинтез", "КТ", "МРТ"],
+    education: "Одеський медуніверситет",
+    achievements: "Діагностика ранніх стадій онкології",
+    color: "from-slate-600 to-slate-700"
+  },
+
+{
     name: "Альона",
     surname: "Лук'яшко",
     role: "Лікар з радіаційної онкології",
