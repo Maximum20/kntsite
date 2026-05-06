@@ -10,7 +10,7 @@ import TeamGallery from '@components/TeamGallery.astro';
 <Layout title="Наша команда" hideSubNav={true}>
   <main class="min-h-screen py-8 px-4 md:px-8">
     
-    <!-- Навігація як у прикладі -->
+    <!-- Навігація -->
     <div class="relative z-20 px-2 md:px-12 flex items-center mb-12">
       <a href="/" class="inline-flex items-center gap-4 group">
         <div class="w-12 h-12 rounded-full backdrop-blur-xl bg-white/60 border border-white/80 flex items-center justify-center group-hover:bg-white/90 transition-all shadow-lg shadow-slate-200/40">
@@ -25,60 +25,77 @@ import TeamGallery from '@components/TeamGallery.astro';
         Наша велика команда
       </h1>
       <p class="text-[10px] md:text-xs font-bold tracking-[0.4em] text-slate-400 uppercase">
-       
       </p>
     </header>
 
-    <!-- Вставляємо наш новий компонент пошуку -->
+    <!-- Компонент пошуку -->
     <SearchBar />
 
-   <div class="container mx-auto px-4">
-  <!-- 1. АКЦЕНТ: Завідувачка + Текстовий блок поруч -->
-  <div class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-20 max-w-6xl mx-auto">
-    <div class="w-full max-w-[400px] shrink-0 relative z-10">
-      {doctors.filter(d => d.surname === "Сніжинська").map(boss => (
-        <DoctorCard doctor={boss} />
-      ))}
-    </div>
+    <div class="container mx-auto px-4">
+      <div id="headSection" class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-24 max-w-6xl mx-auto px-2">
+  
+  <!-- Картка лікаря -->
+  <div class="w-full max-w-[400px] shrink-0 relative z-10">
+    {doctors.filter(d => d.surname === "Сніжинська").map(boss => (
+      <DoctorCard doctor={boss} />
+    ))}
+  </div>
+  
+  <!-- Текстовий контейнер -->
+  <div class="relative w-full max-w-xl">
+    <!-- Декоративний елемент на фоні (опціонально) -->
+    <div class="absolute -top-10 -left-10 w-32 h-32 bg-slate-100 rounded-full blur-3xl opacity-50 -z-10"></div>
     
-    <div class="text-center lg:text-left max-w-xl">
-      <span class="text-amber-500 font-bold tracking-widest uppercase text-xs md:text-sm mb-3 block">
+    <div class="bg-white/60 backdrop-blur-md p-8 md:p-12 rounded-[3rem] border border-white shadow-xl shadow-slate-200/50 relative">
+      
+      <span class="inline-block text-amber-600 font-black tracking-[0.2em] uppercase text-[10px] mb-4 px-4 py-1.5 bg-amber-50 rounded-full">
         Очільниця команди
       </span>
+
       <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1a365d] mb-6 leading-tight">
         Керівництво відділення
       </h2>
-      <p class="text-slate-600 text-base md:text-lg leading-relaxed">
-        Робота нашого відділення побудована на високих міжнародних стандартах. 
-        Ми об'єднали кращих спеціалістів, щоб забезпечити максимальну точність, 
-        безпеку та комфорт для кожного пацієнта під час променевої терапії.
-      </p>
+
+      <div class="space-y-6">
+        <p class="text-slate-600 text-base md:text-lg leading-relaxed font-medium italic border-l-4 border-[#1a365d]/20 pl-6">
+          "Робота нашого відділення побудована на високих міжнародних стандартах. 
+          Ми об'єднали кращих спеціалістів, щоб забезпечити максимальну точність, 
+          безпеку та комфорт для кожного пацієнта під час променевої терапії."
+        </p>
+
+        <!-- Підпис з ім'ям -->
+        <div class="pt-4 mt-8 border-t border-slate-100">
+          <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Завідувачка відділення</span>
+          <p class="font-serif text-xl md:text-2xl font-bold text-[#1a365d]">
+            Сніжинська Валерія Іванівна
+          </p>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <!-- 2. СІТКА: Всі інші лікарі -->
-  <div class="text-center mb-10">
-    <h3 class="text-2xl font-serif font-bold text-[#1a365d]">Спеціалісти відділення</h3>
-  </div>
-
-  <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto pb-20">
-    {doctors.filter(d => d.surname !== "Сніжинська").map(doctor => (
-      <DoctorCard doctor={doctor} />
-    ))}
-  </div>
-
-  <!-- Повідомлення про відсутність результатів -->
-  <div id="noResults" class="hidden text-center py-20">
-    <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено...</p>
   </div>
 </div>
 
-<TeamGallery />
+      <!-- 2. СІТКА: Всі інші лікарі -->
+      <div id="specialistsTitle" class="text-center mb-10">
+        <h3 class="text-2xl font-serif font-bold text-[#1a365d]">Спеціалісти відділення</h3>
+      </div>
+
+      <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto pb-20">
+        {doctors.filter(d => d.surname !== "Сніжинська").map(doctor => (
+          <DoctorCard doctor={doctor} />
+        ))}
+      </div>
+
+      <!-- Повідомлення про відсутність результатів -->
+      <div id="noResults" class="hidden text-center py-20">
+        <p class="text-slate-400 text-xl font-serif italic">Спеціалістів не знайдено...</p>
+      </div>
+    </div>
+
+    <TeamGallery />
 
   </main>
 </Layout>
-
-
 
 <script>
   function initCards() {
@@ -97,4 +114,3 @@ import TeamGallery from '@components/TeamGallery.astro';
   initCards();
   document.addEventListener('astro:after-swap', initCards);
 </script>
-

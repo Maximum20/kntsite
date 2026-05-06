@@ -8,20 +8,28 @@ const baseChip = "filter-chip px-4 py-2 md:px-5 md:py-2.5 bg-white border border
 const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white shadow-lg shadow-slate-200 px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-[10px] md:text-xs font-bold transition-all active:scale-95";
 ---
 
-<!-- ДОДАНО relative z-[70], щоб випадаючий список був поверх карток -->
 <div class="max-w-6xl mx-auto px-4 mb-12 relative z-[70]">
   <div class="backdrop-blur-2xl bg-white/70 border border-white/80 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 p-5 md:p-8">
     
-    <!-- Пошуковий рядок -->
     <div class="relative mb-6">
       <div class="relative group">
         <input
           type="text"
           id="nameSearch"
           autocomplete="off"
-          placeholder="Пошук за ім'ям або посадою..."
-          class="w-full pl-5 pr-12 py-3.5 md:pl-7 md:pr-16 md:py-4 backdrop-blur-xl bg-white/90 border border-slate-200/60 rounded-2xl text-sm md:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all shadow-sm"
+          placeholder="Пошук..."
+          class="w-full pl-5 pr-20 py-3.5 md:pl-7 md:pr-24 md:py-4 backdrop-blur-xl bg-white/90 border border-slate-200/60 rounded-2xl text-sm md:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all shadow-sm"
         />
+        
+        <button 
+          id="clearSearch" 
+          class="hidden absolute right-12 md:right-16 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-900 transition-colors z-10"
+        >
+          <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+
         <div class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
           <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <circle cx="11" cy="11" r="8" stroke-width="2.5"/><path d="M21 21l-4.35-4.35" stroke-width="2.5" stroke-linecap="round"/>
@@ -29,14 +37,11 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
         </div>
       </div>
 
-      <!-- ВИПАДАЮЧИЙ СПИСОК (z-[100] для надійності) -->
       <div 
         id="searchDropdown" 
         class="hidden absolute left-0 right-0 top-full mt-3 max-h-[350px] overflow-y-auto z-[100] bg-white/95 backdrop-blur-xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] custom-scrollbar"
       >
-        <div id="dropdownResults" class="p-3 space-y-1">
-          <!-- Результати рендерить JS -->
-        </div>
+        <div id="dropdownResults" class="p-3 space-y-1"></div>
       </div>
     </div>
 
@@ -71,6 +76,7 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
 <script is:inline define:vars={{ doctors }}>
   function initFilters() {
     const searchInput = document.getElementById('nameSearch');
+    const clearBtn = document.getElementById('clearSearch');
     const dropdown = document.getElementById('searchDropdown');
     const dropdownResults = document.getElementById('dropdownResults');
     const toggleBtn = document.getElementById('toggleAdvanced');
@@ -85,13 +91,55 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
     const activeClasses = "bg-[#1a2b3b] border-[#1a2b3b] text-white shadow-lg shadow-slate-200";
     const baseClasses = "bg-white border-slate-200 text-slate-600 shadow-none";
 
+    function updateButtonStyles(buttons, activeBtn) {
+      buttons.forEach(btn => {
+        btn.classList.remove('active', ...activeClasses.split(' '));
+        btn.classList.add(...baseClasses.split(' '));
+      });
+      activeBtn.classList.add('active', ...activeClasses.split(' '));
+      activeBtn.classList.remove(...baseClasses.split(' '));
+    }
+
     function applyFilters() {
       const query = searchInput.value.toLowerCase().trim();
+      const isSearchActive = query.length > 0 || activeDept !== 'all' || activeRole !== 'all';
+      
+      if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
+
       const cards = document.querySelectorAll('.doctor-card');
       const noResults = document.getElementById('noResults');
+      const headSection = document.getElementById('headSection');
+      const specialistsTitle = document.getElementById('specialistsTitle');
+      
       let hasMatches = false;
 
+      if (specialistsTitle) {
+        specialistsTitle.style.display = isSearchActive ? 'none' : 'block';
+      }
+
+      if (headSection) {
+        const bossCard = headSection.querySelector('.doctor-card');
+        const bossName = bossCard?.dataset.name?.toLowerCase() || '';
+        const bossRole = bossCard?.dataset.role || '';
+        const bossDept = bossCard?.dataset.dept || '';
+
+        const matchesSearch = bossName.includes(query);
+        const matchesDept = activeDept === 'all' || bossDept === activeDept;
+        const matchesRole = activeRole === 'all' || bossRole === activeRole;
+
+        if (!isSearchActive) {
+          headSection.style.display = 'flex';
+        } else if (matchesSearch && matchesDept && matchesRole) {
+          headSection.style.display = 'flex';
+          hasMatches = true;
+        } else {
+          headSection.style.display = 'none';
+        }
+      }
+
       cards.forEach(card => {
+        if (card.closest('#headSection')) return;
+
         const name = card.dataset.name?.toLowerCase() || '';
         const role = card.dataset.role || '';
         const dept = card.dataset.dept || '';
@@ -108,12 +156,12 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
           card.classList.remove('is-expanded');
         }
       });
-      if (noResults) noResults.classList.toggle('hidden', hasMatches);
+
+      if (noResults) noResults.classList.toggle('hidden', hasMatches || !isSearchActive);
     }
 
     function renderDropdown() {
       const query = searchInput.value.toLowerCase().trim();
-      
       const filtered = doctors.filter(doc => {
         const nameMatch = (doc.name + " " + doc.surname).toLowerCase().includes(query);
         const deptMatch = activeDept === 'all' || doc.department === activeDept;
@@ -142,30 +190,48 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
       dropdown.classList.remove('hidden');
 
       document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', (e) => {
-          searchInput.value = item.dataset.fullname;
+        item.addEventListener('click', () => {
+          const fullName = item.dataset.fullname;
+          searchInput.value = fullName;
           dropdown.classList.add('hidden');
           applyFilters();
           
           const targetCard = Array.from(document.querySelectorAll('.doctor-card'))
-            .find(c => c.dataset.name === item.dataset.fullname);
+            .find(c => c.dataset.name === fullName);
           if (targetCard) {
             targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            targetCard.click();
+            setTimeout(() => { if (!targetCard.classList.contains('is-expanded')) targetCard.click(); }, 100);
           }
         });
       });
     }
 
-    searchInput.addEventListener('input', () => {
+    // ЛОГІКА ПОВНОГО СКИНУ (ХРЕСТИК)
+    clearBtn?.addEventListener('click', () => {
+      // 1. Скидаємо текст
+      searchInput.value = '';
+      
+      // 2. Скидаємо фільтри в пам'яті
+      activeDept = 'all';
+      activeRole = 'all';
+      
+      // 3. Візуально повертаємо кнопки "Всі" в активний стан
+      const defaultDeptBtn = document.querySelector('#deptFilter [data-value="all"]');
+      const defaultRoleBtn = document.querySelector('#roleFilter [data-value="all"]');
+      if (defaultDeptBtn) updateButtonStyles(deptButtons, defaultDeptBtn);
+      if (defaultRoleBtn) updateButtonStyles(roleButtons, defaultRoleBtn);
+      
+      // 4. Приховуємо список та оновлюємо видимість карток
+      dropdown.classList.add('hidden');
       applyFilters();
-      renderDropdown();
+      searchInput.focus();
     });
 
+    searchInput.addEventListener('input', () => { applyFilters(); renderDropdown(); });
     searchInput.addEventListener('focus', renderDropdown);
 
     document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+      if (!searchInput.contains(e.target) && !dropdown.contains(e.target) && !clearBtn?.contains(e.target)) {
         dropdown.classList.add('hidden');
       }
     });
@@ -174,15 +240,6 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
       panel?.classList.toggle('hidden');
       chevron?.classList.toggle('rotate-180');
     });
-
-    function updateButtonStyles(buttons, activeBtn) {
-      buttons.forEach(btn => {
-        btn.classList.remove('active', ...activeClasses.split(' '));
-        btn.classList.add(...baseClasses.split(' '));
-      });
-      activeBtn.classList.add('active', ...activeClasses.split(' '));
-      activeBtn.classList.remove(...baseClasses.split(' '));
-    }
 
     deptButtons.forEach(btn => {
       btn.addEventListener('click', () => {
@@ -210,9 +267,5 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
 <style>
   .custom-scrollbar::-webkit-scrollbar { width: 4px; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-  
-  .dropdown-item:active {
-    background-color: #f1f5f9;
-    transform: scale(0.98);
-  }
+  .dropdown-item:active { background-color: #f1f5f9; transform: scale(0.98); }
 </style>

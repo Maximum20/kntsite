@@ -7,29 +7,17 @@ interface Props {
 
 const { doctor } = Astro.props;
 
-// Логіка для автоматичного зменшення шрифту
-// Якщо ім'я або прізвище довше за 10 символів — вважаємо його довгим
 const isLongName = doctor.name.length > 10 || doctor.surname.length > 10;
-
-// Класи для закритої картки
-const closedTitleClass = isLongName 
-  ? "text-2xl md:text-3xl" 
-  : "text-3xl md:text-4xl";
-
-// Класи для розгорнутої картки
-const expandedTitleClass = isLongName 
-  ? "text-xl md:text-2xl" 
-  : "text-2xl md:text-3xl";
+const closedTitleClass = isLongName ? "text-2xl md:text-3xl" : "text-3xl md:text-4xl";
+const expandedTitleClass = isLongName ? "text-xl md:text-2xl" : "text-2xl md:text-3xl";
 ---
 
 <div
   class="doctor-card group relative h-[550px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-white/20 bg-slate-200 transition-all duration-500 hover:-translate-y-2"
   data-name={`${doctor.name} ${doctor.surname}`}
-  
   data-role={doctor.role}
   data-dept={doctor.department}
 >
-  <!-- Фонове зображення -->
   <div class="absolute inset-0 overflow-hidden">
     <img
       src={doctor.image}
@@ -37,25 +25,41 @@ const expandedTitleClass = isLongName
       class="card-image w-full h-full object-cover transition-transform duration-700 pointer-events-none group-[.is-expanded]:scale-110"
       referrerpolicy="no-referrer"
     />
-    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/100 via-black/0 to-transparent opacity-100 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
+    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/99 via-black/0 to-transparent opacity-100 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
   </div>
   
-  <!-- Текст на закритій картці -->
   <div class="card-closed absolute inset-0 p-8 flex flex-col justify-end transition-all duration-500 group-[.is-expanded]:opacity-0 group-[.is-expanded]:pointer-events-none">
   
-  {/* --- ДОДАЄМО ЦЕЙ БЛОК --- */}
-  {doctor.badge && (
-    <div class="inline-block self-start bg-amber-500 text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-2 shadow-lg ring-1 ring-white/20">
-      {doctor.badge}
-    </div>
-  )}
-  {/* ------------------------ */}
+    {/* АНІМОВАНИЙ РОТАТОР ЗІ ЗБІЛЬШЕНОЮ ВИСОТОЮ 44px */}
+    {doctor.badge ? (
+      <div class="status-rotator-container overflow-hidden h-[44px] mb-4">
+        <div class="status-rotator-track flex flex-col animate-rotate-status">
+          
+          {/* 1. РОЛЬ */}
+          <div class="h-[44px] flex items-center">
+            <div class={`inline-block bg-gradient-to-r ${doctor.color} text-[9px] font-bold text-white px-4 py-2 rounded-xl tracking-widest uppercase shadow-lg whitespace-nowrap`}>
+              {doctor.role}
+            </div>
+          </div>
 
-  <div class={`inline-block self-start bg-gradient-to-r ${doctor.color} text-[10px] font-bold text-white px-4 py-2 rounded-xl tracking-wider uppercase mb-4 shadow-lg`}>
-    {doctor.role}
-  </div>
+          {/* 2. ЗАВІДУВАЧКА (ДОЗВОЛЕНО ПЕРЕНОС ТЕКСТУ) */}
+          <div class="h-[38px] flex items-center">
+            <div class="inline-block bg-white/95 backdrop-blur-sm text-[9px] font-black text-[#1a365d] px-4 py-1.5 rounded-xl tracking-widest uppercase shadow-lg border border-white/50 leading-tight max-w-[220px]">
+              {doctor.badge}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    ) : (
+      /* ФІКСОВАНА ВИСОТА ДЛЯ ОДНОРІДНОСТІ КАРТОК */
+      <div class="h-[44px] flex items-center mb-4">
+        <div class={`inline-block bg-gradient-to-r ${doctor.color} text-[9px] font-bold text-white px-4 py-2 rounded-xl tracking-widest uppercase shadow-lg ring-1 ring-white/10 whitespace-nowrap`}>
+          {doctor.role}
+        </div>
+      </div>
+    )}
     
-    <!-- Динамічний шрифт тут -->
     <h3 class={`font-serif ${closedTitleClass} font-bold text-white leading-[1.1] mb-4`}>
       {doctor.name}<br/>{doctor.surname}
     </h3>
@@ -66,7 +70,6 @@ const expandedTitleClass = isLongName
     </div>
   </div>
 
-  <!-- РОЗГОРНУТА АНКЕТА -->
   <div class="card-expanded absolute inset-0 z-30 bg-white flex flex-col translate-y-full group-[.is-expanded]:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]">
     <div class="pt-4 flex justify-center">
        <div class="w-12 h-1 bg-slate-200 rounded-full"></div>
@@ -74,22 +77,29 @@ const expandedTitleClass = isLongName
 
     <div class="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar text-[#1a2b3b]">
       <div class="flex items-center gap-4 md:gap-6 mb-8">
-        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-white shadow-xl bg-slate-100 flex-shrink-0">
+        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-4 border-[#f8fafc] shadow-2xl flex-shrink-0">
           <img src={doctor.image} alt={doctor.name} class="w-full h-full object-cover" referrerpolicy="no-referrer" />
         </div>
         <div class="min-w-0">
-          <!-- Динамічний шрифт тут -->
-          <h4 class={`${expandedTitleClass} font-serif font-bold leading-tight text-[#1a2b3b] break-words`}>
+          <h4 class={`${expandedTitleClass} font-serif font-bold leading-tight text-[#1a365d]`}>
             {doctor.name}<br/>{doctor.surname}
           </h4>
-          <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mt-1">
+          
+          {doctor.badge && (
+            <div class="inline-flex items-center px-2.5 py-1 bg-slate-100 border border-slate-200 text-[#1a365d] text-[9px] font-black uppercase tracking-widest rounded-lg mt-3">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#1a365d] mr-2"></span>
+              {doctor.badge}
+            </div>
+          )}
+
+          <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mt-2">
             {doctor.role}
           </span>
         </div>
       </div>
 
       <div class="space-y-8">
-        <div class="relative p-5 md:p-6 bg-[#f8fafc] rounded-3xl border-l-[6px] border-[#94a3b8]">
+        <div class="relative p-5 md:p-6 bg-[#f8fafc] rounded-3xl border-l-[6px] border-[#1a365d]/10">
           <p class="italic text-base md:text-lg text-slate-600 leading-relaxed font-serif pl-2">
             "{doctor.bio}"
           </p>
@@ -97,25 +107,25 @@ const expandedTitleClass = isLongName
 
         <div class="grid grid-cols-2 gap-4 md:gap-8 border-b border-slate-100 pb-8">
           <div>
-            <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-2 text-[9px] md:text-[10px] font-bold">Досвід</span>
-            <p class="text-2xl md:text-3xl font-bold">{doctor.experience}</p>
+            <span class="block text-slate-400 uppercase tracking-widest mb-2 text-[9px] md:text-[10px] font-bold">Досвід</span>
+            <p class="text-2xl md:text-3xl font-bold text-[#1a365d]">{doctor.experience}</p>
           </div>
           <div>
-            <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-2 text-[9px] md:text-[10px] font-bold">Відділення</span>
-            <p class="text-xs md:text-sm font-bold uppercase tracking-wide leading-tight">{doctor.department}</p>
+            <span class="block text-slate-400 uppercase tracking-widest mb-2 text-[9px] md:text-[10px] font-bold">Відділення</span>
+            <p class="text-xs md:text-sm font-bold uppercase tracking-wide leading-tight text-[#1a365d]">{doctor.department}</p>
           </div>
         </div>
 
         <div class="border-b border-slate-100 pb-8">
-           <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-4 text-[9px] md:text-[10px] font-bold">Освіта</span>
+           <span class="block text-slate-400 uppercase tracking-widest mb-4 text-[9px] md:text-[10px] font-bold">Освіта</span>
            <p class="text-xs md:text-sm font-medium text-slate-700 leading-relaxed">{doctor.education}</p>
         </div>
 
         <div class="pb-8">
-           <span class="block text-[#94a3b8] uppercase tracking-[0.2em] mb-4 text-[9px] md:text-[10px] font-bold">Ключові напрямки</span>
+           <span class="block text-slate-400 uppercase tracking-widest mb-4 text-[9px] md:text-[10px] font-bold">Ключові напрямки</span>
            <div class="flex flex-wrap gap-2">
              {doctor.specializations.map((spec) => (
-               <span class="px-2 py-1 md:px-3 md:py-1.5 bg-[#1a2b3b] text-white text-[8px] md:text-[9px] font-bold rounded-lg uppercase tracking-wide">
+               <span class="px-3 py-1.5 bg-[#1a365d]/5 text-[#1a365d] text-[9px] font-bold rounded-lg uppercase tracking-wide border border-[#1a365d]/10">
                  {spec}
                </span>
              ))}
@@ -127,10 +137,20 @@ const expandedTitleClass = isLongName
 </div>
 
 <style>
+  /* Анімація рівно на висоту одного елемента (38px) */
+  @keyframes rotate-status {
+    0%, 40% { transform: translateY(0); }
+    50%, 90% { transform: translateY(-38px); }
+    100% { transform: translateY(0); }
+  }
+
+  .animate-rotate-status {
+    animation: rotate-status 6s infinite ease-in-out;
+  }
+
   .doctor-card:global(.is-expanded) {
     z-index: 50;
   }
   .custom-scrollbar::-webkit-scrollbar { width: 4px; }
   .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 </style>
-
