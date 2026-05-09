@@ -158,7 +158,7 @@ export const doctors: Doctor[] = [
     department: "КТ-розмітка",
     initials: "ОК",
     bio: "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії",
-    image: "/hero/doctors/didenko.jpg",
+    image: "/hero/doctors/didenko2.jpg",
     experience: "8 років",
     specializations: ["КТ-розмітка", "Контурування (GTV/CTV/PTV)", "Опис КТ-досліджень", "MRI/CT FUSION (злиття зображень МРТ та КТ)", "Планувальна топометрія"],
     education: "-",
