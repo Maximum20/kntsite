@@ -1,0 +1,101 @@
+---
+// src/components/LinacStaff.astro
+import { doctors } from '../data';
+import DoctorCard from './DoctorCard.astro';
+import { Icon } from "astro-icon/components";
+
+// Фільтруємо фахівців: Мегавольтна терапія + Лікар з радіаційної онкології
+const linacDoctors = doctors.filter(d => 
+  d.department === "Мегавольтна терапія" && 
+  d.role === "Лікар з радіаційної онкології"
+);
+---
+
+<section class="not-prose my-20">
+  {/* Декоративний заголовок */}
+  <div class="text-center mb-16 relative">
+    <div class="absolute inset-0 flex items-center justify-center -z-10">
+      <span class="text-8xl md:text-9xl font-black text-slate-100/50 uppercase tracking-widest select-none">
+        Team
+      </span>
+    </div>
+    
+    <span class="inline-block text-blue-600 font-black tracking-[0.3em] uppercase text-xs mb-4 px-4 py-1.5 bg-blue-50 rounded-full">
+      Експертна група
+    </span>
+    
+    <h2 class="text-4xl md:text-5xl font-serif font-bold text-[#1a365d] leading-tight">
+      Лікарі з радіаційної онкології
+    </h2>
+    <div class="w-24 h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-6 rounded-full"></div>
+  </div>
+
+  {/* Сітка карток */}
+  <div id="linacStaffGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto px-4">
+    {linacDoctors.map((doctor) => (
+      <div class="doctor-wrapper is-visible">
+        <DoctorCard doctor={doctor} />
+      </div>
+    ))}
+  </div>
+
+  {/* Кнопка переходу на сторінку всіх лікарів */}
+  <div class="text-center mt-20">
+    <a 
+      href="/doctors" 
+      class="inline-flex items-center gap-3 px-10 py-5 bg-white border-2 border-[#1a365d] text-[#1a365d] font-bold rounded-2xl hover:bg-[#1a365d] hover:text-white transition-all duration-300 shadow-xl shadow-slate-200/50 group active:scale-95"
+    >
+      <span>Переглянути усіх фахівців відділення</span>
+      <Icon name="bx:right-arrow-alt" class="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+    </a>
+    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-400 mt-4 font-bold">
+      • Повний склад команди • 
+    </p>
+  </div>
+</section>
+
+<style>
+  /* Анімація появи карток */
+  .doctor-wrapper.is-visible {
+    opacity: 0;
+    animation: fadeInUp 0.8s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+
+  @keyframes fadeInUp {
+    from { 
+      opacity: 0; 
+      transform: translateY(30px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+
+  .doctor-wrapper:nth-child(1) { animation-delay: 0.1s; }
+  .doctor-wrapper:nth-child(2) { animation-delay: 0.2s; }
+  .doctor-wrapper:nth-child(3) { animation-delay: 0.3s; }
+  .doctor-wrapper:nth-child(n+4) { animation-delay: 0.4s; }
+</style>
+
+<script>
+  function initLinacStaff() {
+    // Логіка інтерактивності карток
+    const cards = document.querySelectorAll('.doctor-card');
+    
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (card.classList.contains('is-expanded')) {
+          card.classList.remove('is-expanded');
+        } else {
+          cards.forEach(c => c.classList.remove('is-expanded'));
+          card.classList.add('is-expanded');
+        }
+      });
+    });
+  }
+
+  // Ініціалізація
+  initLinacStaff();
+  document.addEventListener('astro:after-swap', initLinacStaff);
+</script>

@@ -22,6 +22,7 @@ const {
 
 {type === 'hero' && (
   <div class="relative mb-10 lg:mb-32 not-prose px-1 lg:px-0">
+    {/* Кнопка "На головну" — без змін */}
     <a href="/" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all mb-6 lg:mb-12 group">
       <div class="w-8 h-8 lg:w-10 lg:h-10 rounded-full border border-slate-200 flex items-center justify-center group-hover:border-blue-200 group-hover:bg-blue-50 group-hover:scale-110 transition-all">
         <Icon name="bx:left-arrow-alt" class="w-5 h-5 lg:w-6 lg:h-6 group-hover:-translate-x-1 transition-transform" />
@@ -29,15 +30,22 @@ const {
       <span class="text-[10px] font-black uppercase tracking-[0.2em]">На головну</span>
     </a>
 
-    <div class="grid lg:grid-cols-2 gap-6 lg:gap-20 items-center">
-      <div class="relative order-2 lg:order-1 group/hero">
+    {/* Змінюємо сітку: даємо фото більше простору (lg:grid-cols-[1.4fr_1fr]) */}
+    <div class="grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-16 items-center">
+      
+      {/* Контейнер з фото */}
+      <div class="relative order-2 lg:order-1 group/hero lg:-ml-20 xl:-ml-40"> 
+        {/* lg:-ml-20 висуває фото вліво за межі контейнера */}
+        
         <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 rounded-2xl lg:rounded-[3.5rem] -rotate-1 lg:-rotate-2 scale-105 blur-2xl group-hover/hero:scale-110 transition-transform duration-700"></div>
-        <div class="absolute -top-2 -right-2 lg:-top-6 lg:-right-6 w-12 h-12 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl lg:rounded-3xl opacity-20"></div>
-        <div class="relative rounded-2xl lg:rounded-[3.5rem] overflow-hidden shadow-xl border-4 lg:border-[14px] border-white bg-slate-100 aspect-[4/3] lg:aspect-square transform group-hover/hero:scale-[1.01] transition-transform duration-500">
+        
+        {/* Змінюємо aspect-square на 16/10 або 16/9 для широкого вигляду */}
+        <div class="relative rounded-2xl lg:rounded-[3.5rem] overflow-hidden shadow-xl border-4 lg:border-[14px] border-white bg-slate-100 aspect-[4/3] lg:aspect-[16/10] transform group-hover/hero:scale-[1.01] transition-transform duration-500">
           {src && <img src={src} alt={alt || title} class="w-full h-full object-cover" />}
         </div>
       </div>
 
+      {/* Контейнер з текстом */}
       <div class="order-1 lg:order-2 px-1 lg:px-0">
         {subtitle && (
           <span class="inline-block text-blue-600 font-black uppercase tracking-[0.2em] lg:tracking-[0.4em] text-[10px] lg:text-xs mb-4 lg:mb-6 px-3 py-1.5 bg-blue-50 rounded-full">
