@@ -3,7 +3,7 @@ import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
 import fullLogo from "../../assets/full-logo.png"; 
-import Search from "../Search.astro"; // ПІДКЛЮЧАЄМО НОВИЙ ФАЙЛ
+import Search from "../Search.astro"; 
 
 const { hideSubNav } = Astro.props;
 
@@ -38,12 +38,12 @@ const nextTitle = isServiceDetailPage ? departments[nextIndex].btnTitle : '';
 const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : '';
 ---
 
-<header class="w-full xl:sticky xl:top-0 z-[100] transition-all duration-300">
+<header class="w-full relative xl:sticky xl:top-0 z-[100] transition-all duration-300">
   <div class="bg-transparent xl:bg-white/70 xl:backdrop-blur-xl border-transparent xl:border-b xl:border-white/60 shadow-none xl:shadow-sm relative z-20">
     <div class="max-w-[1800px] mx-auto px-5 font-sans">
       <div class="flex flex-col xl:flex-row items-center py-3 xl:py-2 gap-4">
         <Astronav>
-          <div class="flex w-full xl:w-auto items-center justify-between">
+          <div class="flex w-full xl:w-auto items-center justify-between relative z-50">
             <div class="flex items-center gap-2 sm:gap-4">
               <a href="/" class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95" data-target="home">
                 <Image src={fullLogo} alt="Лого" class="h-10 md:h-12 xl:h-14 w-auto object-contain" loading="eager" />
@@ -56,40 +56,43 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
               <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs active:scale-95">
                 <Icon name="bx:bxs-phone-call" class="w-4 h-4" /> Зв'язок
               </a>
-              <MenuIcon class="w-8 h-8 text-slate-800" />
+              
+              <div id="burger-wrapper" class="p-1.5 bg-white/85 backdrop-blur-2xl border border-white/90 rounded-2xl flex items-center justify-center shadow-sm active:scale-95 transition-all">
+                <MenuIcon class="w-7 h-7 text-slate-800" />
+              </div>
             </div>
           </div>
 
-          <MenuItems class="hidden w-full xl:flex xl:w-auto mt-4 xl:mt-0 xl:ml-auto">
-            <ul class="flex flex-col xl:flex-row xl:items-center gap-1 2xl:gap-4">
+          <MenuItems id="mobile-menu-overlay" class="hidden fixed inset-0 z-40 bg-black/5 backdrop-blur-xs xl:relative xl:inset-auto xl:z-auto xl:flex xl:w-auto xl:bg-transparent xl:backdrop-blur-none mt-0 xl:ml-auto">
+            
+            <ul id="mobile-menu-panel" class="flex flex-col w-full max-w-[300px] h-[calc(100vh-24px)] mt-3 mr-5 mb-4 ml-auto bg-white/85 backdrop-blur-2xl border border-white/90 p-5 pt-20 shadow-2xl shadow-blue-950/5 overflow-y-auto gap-1 rounded-[2.2rem] xl:flex-row xl:w-auto xl:max-w-none xl:h-auto xl:bg-transparent xl:backdrop-blur-none xl:border-none xl:p-0 xl:pt-0 xl:mt-0 xl:mr-0 xl:mb-0 xl:ml-0 xl:shadow-none xl:overflow-visible xl:items-center 2xl:gap-4">
               
-              {/* НАША ЛУПА І СОЦМЕРЕЖІ ТЕПЕР ТУТ  <Search /> */}
               <Search />
 
-              <div class="xl:hidden px-3 mt-4 mb-2 flex items-center gap-2">
-                <div class="w-6 h-px bg-slate-200"></div>
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Навігація</p>
+              <div class="xl:hidden px-2 mt-4 mb-1.5 flex items-center gap-2">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Сторінки</p>
+                <div class="flex-1 h-px bg-slate-500/10"></div>
               </div>
 
               {menuitems.map((item) => (
                 <li>
-                  <a href={item.path} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
-                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
+                  <a href={item.path} class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group">
                     <span>{item.title}</span>
+                    <Icon name="bx:chevron-right" class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5" />
                   </a>
                 </li>
               ))}
 
-              <div class="xl:hidden px-3 mt-6 mb-2 flex items-center gap-2">
-                <div class="w-6 h-px bg-slate-200"></div>
+              <div class="xl:hidden px-2 mt-5 mb-1.5 flex items-center gap-2">
                 <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Детальніше про:</p>
+                <div class="flex-1 h-px bg-slate-500/10"></div>
               </div>
 
               {departments.map((dept) => (
                 <li class="xl:hidden">
-                  <a href={`/services/${dept.id}`} class="flex items-center gap-2 px-3 py-2 rounded-full text-[14px] font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all group">
-                    <div class="w-1.5 h-1.5 rounded-full bg-blue-400/50 group-hover:bg-blue-500 shrink-0"></div>
+                  <a href={`/services/${dept.id}`} class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group">
                     <span>{dept.btnTitle}</span>
+                    <Icon name="bx:chevron-right" class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5" />
                   </a>
                 </li>
               ))}
@@ -97,7 +100,7 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
               <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1"></div>
               
               <li class="mt-4 xl:mt-0">
-                <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-slate-200 transition-all">
+                <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-white/80 transition-all">
                   <Icon name="bx:link-external" class="w-4 h-4 opacity-50" />
                   <span>{mainClinic.title}</span>
                 </a>
@@ -105,10 +108,39 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
 
               <li class="hidden xl:flex">
                 <a href="#contacts" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
-                  <Icon name="bx:bxs-phone-call" class="w-5 h-5 xl:w-4 h-4" />
+                  <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
                   <span>Зв'язок</span>
                 </a>
               </li>
+
+              <li class="xl:hidden mt-auto pt-5 border-t border-slate-500/10 flex flex-col items-center text-center gap-4">
+                <div class="flex items-center gap-2.5">
+                  <Image src={fullLogo} alt="Лого" class="h-9 w-auto object-contain" />
+                  <div class="text-left border-l border-slate-300 pl-2">
+                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-800 leading-tight">КНТ "ДОКОД" ДОР</p>
+                    <p class="text-[9px] text-slate-500 font-medium">Радіологічний департамент</p>
+                  </div>
+                </div>
+                
+                <div class="flex flex-wrap items-center justify-center gap-2 mt-0.5 text-slate-600 w-full">
+                  <a href="https://www.facebook.com/" target="_blank" aria-label="Facebook" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-blue-600 active:scale-90 transition-all shadow-sm">
+                    <Icon name="bx:bxl-facebook" class="w-4 h-4" />
+                  </a>
+                  <a href="https://www.instagram.com/" target="_blank" aria-label="Instagram" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-pink-600 active:scale-90 transition-all shadow-sm">
+                    <Icon name="bx:bxl-instagram" class="w-4 h-4" />
+                  </a>
+                  <a href="https://www.tiktok.com/" target="_blank" aria-label="TikTok" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-black active:scale-90 transition-all shadow-sm">
+                    <Icon name="bx:bxl-tiktok" class="w-4 h-4" />
+                  </a>
+                  <a href="https://t.me/" target="_blank" aria-label="Telegram" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-blue-500 active:scale-90 transition-all shadow-sm">
+                    <Icon name="bx:bxl-telegram" class="w-4 h-4" />
+                  </a>
+                  <a href="https://www.youtube.com/" target="_blank" aria-label="YouTube" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-red-600 active:scale-90 transition-all shadow-sm">
+                    <Icon name="bx:bxl-youtube" class="w-4 h-4" />
+                  </a>
+                </div>
+              </li>
+
             </ul>
           </MenuItems>
         </Astronav>
@@ -178,4 +210,26 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
       }
     }
   }, { passive: true });
+
+  const menuOverlay = document.getElementById('mobile-menu-overlay');
+  const menuPanel = document.getElementById('mobile-menu-panel');
+  
+  const getToggleBtn = () => document.querySelector('#burger-wrapper button') as HTMLElement;
+
+  if (menuOverlay) {
+    const observer = new MutationObserver(() => {
+      if (!menuOverlay.classList.contains('hidden')) {
+        document.body.classList.add('overflow-hidden');
+      } else {
+        document.body.classList.remove('overflow-hidden');
+      }
+    });
+    observer.observe(menuOverlay, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  menuOverlay?.addEventListener('click', (e) => {
+    if (window.innerWidth < 1280 && menuPanel && !menuPanel.contains(e.target as Node)) {
+      getToggleBtn()?.click();
+    }
+  });
 </script>
