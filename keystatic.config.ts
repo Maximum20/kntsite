@@ -35,5 +35,19 @@ export default config({
       },
 // ...
     }),
+// keystatic.config.ts
+vacancies: collection({
+  label: 'Вакансії',
+  slugField: 'title',
+  path: 'src/content/vacancies/*',
+  format: { contentField: 'content' },
+  schema: {
+    title: fields.slug({ name: { label: 'Назва вакансії' } }),
+    date: fields.date({ label: 'Дата публікації' }),
+    content: fields.mdx({ label: 'Опис вакансії' }), // або fields.markdoc / fields.document залежно від налаштувань новин
+  },
+}),
+
+
   },
 });
