@@ -22,13 +22,28 @@ const news = defineCollection({
   }),
 });
 
+// src/content.config.ts
+// src/content.config.ts
 const vacancies = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdoc,mdx}", base: "./src/content/vacancies" }), 
   schema: ({ image }) => z.object({
     title: z.string(),
     date: z.coerce.date(),
-    description: z.string().optional(), // 👈 Тепер не обов'язкове
+    isActive: z.boolean().default(true),
+    description: z.string().optional(),
     image: image().optional(),
+    benefits: z.array(z.object({
+      title: z.string(),
+      image: image().optional(),
+    })).optional(),
+
+    // 👇 Додаємо сюди контакти
+    contacts: z.object({
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      messengerUrl: z.string().optional(),
+      messengerName: z.string().optional(),
+    }).optional(),
   }),
 });
 

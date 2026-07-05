@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import { Icon } from "astro-icon/components";
 import { Image } from 'astro:assets';
-import Layout from '../layouts/Layout.astro'; 
+import Layout from '../../layouts/Layout.astro'; // 👈 Дві пари крапок!
 
 const allVacancies = await getCollection('vacancies') || [];
 const sortedVacancies = allVacancies.sort((a, b) => {
@@ -11,7 +11,6 @@ const sortedVacancies = allVacancies.sort((a, b) => {
   return dateB - dateA;
 });
 
-// Підготовка даних для "живого" пошуку через JS (захищено від undefined)
 const vacanciesData = sortedVacancies.map(item => ({
   id: item.id,
   title: item.data?.title || '',
@@ -81,9 +80,20 @@ const vacanciesData = sortedVacancies.map(item => ({
             </div>
 
             <div class="flex flex-col">
-              <div class="flex items-center gap-4 mb-4">
-                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">Вакансія</span>
-                <span class="text-slate-400 font-bold text-xs flex items-center gap-1">
+              <div class="flex items-center gap-3 mb-4">
+                {item.data?.isActive !== false ? (
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Актуальна
+                  </span>
+                ) : (
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    Архівна
+                  </span>
+                )}
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">Позиція</span>
+                <span class="text-slate-400 font-bold text-xs flex items-center gap-1 ml-auto">
                   <Icon name="bx:calendar" class="w-4 h-4" />
                   {item.data?.date ? new Date(item.data.date).toLocaleDateString('uk-UA') : ''}
                 </span>
