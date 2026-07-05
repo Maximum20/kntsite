@@ -5,14 +5,18 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro'; 
 
 const allVacancies = await getCollection('vacancies') || [];
-const sortedVacancies = allVacancies.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const sortedVacancies = allVacancies.sort((a, b) => {
+  const dateA = a.data?.date ? new Date(a.data.date).getTime() : 0;
+  const dateB = b.data?.date ? new Date(b.data.date).getTime() : 0;
+  return dateB - dateA;
+});
 
-// Підготовка даних для "живого" пошуку через JS
+// Підготовка даних для "живого" пошуку через JS (захищено від undefined)
 const vacanciesData = sortedVacancies.map(item => ({
   id: item.id,
-  title: item.data.title,
-  description: item.data.description,
-  date: item.data.date.toLocaleDateString('uk-UA'),
+  title: item.data?.title || '',
+  description: item.data?.description || '',
+  date: item.data?.date ? new Date(item.data.date).toLocaleDateString('uk-UA') : '',
   url: `/vacancies/${item.id}`
 }));
 ---
@@ -58,14 +62,14 @@ const vacanciesData = sortedVacancies.map(item => ({
         {sortedVacancies.map((item) => (
           <article 
             class="vacancy-card group relative grid md:grid-cols-[1fr_1.5fr] gap-8 items-center border-b border-slate-100 pb-16 last:border-0"
-            data-title={item.data.title.toLowerCase()}
-            data-desc={item.data.description.toLowerCase()}
+            data-title={item.data?.title?.toLowerCase() || ''}
+            data-desc={item.data?.description?.toLowerCase() || ''}
           >
             <div class="relative aspect-[4/3] overflow-hidden rounded-[2.5rem]">
-              {item.data.image ? (
+              {item.data?.image ? (
                 <Image 
                   src={item.data.image} 
-                  alt={item.data.title} 
+                  alt={item.data.title || 'Vacancy'} 
                   class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                 />
               ) : (
@@ -81,16 +85,16 @@ const vacanciesData = sortedVacancies.map(item => ({
                 <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">Вакансія</span>
                 <span class="text-slate-400 font-bold text-xs flex items-center gap-1">
                   <Icon name="bx:calendar" class="w-4 h-4" />
-                  {item.data.date.toLocaleDateString('uk-UA')}
+                  {item.data?.date ? new Date(item.data.date).toLocaleDateString('uk-UA') : ''}
                 </span>
               </div>
               
               <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors leading-tight">
-                <a href={`/vacancies/${item.id}`}>{item.data.title}</a>
+                <a href={`/vacancies/${item.id}`}>{item.data?.title}</a>
               </h2>
              
               <p class="text-slate-500 leading-relaxed mb-6 line-clamp-3 font-medium">
-                {item.data.description}
+                {item.data?.description || ''}
               </p>
               
               <div>
@@ -146,7 +150,7 @@ const vacanciesData = sortedVacancies.map(item => ({
       const query = searchInput.value.toLowerCase().trim();
 
       if (query.length < 2) {
-        dropdown.classList.add('hidden');
+        if (dropdown) dropdown.classList.add('hidden');
         return;
       }
 
@@ -156,17 +160,19 @@ const vacanciesData = sortedVacancies.map(item => ({
       ).slice(0, 5);
 
       if (filtered.length === 0) {
-        dropdown.classList.add('hidden');
+        if (dropdown) dropdown.classList.add('hidden');
         return;
       }
 
-      dropdownResults.innerHTML = filtered.map(v => `
-        <a href="${v.url}" class="flex flex-col p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
-          <div class="text-xs font-black text-blue-500 uppercase tracking-widest mb-1">${v.date}</div>
-          <div class="text-sm font-bold text-slate-900 group-hover:text-blue-600">${v.title}</div>
-        </a>
-      `).join('');
-      dropdown.classList.remove('hidden');
+      if (dropdownResults) {
+        dropdownResults.innerHTML = filtered.map(v => `
+          <a href="${v.url}" class="flex flex-col p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
+            <div class="text-xs font-black text-blue-500 uppercase tracking-widest mb-1">${v.date}</div>
+            <div class="text-sm font-bold text-slate-900 group-hover:text-blue-600">${v.title}</div>
+          </a>
+        `).join('');
+      }
+      if (dropdown) dropdown.classList.remove('hidden');
     }
 
     searchInput.addEventListener('input', () => {
@@ -175,7 +181,7 @@ const vacanciesData = sortedVacancies.map(item => ({
     });
 
     document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+      if (!searchInput.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
         dropdown.classList.add('hidden');
       }
     });

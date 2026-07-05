@@ -22,14 +22,13 @@ const news = defineCollection({
   }),
 });
 
-// 👇 Нова колекція для Вакансій
 const vacancies = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdoc,mdx}", base: "./src/content/vacancies" }),
+  loader: glob({ pattern: "**/*.{md,mdoc,mdx}", base: "./src/content/vacancies" }), 
   schema: ({ image }) => z.object({
     title: z.string(),
     date: z.coerce.date(),
-    description: z.string(),
-    image: image().optional(), // залишаємо опціональне фото, як у новинах
+    description: z.string().optional(), // 👈 Тепер не обов'язкове
+    image: image().optional(),
   }),
 });
 
