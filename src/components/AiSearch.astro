@@ -1,64 +1,272 @@
 ---
 // src/components/AiSearch.astro
 ---
-<div class="ai-search-container border rounded-xl p-4 bg-slate-50 max-w-2xl mx-auto my-8 font-sans">
-  <h3 class="text-lg font-bold mb-2">AI Помічник</h3>
-  <div id="chat-output" class="min-h-[50px] mb-4 text-slate-700 whitespace-pre-wrap">
-    Тут з'явиться відповідь...
-  </div>
+
+<div class="flex flex-col h-[580px] max-h-[85vh] bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden font-sans">
   
-  <div class="flex gap-2">
-    <input 
-      type="text" 
-      id="chat-input" 
-      placeholder="Наприклад: Яка точність обладнання?" 
-      class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-    <button id="send-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-      Запитати
+  <!-- Заголовок -->
+  <div class="px-4 py-3 bg-slate-50/90 border-b border-slate-100 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="text-sm font-semibold text-slate-800">Інтелектуальний помічник відділення</span>
+    </div>
+    <button 
+      id="ai-clear-btn" 
+      type="button" 
+      class="text-xs text-slate-400 hover:text-slate-600 transition-colors uppercase font-medium tracking-wider cursor-pointer"
+    >
+      Очистити чат
     </button>
+  </div>
+
+  <!-- Потік повідомлень (скролиться) -->
+  <div id="ai-chat-flow" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
+    <div class="flex justify-start">
+      <div class="max-w-[85%] bg-slate-100 text-slate-800 p-3.5 rounded-2xl rounded-tl-xs leading-relaxed">
+        Вітаю! Я допоможу знайти інформацію про фахівців відділення, лінійні прискорювачі та систему Brainlab, підготовку до лікування або порядок запису на прийом.
+      </div>
+    </div>
+  </div>
+
+  <!-- Нижня закріплена панель вводу -->
+  <div class="p-3 bg-slate-50/90 border-t border-slate-100">
+    <form id="ai-chat-form" class="flex items-center gap-2">
+      <div class="relative flex-1">
+        <input
+          type="text"
+          id="ai-user-input"
+          placeholder="Запитайте будь-що (наприклад: розкажи про Brainlab)..."
+          autocomplete="off"
+          class="w-full bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all disabled:bg-slate-50"
+        />
+        <!-- Спінер завантаження -->
+        <div id="ai-spinner" class="hidden absolute right-3 top-1/2 -translate-y-1/2">
+          <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        id="ai-send-btn"
+        class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white p-2.5 rounded-xl transition-colors flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+        aria-label="Надіслати"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </form>
   </div>
 </div>
 
 <script>
-  const btn = document.getElementById('send-btn');
-  const input = document.getElementById('chat-input') as HTMLInputElement;
-  const output = document.getElementById('chat-output');
+  const form = document.getElementById('ai-chat-form') as HTMLFormElement;
+  const input = document.getElementById('ai-user-input') as HTMLInputElement;
+  const sendBtn = document.getElementById('ai-send-btn') as HTMLButtonElement;
+  const spinner = document.getElementById('ai-spinner') as HTMLDivElement;
+  const chatFlow = document.getElementById('ai-chat-flow') as HTMLDivElement;
+  const clearBtn = document.getElementById('ai-clear-btn') as HTMLButtonElement;
 
-  async function askAi() {
-    const question = input.value;
-    if (!question || !output) return;
+  interface Message {
+    role: 'user' | 'assistant';
+    content: string;
+  }
 
-    output.innerText = "Думаю...";
-    input.value = "";
+  let chatHistory: Message[] = [];
+
+  function scrollToBottom() {
+    if (chatFlow) {
+      chatFlow.scrollTop = chatFlow.scrollHeight;
+    }
+  }
+
+  // Перетворює markdown-посилання [текст](url) на клікабельний HTML
+  function formatMarkdown(text: string): string {
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    return escaped.replace(
+      /\[(.*?)\]\((.*?)\)/g,
+      '<a href="$2" class="text-blue-600 underline font-medium hover:text-blue-800 transition-colors">$1</a>'
+    );
+  }
+
+  // Генерує картки швидких дій на базі посилань або ключових слів
+  function generateCardsHtml(text: string): string {
+    const lower = text.toLowerCase();
+    const cards: { title: string; href: string; icon: string }[] = [];
+
+    // Brainlab
+    if (lower.includes('brainlab') || lower.includes('стереотаксис') || lower.includes('радіохірург')) {
+      cards.push({ title: 'Прискорювачі та Brainlab', href: '/services/linac', icon: '⚡' });
+      cards.push({ title: 'Новина: «Мрія здійснилась»', href: '/news/mriya-zdijsnilas', icon: '📰' });
+    }
+
+    // Лікарі (загалом або за прізвищами)
+    const doctors = ['лікар', 'онколог', 'сніжинськ', 'мал', 'галій', 'діденко', 'лук\'яшко', 'гончар', 'примаков', 'рижов', 'трубіцин', 'землянськ'];
+    if (doctors.some(d => lower.includes(d)) && !cards.some(c => c.href === '/doctors')) {
+      cards.push({ title: 'Лікарі відділення', href: '/doctors', icon: '👨‍⚕️' });
+    }
+
+    // Реєстратура / Запис / Контакти
+    if ((lower.includes('запис') || lower.includes('реєстратур') || lower.includes('контакт') || lower.includes('направленн')) && !cards.some(c => c.href === '/contacts')) {
+      cards.push({ title: 'Контакти та реєстратура', href: '/contacts', icon: '📞' });
+    }
+
+    // Лінійні прискорювачі (якщо ще не додано через Brainlab)
+    if ((lower.includes('versa') || lower.includes('synergy') || lower.includes('прискорювач') || lower.includes('vmat') || lower.includes('imrt')) && !cards.some(c => c.href === '/services/linac')) {
+      cards.push({ title: 'Лінійні прискорювачі', href: '/services/linac', icon: '⚡' });
+    }
+
+    // КТ-симуляція
+    if (lower.includes('кт') || lower.includes('томограф') || lower.includes('симуляці') || lower.includes('маск')) {
+      cards.push({ title: 'КТ-симуляція', href: '/services/ct', icon: '🖥️' });
+    }
+
+    // Гамма-терапія
+    if (lower.includes('гамма') || lower.includes('кобальт') || lower.includes('theratron') || lower.includes('агат')) {
+      cards.push({ title: 'Гамма-терапія', href: '/services/gamma', icon: '☢️' });
+    }
+
+    // Брахітерапія
+    if (lower.includes('брахітерапі')) {
+      cards.push({ title: 'Брахітерапія', href: '/services/brachy', icon: '🎯' });
+    }
+
+    // Близькофокусна терапія
+    if (lower.includes('близькофокусн') || lower.includes('шкір')) {
+      cards.push({ title: 'Рентгенотерапія шкіри', href: '/services/nearfocus', icon: '🔬' });
+    }
+
+    // Вакансії
+    if (lower.includes('вакансі') || lower.includes('робот') || lower.includes('лаборант')) {
+      cards.push({ title: 'Вакансії відділення', href: '/vacancies', icon: '💼' });
+    }
+
+    if (cards.length === 0) return '';
+
+    return `
+      <div class="mt-3 pt-2.5 border-t border-slate-200/70 flex flex-wrap gap-1.5">
+        ${cards.map(c => `
+          <a 
+            href="${c.href}" 
+            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 text-xs font-medium transition-all shadow-2xs"
+          >
+            <span>${c.icon}</span>
+            <span>${c.title}</span>
+            <span class="text-slate-400">→</span>
+          </a>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function appendUserMessage(text: string) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex justify-end';
+    wrapper.innerHTML = `
+      <div class="max-w-[85%] bg-blue-600 text-white p-3.5 rounded-2xl rounded-tr-xs leading-relaxed shadow-2xs">
+        ${text}
+      </div>
+    `;
+    chatFlow.appendChild(wrapper);
+    scrollToBottom();
+  }
+
+  function createBotPlaceholder() {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'flex justify-start';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'max-w-[85%] bg-slate-100 text-slate-800 p-3.5 rounded-2xl rounded-tl-xs leading-relaxed shadow-2xs';
+
+    const textDiv = document.createElement('div');
+    textDiv.className = 'whitespace-pre-wrap leading-relaxed';
+    bubble.appendChild(textDiv);
+
+    const cardsContainer = document.createElement('div');
+    bubble.appendChild(cardsContainer);
+
+    wrapper.appendChild(bubble);
+    chatFlow.appendChild(wrapper);
+    scrollToBottom();
+
+    return { textDiv, cardsContainer };
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const prompt = input.value.trim();
+    if (!prompt) return;
+
+    appendUserMessage(prompt);
+    chatHistory.push({ role: 'user', content: prompt });
+
+    input.value = '';
+    input.disabled = true;
+    sendBtn.disabled = true;
+    spinner.classList.remove('hidden');
+
+    const { textDiv, cardsContainer } = createBotPlaceholder();
+    let accumulatedResponse = '';
 
     try {
       const response = await fetch('/api/chats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [{ role: 'user', content: question }] }),
+        body: JSON.stringify({ messages: chatHistory }),
       });
 
-      if (!response.body) return;
+      if (!response.ok || !response.body) {
+        throw new Error(`Помилка сервера: ${response.status}`);
+      }
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      output.innerText = ""; 
 
-      // Читаємо потік частинами
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        
-        const textChunk = decoder.decode(value, { stream: true });
-        output.innerText += textChunk;
-      }
-    } catch (e) {
-      output.innerText = "Помилка зв'язку з сервером.";
-      console.error(e);
-    }
-  }
 
-  btn?.addEventListener('click', askAi);
-  input?.addEventListener('keypress', (e) => e.key === 'Enter' && askAi());
+        accumulatedResponse += decoder.decode(value, { stream: true });
+        // Під час стрімінгу показуємо текст з живими markdown-посиланнями
+        textDiv.innerHTML = formatMarkdown(accumulatedResponse);
+        scrollToBottom();
+      }
+
+      chatHistory.push({ role: 'assistant', content: accumulatedResponse });
+
+      // Після завершення генерації будуємо картки-кнопки
+      const cardsHtml = generateCardsHtml(accumulatedResponse);
+      if (cardsHtml) {
+        cardsContainer.innerHTML = cardsHtml;
+        scrollToBottom();
+      }
+    } catch (err) {
+      console.error('Chat stream error:', err);
+      if (!accumulatedResponse) {
+        textDiv.textContent = 'Вибачте, виникла помилка зв’язку із сервером. Будь ласка, повторіть запит.';
+      }
+    } finally {
+      spinner.classList.add('hidden');
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+
+  clearBtn?.addEventListener('click', () => {
+    chatHistory = [];
+    chatFlow.innerHTML = `
+      <div class="flex justify-start">
+        <div class="max-w-[85%] bg-slate-100 text-slate-800 p-3.5 rounded-2xl rounded-tl-xs leading-relaxed">
+          Чат очищено. Чим я можу вам допомогти?
+        </div>
+      </div>
+    `;
+    input.focus();
+  });
 </script>

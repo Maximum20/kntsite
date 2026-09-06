@@ -6,118 +6,170 @@ const searchIndex = [
   { title: "КТ-розмітка (Симуляція)", tags: ["кт", "комп'ютерна томографія", "симуляція", "планування"], url: "/services/ct", category: "послуга" },
   { title: "Брахітерапія", tags: ["контактна променева терапія", "джерело", "іридій"], url: "/services/brachy", category: "відділення" },
   { title: "Діденко Олександр Петрович", tags: ["лікар", "радіолог", "онколог", "завідувач"], url: "/doctors", category: "лікар" },
-  { title: "Контакти та графік роботи", tags: ["телефон", "адреса", "як доїхати", "головний лікар"], url: "#contacts", category: "інфо" }
+  { title: "Контакти та графік роботи", tags: ["телефон", "адреса", "як доїхати", "головний лікар"], url: "/#contacts", category: "інфо" }
 ];
 ---
 
 {/* --- 1. КНОПКИ В ШАПЦІ --- */}
 <div class="flex items-center gap-3 mr-2 xl:mr-6 xl:ml-4">
   
-  {/* БУЛЬБАШКА СОЦМЕРЕЖ (Окремо) */}
-<div class="hidden xl:flex items-center gap-4 bg-white/60 p-2 px-4 rounded-full border border-slate-200/50 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:bg-white/80">
-  <a href="https://www.facebook.com/kz.kod.dor" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-600 transition-all hover:scale-110">
-    <Icon name="bx:bxl-facebook-circle" class="w-5 h-5" />
-  </a>
-  <a href="https://t.me/dokod_dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-sky-500 transition-all hover:scale-110">
-    <Icon name="bx:bxl-telegram" class="w-5 h-5" />
-  </a>
-  <a href="https://www.instagram.com/dokod.dp/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-500 transition-all hover:scale-110">
-    <Icon name="bx:bxl-instagram" class="w-5 h-5" />
-  </a>
-  <a href="https://www.youtube.com/@dokodlic" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-600 transition-all hover:scale-110">
-    <Icon name="bx:bxl-youtube" class="w-5 h-5" />
-  </a>
-  <a href="https://www.tiktok.com/@dokod.dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-900 transition-all hover:scale-110">
-    <Icon name="bx:bxl-tiktok" class="w-5 h-5" />
-  </a>
-</div>
+  {/* БУЛЬБАШКА СОЦМЕРЕЖ */}
+  <div class="hidden xl:flex items-center gap-4 bg-white/60 p-2 px-4 rounded-full border border-slate-200/50 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:bg-white/80">
+    <a href="https://www.facebook.com/kz.kod.dor" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-600 transition-all hover:scale-110" aria-label="Facebook">
+      <Icon name="bx:bxl-facebook-circle" class="w-5 h-5" />
+    </a>
+    <a href="https://t.me/dokod_dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-sky-500 transition-all hover:scale-110" aria-label="Telegram">
+      <Icon name="bx:bxl-telegram" class="w-5 h-5" />
+    </a>
+    <a href="https://www.instagram.com/dokod.dp/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-500 transition-all hover:scale-110" aria-label="Instagram">
+      <Icon name="bx:bxl-instagram" class="w-5 h-5" />
+    </a>
+    <a href="https://www.youtube.com/@dokodlic" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-600 transition-all hover:scale-110" aria-label="YouTube">
+      <Icon name="bx:bxl-youtube" class="w-5 h-5" />
+    </a>
+    <a href="https://www.tiktok.com/@dokod.dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-900 transition-all hover:scale-110" aria-label="TikTok">
+      <Icon name="bx:bxl-tiktok" class="w-5 h-5" />
+    </a>
+  </div>
 
   {/* БУЛЬБАШКА ПОШУКУ З АНІМАЦІЄЮ ТЕКСТУ */}
   <div class="flex items-center">
     <button 
       id="search-trigger" 
-      class="group relative flex items-center justify-start h-10 w-10 xl:hover:w-56 bg-blue-600 text-white rounded-full transition-all duration-500 ease-in-out overflow-hidden shadow-lg shadow-blue-500/20 active:scale-95"
+      class="group relative flex items-center justify-start h-10 w-10 xl:hover:w-56 bg-blue-600 text-white rounded-full transition-all duration-500 ease-in-out overflow-hidden shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer"
+      aria-label="Відкрити інтелектуальний пошук"
     >
-      {/* Іконка (Завжди зліва) */}
       <div class="flex items-center justify-center min-w-[40px] h-10">
         <Icon name="bx:bx-search" class="w-5 h-5" />
       </div>
 
-      {/* Текст (З'являється при розширенні) */}
       <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-150 font-bold text-[13px] tracking-tight pr-6">
         Інтелектуальний пошук
       </span>
-
-  
     </button>
   </div>
 </div>
 
 {/* --- 2. ВІКНО ПОШУКУ (MODAL) --- */}
-<div id="search-modal" class="fixed inset-0 z-[999] hidden bg-slate-900/40 backdrop-blur-2xl items-start justify-center pt-12 md:pt-24 px-4 font-sans">
-  <div class="bg-white w-full max-w-2xl rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col max-h-[80vh] border border-slate-100">
+<div id="search-modal" class="fixed inset-0 z-[999] hidden bg-slate-950/60 backdrop-blur-xl items-center justify-center p-0 md:p-6 lg:p-8 font-sans">
+  
+  {/* Картка модалки: на смартфонах 100dvh, на ПК max-w-5xl і висота 88vh */}
+  <div class="bg-white w-full h-[100dvh] md:h-[88vh] md:max-h-[850px] md:max-w-4xl lg:max-w-5xl rounded-none md:rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col border-0 md:border md:border-slate-100 transition-all">
     
-    {/* СУЧАСНІ ВКЛАДКИ (Segmented Control) */}
-    <div class="p-4 bg-slate-50/50 border-b border-slate-100">
-      <div class="relative flex bg-slate-200/50 p-1 rounded-xl">
-        <button id="tab-offline" class="relative flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-blue-600">Пошук</button>
-        <button id="tab-ai" class="relative flex-1 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-slate-500">AI Асистент</button>
+    {/* ВЕРХНЯ ПАНЕЛЬ: Перемикач вкладок + Кнопка закриття */}
+    <div class="p-3 md:p-4 bg-slate-50/90 border-b border-slate-100 shrink-0 flex items-center justify-between gap-3">
+      <div class="relative flex flex-1 bg-slate-200/60 p-1 rounded-xl max-w-sm sm:max-w-md">
+        <button id="tab-offline" type="button" class="relative flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-blue-600 cursor-pointer">Пошук</button>
+        <button id="tab-ai" type="button" class="relative flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-slate-500 cursor-pointer">AI Асистент</button>
         <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-transform duration-300 ease-out"></div>
       </div>
+
+      <button 
+        id="modal-close-btn" 
+        type="button" 
+        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-200/60 hover:bg-slate-300/80 text-slate-500 hover:text-slate-800 transition-all cursor-pointer shrink-0"
+        aria-label="Закрити вікно"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
 
-    <div class="p-6 md:p-8 flex flex-col flex-1 overflow-hidden">
-      {/* Search Input */}
-      <div class="relative flex items-center gap-4 bg-slate-50 px-6 py-4 rounded-2xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50 transition-all flex-shrink-0">
-        <Icon name="bx:bx-search" class="w-5 h-5 text-slate-400" />
-        <input id="search-input" type="text" placeholder="Шукайте лікаря або відділення..." class="bg-transparent border-none outline-none w-full font-medium text-slate-700 placeholder:text-slate-400 text-base" autocomplete="off" />
-        <div id="ai-loader" class="hidden">
-           <div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        </div>
-      </div>
+    {/* ОСНОВНИЙ БЛОК КОНТЕНТУ */}
+    <div class="flex flex-col flex-1 overflow-hidden">
       
-      {/* OFFLINE SECTION */}
-      <div id="offline-content" class="mt-6 overflow-y-auto no-scrollbar transition-all duration-300">
-        <div id="suggestions-box">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Швидкі посилання:</p>
-          <div class="flex flex-wrap gap-2">
-            {["#лікар", "#відділення", "лінійний прискорювач"].map(q => (
-              <button class="tag-btn px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-blue-600 hover:text-white transition-all active:scale-95" data-query={q}>
-                {q.replace('#', '')}
-              </button>
-            ))}
+      {/* 1. ВКЛАДКА ТРАДИЦІЙНОГО ПОШУКУ */}
+      <div id="offline-content" class="flex flex-col flex-1 p-4 sm:p-6 md:p-8 overflow-hidden transition-all duration-300">
+        <div class="relative flex items-center gap-4 bg-slate-50 px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50 transition-all shrink-0">
+          <Icon name="bx:bx-search" class="w-5 h-5 text-slate-400" />
+          <input 
+            id="search-input" 
+            type="text" 
+            placeholder="Шукайте лікаря або відділення..." 
+            class="bg-transparent border-none outline-none w-full font-medium text-slate-700 placeholder:text-slate-400 text-base" 
+            autocomplete="off" 
+          />
+        </div>
+
+        <div class="mt-6 overflow-y-auto no-scrollbar flex-1">
+          <div id="suggestions-box">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Швидкі посилання:</p>
+            <div class="flex flex-wrap gap-2">
+              {["#лікар", "#відділення", "лінійний прискорювач"].map(q => (
+                <button class="tag-btn px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-blue-600 hover:text-white transition-all active:scale-95 cursor-pointer" data-query={q}>
+                  {q.replace('#', '')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div id="results-list" class="space-y-3 hidden">
+            {/* Результати офлайн пошуку */}
           </div>
         </div>
-
-        <div id="results-list" class="mt-6 space-y-3 hidden">
-          {/* JS Results */}
-        </div>
       </div>
 
-      {/* AI SECTION */}
-      <div id="ai-content" class="mt-6 hidden flex flex-col flex-1 overflow-hidden transition-all duration-300 opacity-0 translate-x-4">
-        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 pr-2 mb-4 no-scrollbar min-h-[250px]">
+      {/* 2. ВКЛАДКА AI ЧАТУ */}
+      <div id="ai-content" class="hidden flex-col flex-1 overflow-hidden transition-all duration-300 opacity-0">
+        
+        {/* Область повідомлень зі скролом */}
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 sm:p-6 md:p-8 no-scrollbar">
           <div class="flex justify-start">
-            <div class="bg-blue-50 text-blue-700 p-4 rounded-2xl rounded-tl-none text-sm max-w-[90%] leading-relaxed border border-blue-100">
-              Вітаю! Я допоможу знайти потрібну інформацію. Що вас цікавить?
+            <div class="bg-blue-50/80 text-blue-900 p-4 rounded-2xl rounded-tl-xs text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed border border-blue-100/80 shadow-xs">
+              Вітаю! Я AI-помічник радіологічного відділення. Підкажу інформацію про лікарів, наші лінійні прискорювачі та Brainlab, підготовку або запис на консультацію.
             </div>
           </div>
         </div>
 
-        <div class="flex justify-between items-center px-1">
-          <span class="text-[10px] text-slate-400 font-medium">Gemini 1.5 Flash</span>
-          <button id="clear-chat" class="text-[10px] uppercase font-bold text-slate-400 hover:text-red-500 transition-colors">
-            Очистити чат
-          </button>
+        {/* Закріплена нижня панель вводу */}
+        <div class="p-3 sm:p-4 bg-slate-50/90 border-t border-slate-100 shrink-0">
+          <form id="ai-chat-form" class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <input 
+                id="ai-chat-input" 
+                type="text" 
+                placeholder="Запитайте будь-що..." 
+                class="w-full bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all disabled:bg-slate-100" 
+                autocomplete="off" 
+              />
+              <div id="ai-loader" class="hidden absolute right-3 top-1/2 -translate-y-1/2">
+                <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              id="ai-send-btn" 
+              class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white p-3 rounded-xl transition-colors flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
+              aria-label="Надіслати"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </form>
+
+          <div class="flex justify-between items-center mt-2 px-1">
+            <span class="text-[10px] text-slate-400 font-medium">ШІ Радіологічного відділення</span>
+            <button id="clear-chat" type="button" class="text-[10px] uppercase font-bold text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
+              Очистити чат
+            </button>
+          </div>
         </div>
+
       </div>
     </div>
+
   </div>
   <div id="search-close" class="fixed inset-0 -z-10 cursor-pointer"></div>
 </div>
 
 <script define:vars={{ searchIndex }}>
-  // ТЕЛЕПОРТ (залишаємо без змін)
+  const STORAGE_KEY = 'dokod_ai_chat_history_v3';
+  const ACTIVE_TAB_KEY = 'dokod_modal_active_tab_v3';
+
   document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('search-modal');
     if (modal) document.body.appendChild(modal);
@@ -125,8 +177,9 @@ const searchIndex = [
 
   const trigger = document.getElementById('search-trigger');
   const modal = document.getElementById('search-modal');
-  const close = document.getElementById('search-close');
-  const input = document.getElementById('search-input');
+  const closeBackdrop = document.getElementById('search-close');
+  const closeBtn = document.getElementById('modal-close-btn');
+  const searchInput = document.getElementById('search-input');
   
   const tOff = document.getElementById('tab-offline');
   const tAI = document.getElementById('tab-ai');
@@ -137,34 +190,45 @@ const searchIndex = [
   
   const resultsList = document.getElementById('results-list');
   const suggestionsBox = document.getElementById('suggestions-box');
+  
   const chatMessages = document.getElementById('chat-messages');
+  const chatForm = document.getElementById('ai-chat-form');
+  const aiChatInput = document.getElementById('ai-chat-input');
+  const aiSendBtn = document.getElementById('ai-send-btn');
   const clearChatBtn = document.getElementById('clear-chat');
   const aiLoader = document.getElementById('ai-loader');
 
   let currentTab = 'offline';
   let chatHistory = [];
 
-  const switchToTab = (tab) => {
+  const switchToTab = (tab, savePreference = true) => {
     currentTab = tab;
+    if (savePreference) {
+      sessionStorage.setItem(ACTIVE_TAB_KEY, tab);
+    }
+
     if (tab === 'ai') {
       indicator.style.transform = 'translateX(100%)';
       tAI.classList.replace('text-slate-500', 'text-blue-600');
       tOff.classList.replace('text-blue-600', 'text-slate-500');
       cOff.classList.add('hidden');
       cAI.classList.remove('hidden');
-      setTimeout(() => { cAI.style.opacity = '1'; cAI.style.transform = 'translateX(0)'; }, 10);
-      input.placeholder = "Запитайте будь-що...";
+      cAI.classList.add('flex');
+      setTimeout(() => { 
+        cAI.style.opacity = '1'; 
+        aiChatInput?.focus();
+        if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 10);
     } else {
       indicator.style.transform = 'translateX(0)';
       tOff.classList.replace('text-slate-500', 'text-blue-600');
       tAI.classList.replace('text-blue-600', 'text-slate-500');
       cAI.classList.add('hidden');
-      cOff.classList.remove('hidden');
+      cAI.classList.remove('flex');
       cAI.style.opacity = '0';
-      cAI.style.transform = 'translateX(10px)';
-      input.placeholder = "Шукайте лікаря або відділення...";
+      cOff.classList.remove('hidden');
+      searchInput?.focus();
     }
-    input.focus();
   };
 
   tOff?.addEventListener('click', () => switchToTab('offline'));
@@ -173,8 +237,14 @@ const searchIndex = [
   trigger?.addEventListener('click', () => {
     modal?.classList.remove('hidden');
     modal?.classList.add('flex');
-    input?.focus();
     document.body.style.overflow = 'hidden';
+
+    const savedTab = sessionStorage.getItem(ACTIVE_TAB_KEY);
+    if (savedTab === 'ai' || chatHistory.length > 0) {
+      switchToTab('ai', false);
+    } else {
+      switchToTab('offline', false);
+    }
   });
 
   const hideModal = () => {
@@ -182,7 +252,15 @@ const searchIndex = [
     modal?.classList.remove('flex');
     document.body.style.overflow = 'auto';
   };
-  close?.addEventListener('click', hideModal);
+
+  closeBackdrop?.addEventListener('click', hideModal);
+  closeBtn?.addEventListener('click', hideModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
+      hideModal();
+    }
+  });
 
   function performSearch(query) {
     const rawQ = query.toLowerCase().trim();
@@ -209,40 +287,217 @@ const searchIndex = [
               <span class="text-[9px] font-bold uppercase text-blue-500 tracking-tighter mb-0.5">${item.category}</span>
               <span class="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors">${item.title}</span>
             </div>
-            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-slate-300 group-hover:text-blue-600 shadow-sm transition-all">
+            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-slate-300 group-hover:text-blue-600 shadow-xs transition-all">
                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" /></svg>
             </div>
           </a>
         `).join('');
   }
 
-  function appendBubble(role, content) {
-    const isAi = role === 'assistant';
+  function formatMarkdown(text) {
+    let escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    escaped = escaped.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-600 underline font-semibold hover:text-blue-800 transition-colors">$1</a>');
+    return escaped;
+  }
+
+  function generateCardsHtml(text) {
+    const lower = text.toLowerCase();
+    const cards = [];
+
+    // Brainlab
+    if (lower.includes('brainlab') || lower.includes('стереотаксис') || lower.includes('радіохірург')) {
+      cards.push({
+        title: 'Система Brainlab & Versa HD',
+        desc: 'Стереотаксична радіохірургія та прискорювачі',
+        href: '/services/linac',
+        icon: '⚡'
+      });
+      cards.push({
+        title: 'Новина: «Мрія здійснилась»',
+        desc: 'Про встановлення системи Brainlab',
+        href: '/news/mriya-zdijsnilas',
+        icon: '📰'
+      });
+    }
+
+    // Лікарі
+    const docKeywords = ['лікар', 'онколог', 'галій', 'сніжинськ', 'мал', 'діденко', 'лук\'яшко', 'гончар', 'примаков', 'рижов', 'трубіцин', 'землянськ'];
+    if (docKeywords.some(k => lower.includes(k)) && !cards.some(c => c.href === '/doctors')) {
+      cards.push({
+        title: 'Лікарі радіологічного відділення',
+        desc: 'Повний список фахівців та лікарів-радіологів',
+        href: '/doctors',
+        icon: '👨‍⚕️'
+      });
+    }
+
+    // Контакти / Запис / Реєстратура -> ведемо на /#contacts
+    if (lower.includes('запис') || lower.includes('реєстратур') || lower.includes('контакт') || lower.includes('телефон') || lower.includes('направленн')) {
+      if (!cards.some(c => c.href === '/#contacts')) {
+        cards.push({
+          title: 'Контакти та реєстратура',
+          desc: 'Телефони, адреса та порядок прийому',
+          href: '/#contacts',
+          icon: '📞'
+        });
+      }
+    }
+
+    // Лінійні прискорювачі Elekta
+    if ((lower.includes('versa') || lower.includes('synergy') || lower.includes('прискорювач') || lower.includes('vmat') || lower.includes('imrt')) && !cards.some(c => c.href === '/services/linac')) {
+      cards.push({
+        title: 'Лінійні прискорювачі Elekta',
+        desc: 'Versa HD та Synergy Platform',
+        href: '/services/linac',
+        icon: '⚡'
+      });
+    }
+
+    // КТ
+    if (lower.includes('кт') || lower.includes('томограф') || lower.includes('симуляці') || lower.includes('маск')) {
+      cards.push({
+        title: 'КТ-симуляція (Toshiba Aquilion)',
+        desc: 'Топометрична розмітка та підготовка',
+        href: '/services/ct',
+        icon: '🖥️'
+      });
+    }
+
+    // Гамма-терапія
+    if (lower.includes('гамма') || lower.includes('кобальт') || lower.includes('theratron') || lower.includes('агат')) {
+      cards.push({
+        title: 'Гамма-терапевтичні комплекси',
+        desc: 'Theratron Elite 80 та АГАТ-Р1',
+        href: '/services/gamma',
+        icon: '☢️'
+      });
+    }
+
+    // Брахітерапія
+    if (lower.includes('брахітерапі')) {
+      cards.push({
+        title: 'Брахітерапія',
+        desc: 'Контактне внутрішньопорожнинне опромінення',
+        href: '/services/brachy',
+        icon: '🎯'
+      });
+    }
+
+    // Близькофокусна терапія
+    if (lower.includes('близькофокусн') || lower.includes('шкір')) {
+      cards.push({
+        title: 'Рентгенотерапія шкіри',
+        desc: 'Лікування новоутворень шкіри',
+        href: '/services/nearfocus',
+        icon: '🔬'
+      });
+    }
+
+    if (cards.length === 0) return '';
+
+    return `
+      <div class="mt-3.5 pt-3 border-t border-slate-200/60 flex flex-col gap-2">
+        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Швидкий перехід:</div>
+        ${cards.map(c => `
+          <a 
+            href="${c.href}" 
+            class="flex items-center justify-between p-2.5 bg-white border border-slate-200/90 rounded-xl hover:border-blue-500 hover:bg-blue-50/40 transition-all shadow-xs group"
+          >
+            <div class="flex items-center gap-2.5">
+              <span class="text-base p-1.5 bg-slate-100 rounded-lg group-hover:bg-blue-100 transition-colors">${c.icon}</span>
+              <div>
+                <div class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${c.title}</div>
+                <div class="text-[11px] text-slate-500">${c.desc}</div>
+              </div>
+            </div>
+            <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function appendUserBubble(text) {
     const div = document.createElement('div');
-    div.className = `flex ${isAi ? 'justify-start' : 'justify-end'} animate-in fade-in slide-in-from-bottom-2`;
+    div.className = 'flex justify-end animate-in fade-in slide-in-from-bottom-2';
     div.innerHTML = `
-      <div class="${isAi ? 'bg-slate-100 text-slate-700 rounded-tl-none border border-slate-200' : 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-100'} p-4 rounded-2xl text-sm max-w-[85%] leading-relaxed whitespace-pre-wrap">
-        ${content}
+      <div class="bg-blue-600 text-white rounded-2xl rounded-tr-xs shadow-xs p-3.5 text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed">
+        ${text}
       </div>
     `;
     chatMessages.appendChild(div);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-    return div.querySelector('div');
   }
 
-  async function handleAiSearch() {
-    const question = input.value.trim();
+  function createBotBubbleHolder() {
+    const div = document.createElement('div');
+    div.className = 'flex justify-start animate-in fade-in slide-in-from-bottom-2';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bg-slate-100 text-slate-800 rounded-2xl rounded-tl-xs border border-slate-200/70 shadow-xs p-3.5 text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed';
+
+    const textSpan = document.createElement('div');
+    textSpan.className = 'whitespace-pre-wrap';
+    bubble.appendChild(textSpan);
+
+    const cardsSpan = document.createElement('div');
+    bubble.appendChild(cardsSpan);
+
+    div.appendChild(bubble);
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    return { textSpan, cardsSpan };
+  }
+
+  function restoreChatHistory() {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        chatHistory = JSON.parse(saved);
+        if (Array.isArray(chatHistory) && chatHistory.length > 0) {
+          chatMessages.innerHTML = '';
+          chatHistory.forEach(msg => {
+            if (msg.role === 'user') {
+              appendUserBubble(msg.content);
+            } else {
+              const { textSpan, cardsSpan } = createBotBubbleHolder();
+              textSpan.innerHTML = formatMarkdown(msg.content);
+              const cardsHtml = generateCardsHtml(msg.content);
+              if (cardsHtml) cardsSpan.innerHTML = cardsHtml;
+            }
+          });
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+      }
+    } catch (e) {
+      console.warn('Не вдалося відновити історію чату', e);
+    }
+  }
+
+  restoreChatHistory();
+
+  async function handleAiChat() {
+    const question = aiChatInput.value.trim();
     if (!question) return;
 
-    appendBubble('user', question);
+    appendUserBubble(question);
     chatHistory.push({ role: 'user', content: question });
-    
-    input.value = "";
-    input.disabled = true;
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
+
+    aiChatInput.value = "";
+    aiChatInput.disabled = true;
+    aiSendBtn.disabled = true;
     aiLoader?.classList.remove('hidden');
 
-    const aiBubble = appendBubble('assistant', "...");
-    aiBubble.innerText = "";
+    const { textSpan, cardsSpan } = createBotBubbleHolder();
+    let fullResponse = "";
 
     try {
       const response = await fetch('/api/chats', {
@@ -251,49 +506,70 @@ const searchIndex = [
         body: JSON.stringify({ messages: chatHistory }),
       });
 
+      if (!response.ok || !response.body) throw new Error('Помилка сервера');
+
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
-      let fullResponse = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         fullResponse += decoder.decode(value, { stream: true });
-        aiBubble.innerText = fullResponse;
+        textSpan.innerHTML = formatMarkdown(fullResponse);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
+
       chatHistory.push({ role: 'assistant', content: fullResponse });
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
+
+      const cardsHtml = generateCardsHtml(fullResponse);
+      if (cardsHtml) {
+        cardsSpan.innerHTML = cardsHtml;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
     } catch (err) {
-      aiBubble.innerText = "Помилка з'єднання.";
+      console.error(err);
+      if (!fullResponse) {
+        textSpan.textContent = "Вибачте, виникла помилка зв'язку з сервером.";
+      }
     } finally {
       aiLoader?.classList.add('hidden');
-      input.disabled = false;
-      input.focus();
+      aiChatInput.disabled = false;
+      aiSendBtn.disabled = false;
+      aiChatInput.focus();
     }
   }
 
-  input?.addEventListener('input', (e) => {
-    if (currentTab === 'offline') performSearch(e.target.value);
+  chatForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    handleAiChat();
   });
 
-  input?.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && currentTab === 'ai') {
-      e.preventDefault();
-      handleAiSearch();
-    }
+  searchInput?.addEventListener('input', (e) => {
+    if (currentTab === 'offline') performSearch(e.target.value);
   });
 
   clearChatBtn?.addEventListener('click', () => {
     chatHistory = [];
-    chatMessages.innerHTML = `<div class="flex justify-start"><div class="bg-blue-50 text-blue-700 p-4 rounded-2xl rounded-tl-none text-sm max-w-[90%] border border-blue-100">Чат очищено. Чим я можу допомогти?</div></div>`;
+    sessionStorage.removeItem(STORAGE_KEY);
+    chatMessages.innerHTML = `
+      <div class="flex justify-start">
+        <div class="bg-blue-50/80 text-blue-900 p-4 rounded-2xl rounded-tl-xs text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed border border-blue-100/80 shadow-xs">
+          Чат очищено. Чим я можу вам допомогти?
+        </div>
+      </div>
+    `;
+    aiChatInput?.focus();
   });
 
   document.querySelectorAll('.tag-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const q = btn.getAttribute('data-query');
-      input.value = q;
-      if (currentTab === 'offline') performSearch(q);
-      input.focus();
+      if (searchInput) {
+        searchInput.value = q;
+        if (currentTab === 'offline') performSearch(q);
+        searchInput.focus();
+      }
     });
   });
 </script>
