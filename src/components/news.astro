@@ -1,11 +1,15 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
-import { Image } from 'astro:assets'; 
+import { Image } from "astro:assets";
 
-const allNews = await getCollection('news') || [];
+const allNews = (await getCollection("news")) || [];
 const latestNews = allNews
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .sort((a, b) => {
+    const pinDiff = Number(Boolean(b.data.isPinned)) - Number(Boolean(a.data.isPinned));
+    if (pinDiff !== 0) return pinDiff;
+    return (b.data.date?.getTime() || 0) - (a.data.date?.getTime() || 0);
+  })
   .slice(0, 3);
 ---
 
@@ -20,8 +24,11 @@ const latestNews = allNews
         Дізнавайтеся першими про нові технології та події нашого центру.
       </p>
     </div>
-    
-    <a href="/all-news" class="mt-6 md:mt-0 group flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-slate-900 text-slate-900 rounded-full font-bold hover:bg-slate-900 hover:text-white transition-all duration-300">
+
+    <a
+      href="/all-news"
+      class="mt-6 md:mt-0 group flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-slate-900 text-slate-900 rounded-full font-bold hover:bg-slate-900 hover:text-white transition-all duration-300"
+    >
       Архів публікацій
       <Icon name="bx:chevron-right" class="w-5 h-5 transition-transform group-hover:translate-x-1" />
     </a>
@@ -29,39 +36,54 @@ const latestNews = allNews
 
   <!-- News Grid -->
   <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {latestNews.map(item => (
+    {latestNews.map((item) => (
       <article class="group bg-white rounded-3xl border border-slate-100 overflow-hidden hover:border-blue-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 flex flex-col">
         {/* Image Container */}
-        <div class="aspect-[16/10] overflow-hidden relative">
+        <div class="aspect-[16/10] overflow-hidden relative bg-slate-100">
           {item.data.image && (
-            <Image 
-              src={item.data.image} 
-              alt={item.data.title} 
-              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+            <Image
+              src={item.data.image}
+              alt={item.data.title}
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
           )}
-          <div class="absolute top-4 left-4">
-            <span class="bg-white/90 backdrop-blur-md text-slate-900 text-[11px] font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
-              Новина
+          <div class="absolute top-4 left-4 flex items-center gap-2">
+            <span class="bg-white/95 backdrop-blur-md text-slate-900 text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+              {item.data.category || "Новина"}
             </span>
+            {item.data.isPinned && (
+              <span class="bg-blue-600 text-white text-[10px] font-black px-3 py-1.5 rounded-full uppercase tracking-wider shadow-sm">
+                📌 Важливо
+              </span>
+            )}
           </div>
         </div>
 
         {/* Content */}
         <div class="p-8 flex flex-col flex-grow">
           <div class="flex items-center gap-2 text-blue-600 font-bold text-[11px] mb-4 uppercase tracking-widest">
-            <Icon name="bx:calendar" class="w-4 h-4" /> 
-            {item.data.date.toLocaleDateString('uk-UA')}
+            <Icon name="bx:calendar" class="w-4 h-4" />
+            {item.data.date ? item.data.date.toLocaleDateString("uk-UA") : ""}
           </div>
-          
+
           <h3 class="text-xl font-bold text-slate-900 mb-4 leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
-            {item.data.title}
+            <a href={`/news/${item.id}`}>{item.data.title}</a>
           </h3>
-          
-          <p class="text-slate-500 text-sm leading-relaxed mb-8 line-clamp-3">
+
+          <p class="text-slate-500 text-sm leading-relaxed mb-6 line-clamp-3">
             {item.data.description}
           </p>
-          
+
+          {item.data.tags && item.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              {item.data.tags.slice(0, 3).map((tag: string) => (
+                <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+
           <div class="mt-auto">
             <a href={`/news/${item.id}`} class="inline-flex items-center gap-2 text-sm font-bold text-slate-900 group/link">
               <span class="relative">

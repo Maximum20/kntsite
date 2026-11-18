@@ -1,6 +1,11 @@
 ---
 title: 'З Днем Вишиванки! #коднації'
 date: 2025-05-15
+category: Подія
+tags:
+  - День Вишиванки
+  - Команда
+isPinned: false
 image: /src/assets/news/z-dnem-vishivanki-kodnacziyi/image.jpg
 description: '#коднації'
 ---

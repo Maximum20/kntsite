@@ -1,226 +1,139 @@
 ---
-// src/components/hero.astro
-import Link from "@components/ui/link.astro";
 import { Icon } from "astro-icon/components";
+import { siteSettings } from "../data";
 
-// 1. Отримуємо дані, які прийдуть з index.astro
-const { title, subtitle, description } = Astro.props;
+const {
+  description = siteSettings.heroDescription,
+  subtitle = siteSettings.heroSubtitle,
+} = Astro.props;
 ---
 
-{/* МІНЯЄМО max-w-screen-xl на max-w-[1850px] та збільшуємо відступи px */}
-<main class="max-w-[1850px] mx-auto px-6 md:px-12 lg:px-20 pt-4 md:pt-20 pb-16 md:pb-32 font-sans relative overflow-visible">
-  
-  {/* Міняємо співвідношення сітки: 1fr для тексту і 1.3fr для картинки, щоб вона була БІЛЬШОЮ */}
-  <div class="grid lg:grid-cols-[1fr_1.3fr] items-center gap-12 lg:gap-24 relative z-10 min-h-[600px]">
-    
+<section class="max-w-[1850px] mx-auto px-6 md:px-12 lg:px-20 pt-4 md:pt-16 pb-16 md:pb-28 font-sans relative overflow-visible">
+  <div class="grid lg:grid-cols-[1fr_1.3fr] items-center gap-12 lg:gap-24 relative z-10 min-h-[560px]">
     <div class="text-center lg:text-left order-1 relative z-10">
-  
-      <div class="hidden sm:inline-flex items-center gap-2 bg-cyan-50 text-cyan-700 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.2em] border border-cyan-100 shadow-sm transition-transform hover:scale-105 select-none shrink-0 w-fit">
-  <Icon name="bx:bxs-badge-check" class="w-5 h-5 text-cyan-600" />
-  Передові технології лікування
-</div>
+      <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 mb-6">
+        <div class="inline-flex items-center gap-2 bg-cyan-50 text-cyan-700 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-[0.18em] border border-cyan-100 shadow-xs select-none">
+          <Icon name="bx:bxs-badge-check" class="w-4 h-4 text-cyan-600" />
+          <span>Передові технології лікування</span>
+        </div>
 
-<div class="hidden sm:inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3.5 py-1.5 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-blue-100 shadow-sm transition-transform duration-300 transform hover:scale-105 select-none shrink-0 w-fit">
-  <img src="/hero/nszu.png" alt="НСЗУ" class="h-4 md:h-5 w-auto object-contain" />
-  Програма медичних гарантій
-</div>
+        <a
+          href="#faq-section"
+          class="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100/80 text-blue-700 px-3.5 py-2 rounded-full text-[10px] md:text-[11px] font-bold uppercase tracking-widest border border-blue-100 shadow-xs transition-transform duration-300 hover:scale-105 select-none"
+        >
+          <img src="/hero/nszu.png" alt="НСЗУ" width="20" height="20" class="h-4 md:h-5 w-auto object-contain" />
+          <span>Програма медичних гарантій</span>
+        </a>
+      </div>
 
+      <div class="mb-8 animate-fade-in-up text-center lg:text-left relative z-20 overflow-visible group">
+        <div class="inline-flex items-center justify-center lg:justify-start gap-2 mb-3 relative">
+          <div class="w-4 h-8 border-l-2 border-t-2 border-blue-500/40 rounded-tl-lg transition-all duration-700 group-hover:translate-x-1 group-hover:translate-y-1"></div>
+          <h1 class="text-5xl md:text-8xl font-extrabold tracking-tight">
+            <span class="bg-gradient-to-br from-gray-900 via-slate-800 to-slate-600 bg-clip-text text-transparent px-2">
+              Центр
+            </span>
+          </h1>
+          <div class="w-4 h-8 border-r-2 border-b-2 border-blue-500/40 rounded-br-lg transition-all duration-700 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
+        </div>
 
+        <div class="text-4xl sm:text-5xl md:text-8xl font-black leading-none mb-7">
+          <span class="inline-block pr-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
+            променевої терапії
+          </span>
+        </div>
 
+        <div class="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/60 backdrop-blur-md border border-white/80 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-transform hover:scale-105 cursor-default">
+          <div class="relative flex items-center justify-center">
+            <Icon name="bx:bxs-map-pin" class="w-6 h-6 text-blue-500 animate-bounce" />
+          </div>
+          <span class="text-xl md:text-3xl font-bold bg-gradient-to-r from-slate-700 to-slate-500 bg-clip-text text-transparent tracking-wide">
+            {subtitle}
+          </span>
+          <span class="text-2xl group-hover:rotate-12 transition-transform">🏙️</span>
+        </div>
+      </div>
 
-
-    <div class="mb-8 animate-fade-in-up text-center lg:text-left relative z-20 overflow-visible group">
-  
-  <div class="inline-flex items-center justify-center lg:justify-start gap-2 mb-4 relative">
-    
-    <div class="w-4 h-8 border-l-2 border-t-2 border-blue-500/40 rounded-tl-lg 
-                transition-all duration-700 group-hover:translate-x-1 group-hover:translate-y-1"></div>
-
-    <h2 class="text-5xl md:text-8xl font-extrabold tracking-tight">
-      <span class="bg-gradient-to-br from-gray-900 via-slate-800 to-slate-600 bg-clip-text text-transparent px-2">
-        Центр
-      </span>
-    </h2>
-
-    <div class="w-4 h-8 border-r-2 border-b-2 border-blue-500/40 rounded-br-lg 
-                transition-all duration-700 group-hover:-translate-x-1 group-hover:-translate-y-1"></div>
-    
-    <div class="absolute -top-1 -left-1 w-2 h-2 bg-blue-400 rounded-full blur-[2px] animate-pulse opacity-0 group-hover:opacity-100 transition-opacity"></div>
-  </div>
-
-  <div class="text-5xl md:text-8xl font-black leading-none mb-8">
-    <span class="inline-block pr-2 bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 bg-clip-text text-transparent">
-      променевої терапії
-    </span>
-  </div>
-
-  <div class="inline-flex items-center gap-3 px-6 py-3 rounded-2xl 
-              bg-white/10 backdrop-blur-md 
-              border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] 
-              transition-transform hover:scale-105 cursor-default">
-    
-    <div class="relative flex items-center justify-center">
-       <Icon name="bx:bxs-map-pin" class="w-6 h-6 text-blue-500 animate-bounce" />
-       <div class="absolute -bottom-1 w-2 h-1 bg-blue-900/20 rounded-full blur-[2px]"></div>
-    </div>
-
-    <span class="text-xl md:text-3xl font-bold bg-gradient-to-r from-slate-700 to-slate-500 bg-clip-text text-transparent tracking-wide">
-      У місті Дніпро
-    </span>
-
-    <span class="text-2xl group-hover:rotate-12 transition-transform">🏙️</span>
-  </div>
-</div>
-
-
-<!-- 
-
-<div class="versa-hd-cartoon-element relative w-64 h-56 flex items-center justify-center overflow-visible group">
-  <div class="absolute w-40 h-20 bg-blue-500/10 rounded-full blur-[40px] animate-pulse"></div>
-
-  <svg viewBox="0 0 200 200" class="w-60 h-52 overflow-visible">
-    <text x="100" y="130" 
-          text-anchor="middle" 
-          class="text-4xl font-black tracking-tighter fill-slate-800"
-          style="font-family: sans-serif; letter-spacing: -1px;">
-      
-    </text>
-
-    <g class="animate-linac-cartoon-arc origin-center">
-      
-      <g transform="translate(100, 40)">
-        
-        <rect x="-35" y="-10" width="70" height="45" rx="4" fill="white" stroke="#334155" stroke-width="2" />
-        
-        <rect x="-35" y="-10" width="70" height="8" rx="2" fill="#f1f5f9" stroke="#334155" stroke-width="2" />
-
-        <rect x="-28" y="5" width="56" height="22" rx="3" fill="#1e293b" />
-        
-        <text x="0" y="19" 
-              text-anchor="middle" 
-              font-size="8" 
-              font-weight="900" 
-              fill="#3b82f6" 
-              style="font-family: sans-serif; letter-spacing: 0.5px; filter: drop-shadow(0 0 2px #3b82f6);">
-          VersaHD
-        </text>
-
-        <circle cx="-28" cy="-1" r="2" fill="#ef4444" stroke="#334155" stroke-width="1" /> <circle cx="28" cy="-1" r="2" fill="#22c55e" stroke="#334155" stroke-width="1" />  <rect x="-20" y="30" width="40" height="2" fill="#cbd5e1" /> <path d="M-12 35 L12 35 L8 45 L-8 45 Z" fill="#475569" stroke="#334155" stroke-width="2" />
-        
-        <path d="M-2 45 L-0.5 85 H0.5 L2 45 Z" fill="url(#cartoon-beam-grad)" class="animate-beam-pulse" />
-      </g>
-      
-      <rect x="85" y="170" width="30" height="6" rx="3" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    </g>
-
-    <g transform="translate(100, 118)">
-      <circle r="2" fill="#3b82f6" class="animate-ping" />
-      <circle r="1" fill="#3b82f6" />
-    </g>
-
-    <defs>
-      <linearGradient id="cartoon-beam-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-        <stop offset="0%" stop-color="#60a5fa" stop-opacity="0.8" />
-        <stop offset="100%" stop-color="#60a5fa" stop-opacity="0" />
-      </linearGradient>
-    </defs>
-  </svg>
-</div>
-
-<style>
-  /* Рух голови: рівно -40 до 40 градусів */
-  @keyframes linac-cartoon-arc {
-    0% { transform: rotate(-40deg); }
-    100% { transform: rotate(40deg); }
-  }
-  
-  .animate-linac-cartoon-arc {
-    animation: linac-cartoon-arc 5s ease-in-out infinite alternate;
-    transform-origin: 100px 118px; /* Обертання навколо точки над текстом */
-  }
-
-  /* Мерехтіння променя */
-  @keyframes beam-pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.9; }
-  }
-
-  .animate-beam-pulse {
-    animation: beam-pulse 0.1s infinite;
-    transform-origin: center top;
-  }
-</style>
-
--->
-
-
-
+      {/* Мобільне зображення */}
       <div class="lg:hidden my-10 relative z-10">
-         <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-50 relative z-10">
-            <img src="/hero/raddepartment.jpg" alt="Будівля відділення" class="hero-dynamic-img h-auto w-full object-cover" />
-         </div>
-         
-         <div class="hero-hug-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-hero-float z-20 cursor-pointer active:scale-95">
-            <div class="flex items-center gap-3 text-left pointer-events-none">
-              <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
-                <div class="hero-heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
-                  <Icon name="bx:bxs-heart" class="w-6 h-6" />
-                </div>
-                <div class="hero-hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">🤗</div>
+        <div class="rounded-[2rem] overflow-hidden shadow-xl border-4 border-white bg-slate-100 relative z-10 aspect-[4/3]">
+          <img
+            src="/hero/raddepartment.jpg"
+            alt="Будівля відділення променевої терапії КНП ДОКОД ДОР"
+            width="800"
+            height="600"
+            class="hero-dynamic-img w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+
+        <div class="hero-hug-trigger absolute -bottom-6 -right-2 bg-white/95 backdrop-blur-md py-3 px-4 rounded-[1.5rem] shadow-2xl border border-slate-100 max-w-[260px] animate-hero-float z-20 cursor-pointer active:scale-95">
+          <div class="flex items-center gap-3 text-left pointer-events-none">
+            <div class="w-10 h-10 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
+              <div class="hero-heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300">
+                <Icon name="bx:bxs-heart" class="w-6 h-6" />
               </div>
-              <div>
-                <h4 class="font-bold text-slate-900 text-[11px] mb-0 tracking-tight text-balance">Турбота про кожного</h4>
-                <p class="text-[9px] text-slate-500 leading-tight font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
-              </div>
+              <div class="hero-hug-layer absolute inset-0 flex items-center justify-center text-2xl opacity-0 scale-50 transition-all duration-300">🤗</div>
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-[11px] mb-0 tracking-tight text-balance">Турбота про кожного</h4>
+              <p class="text-[9px] text-slate-500 leading-tight font-medium">Індивідуальні плани лікування та підтримка на кожному етапі.</p>
             </div>
           </div>
+        </div>
       </div>
-      
+
       <p class="text-base md:text-lg mt-6 text-slate-600 max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium relative z-20">
         {description}
       </p>
-      
-      <div id="hero-buttons" class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start relative z-20 hidden">
-  <a
-    id="dynamic-btn"
-    href="#"
-    class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold shadow-lg bg-slate-900 text-white transition-transform active:scale-95"
-  >
-    <Icon class="w-5 h-5" name="bx:bxs-chevron-right-circle" />
-    <span id="dynamic-btn-text">Детальніше</span>
-  </a>
 
-  <a
-    id="doctors-btn"
-    href="/contact"
-    class="flex gap-2 items-center justify-center px-8 py-4 rounded-xl font-bold border-2 border-slate-200 hover:bg-slate-50 transition-all active:scale-95 text-slate-700"
-  >
-    <Icon class="text-slate-700 w-5 h-5" name="bx:bxs-calendar" />
-    <span id="doctors-btn-text">Наші лікарі</span>
-  </a>
-</div>
+      {/* Швидкі кнопки переходу для пацієнтів */}
+      <div class="mt-8 flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start relative z-20">
+        <a
+          href="#patient-checklist"
+          class="inline-flex gap-2.5 items-center justify-center px-7 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-blue-600/20 bg-blue-600 hover:bg-blue-700 text-white transition-all active:scale-95"
+        >
+          <Icon class="w-5 h-5" name="bx:list-check" />
+          <span>Підготовка до візиту (Чекліст)</span>
+        </a>
 
-      <div class="mt-10 inline-flex items-center justify-between bg-white/40 backdrop-blur-md border border-white/60 py-3.5 px-8 md:py-4 md:px-12 rounded-[2.5rem] relative z-20 shadow-sm min-w-[280px] md:min-w-[400px]">
+        <a
+          href="/doctors"
+          class="inline-flex gap-2.5 items-center justify-center px-7 py-4 rounded-2xl font-bold text-sm bg-white/80 hover:bg-white border border-slate-200 hover:border-blue-300 transition-all active:scale-95 text-slate-700 shadow-sm"
+        >
+          <Icon class="text-blue-600 w-5 h-5" name="bx:user-check" />
+          <span>Наші спеціалісти</span>
+        </a>
+      </div>
+
+      <div class="mt-10 inline-flex items-center justify-between bg-white/60 backdrop-blur-md border border-white/80 py-3.5 px-8 md:py-4 md:px-12 rounded-[2.5rem] relative z-20 shadow-sm min-w-[280px] md:min-w-[400px]">
         <div class="flex flex-col text-left">
-          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">15+</span>
+          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">{siteSettings.statsYears}</span>
           <span class="text-[9px] md:text-xs uppercase font-bold text-slate-500 tracking-widest mt-0.5">Років досвіду</span>
         </div>
         <div class="w-px h-10 bg-slate-300/60 mx-4"></div>
         <div class="flex flex-col text-left">
-          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">1500+</span>
+          <span class="text-3xl md:text-4xl font-bold text-slate-900 tracking-tighter">{siteSettings.statsPatients}</span>
           <span class="text-[9px] md:text-xs uppercase font-bold text-slate-500 tracking-widest mt-0.5">Пацієнтів щорічно</span>
         </div>
       </div>
     </div>
 
     <div class="hidden lg:block relative order-2 z-10 w-full">
-      <div class="relative transform lg:scale-110 transition-transform duration-500 hover:scale-[1.17] group">
-        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-50 relative z-10 aspect-[4/3]">
-          <img src="/hero/raddepartment.jpg" alt="Будівля відділення" class="hero-dynamic-img w-full h-full object-cover transition-opacity duration-500" />
+      <div class="relative transform lg:scale-105 transition-transform duration-500 hover:scale-[1.09] group">
+        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-100 relative z-10 aspect-[4/3]">
+          <img
+            src="/hero/raddepartment.jpg"
+            alt="Будівля відділення променевої терапії КНП ДОКОД ДОР"
+            width="1200"
+            height="900"
+            class="hero-dynamic-img w-full h-full object-cover transition-opacity duration-500"
+            loading="eager"
+          />
         </div>
       </div>
 
-      <div class="hero-hug-trigger absolute -bottom-10 -right-10 xl:-right-16 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-hero-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
+      <div class="hero-hug-trigger absolute -bottom-10 -right-6 xl:-right-10 bg-white/95 backdrop-blur-md p-6 md:p-7 rounded-[2.5rem] shadow-2xl border border-slate-100 max-w-[280px] md:max-w-[320px] animate-hero-float z-30 transition-all duration-300 cursor-pointer active:scale-95 select-none overflow-hidden">
         <div class="flex items-start gap-4 text-left pointer-events-none">
           <div class="w-12 h-12 shrink-0 bg-cyan-100 rounded-full flex items-center justify-center text-cyan-600 shadow-inner relative overflow-hidden">
             <div class="hero-heart-layer absolute inset-0 flex items-center justify-center transition-all duration-300 opacity-100 scale-100">
@@ -235,43 +148,43 @@ const { title, subtitle, description } = Astro.props;
         </div>
       </div>
     </div>
-
   </div>
-</main>
+</section>
 
 <style>
   @keyframes hero-float-anim {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
+    50% { transform: translateY(-12px); }
   }
-  
+
   .animate-hero-float {
     animation: hero-float-anim 5s ease-in-out infinite;
   }
 </style>
 
 <script>
-
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll<HTMLElement>('.hero-hug-trigger');
-    cards.forEach(card => {
-      const heart = card.querySelector<HTMLElement>('.hero-heart-layer');
-      const hug = card.querySelector<HTMLElement>('.hero-hug-layer');
+  function initHeroHug() {
+    const cards = document.querySelectorAll<HTMLElement>(".hero-hug-trigger");
+    cards.forEach((card) => {
+      const heart = card.querySelector<HTMLElement>(".hero-heart-layer");
+      const hug = card.querySelector<HTMLElement>(".hero-hug-layer");
       if (heart && hug) {
-        card.addEventListener('click', () => {
-          heart.style.opacity = '0';
-          heart.style.transform = 'scale(0)';
-          hug.style.opacity = '1';
-          hug.style.transform = 'scale(1.4)';
+        card.addEventListener("click", () => {
+          heart.style.opacity = "0";
+          heart.style.transform = "scale(0)";
+          hug.style.opacity = "1";
+          hug.style.transform = "scale(1.4)";
           setTimeout(() => {
-            heart.style.opacity = '1';
-            heart.style.transform = 'scale(1)';
-            hug.style.opacity = '0';
-            hug.style.transform = 'scale(0.5)';
+            heart.style.opacity = "1";
+            heart.style.transform = "scale(1)";
+            hug.style.opacity = "0";
+            hug.style.transform = "scale(0.5)";
           }, 1500);
         });
       }
     });
-  });
+  }
+
+  initHeroHug();
+  document.addEventListener("astro:after-swap", initHeroHug);
 </script>

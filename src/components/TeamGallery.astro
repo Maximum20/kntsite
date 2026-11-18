@@ -1,32 +1,34 @@
 ---
 import { Icon } from "astro-icon/components";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const teamPhotos = [
   {
     url: "/hero/doctors/physicsteam.jpg",
-    title: "Інженерно-фізична група"
+    title: "Інженерно-фізична група",
   },
   {
     url: "/hero/doctors/postyka_hladush_pryhodko_drobynaSecond.jpg",
-    title: "Планування та верифікація"
+    title: "Планування та верифікація",
   },
   {
     url: "/hero/doctors/pavlenko_volokitin.jpg",
-    title: "Робочий процес"
-  }, 
+    title: "Робочий процес",
+  },
   {
     url: "/hero/doctors/oldphysics.jpg",
-    title: "Робочий процес"
-  }
+    title: "Команда фізиків та інженерів",
+  },
 ];
 ---
 
-<!-- Підключаємо Swiper CSS прямо тут для надійності -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
 <section class="relative z-10 max-w-[1400px] mx-auto px-6 py-20">
   <div class="mb-12 text-center md:text-left">
-    <h2 class="text-3xl md:text-5xl font-serif font-bold text-slate-900">Команда медичних фізиків</h2>
+    <h2 class="text-3xl md:text-5xl font-serif font-bold text-slate-900">
+      Команда медичних фізиків
+    </h2>
     <div class="w-20 h-1.5 bg-slate-800 mt-6 rounded-full hidden md:block"></div>
   </div>
 
@@ -35,17 +37,20 @@ const teamPhotos = [
       <div class="swiper-wrapper">
         {teamPhotos.map((photo) => (
           <div class="swiper-slide flex flex-col">
-            <div class="relative w-full">
-              <img 
-                src={photo.url} 
+            <div class="relative w-full aspect-[16/10] bg-slate-100">
+              <img
+                src={photo.url}
                 alt={photo.title}
-                class="w-full h-auto block object-contain" 
+                width="1200"
+                height="750"
+                loading="lazy"
+                class="w-full h-full block object-cover"
               />
-              
+
               <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
-              
+
               <div class="absolute bottom-6 left-6 md:bottom-10 md:left-10">
-                <span class="px-4 py-2 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">
+                <span class="px-4 py-2 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">
                   {photo.title}
                 </span>
               </div>
@@ -61,7 +66,7 @@ const teamPhotos = [
       <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
         <Icon name="bx:right-arrow-alt" class="w-8 h-8" />
       </div>
-      
+
       <!-- Пагінація -->
       <div class="team-pagination !bottom-8"></div>
     </div>
@@ -82,43 +87,39 @@ const teamPhotos = [
     width: 30px;
     background: white !important;
   }
-  
-  /* Фікс для слайдів, щоб не стрибали при завантаженні */
+
   .team-swiper:not(.swiper-initialized) .swiper-slide:not(:first-child) {
     display: none;
   }
 </style>
 
 <script>
-  import Swiper from 'swiper';
-  import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+  import Swiper from "swiper";
+  import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
   function initTeamSwiper() {
-    new Swiper('.team-swiper', {
+    new Swiper(".team-swiper", {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 1,
       spaceBetween: 0,
       loop: true,
-      speed: 1000,
+      speed: 800,
       grabCursor: true,
       autoplay: {
         delay: 5000,
         disableOnInteraction: false,
       },
       pagination: {
-        el: '.team-pagination',
+        el: ".team-pagination",
         clickable: true,
       },
       navigation: {
-        nextEl: '.team-next',
-        prevEl: '.team-prev',
+        nextEl: ".team-next",
+        prevEl: ".team-prev",
       },
     });
   }
 
-  // Запуск при завантаженні
   initTeamSwiper();
-
-  // Якщо використовуєш View Transitions в Astro
-  document.addEventListener('astro:after-swap', initTeamSwiper);
+  document.addEventListener("astro:after-swap", initTeamSwiper);
 </script>

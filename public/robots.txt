@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /keystatic
+Disallow: /keystatic/
+Disallow: /api/
+
+Sitemap: https://kntsite.vercel.app/sitemap-index.xml

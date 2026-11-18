@@ -1,84 +1,273 @@
 ---
 import { SEO } from "astro-seo";
+import { Icon } from "astro-icon/components";
 import Footer from "../components/footer.astro";
 import Navbar from "../components/navbar/navbar.astro";
+import { siteSettings } from "../data";
 
 import "@fontsource-variable/inter/index.css";
-import '@fontsource-variable/bricolage-grotesque/index.css';
+import "@fontsource-variable/bricolage-grotesque/index.css";
 import "../styles/global.css";
 
-
-
-
-const { title, hideSubNav = false } = Astro.props; // Додаємо hideSubNav
-const makeTitle = title ? title + " | Відділення променевої терапії" : "Відділення променевої терапії - №1";
-
+const { title, description, hideSubNav = false } = Astro.props;
+const makeTitle = title
+  ? `${title} | ${siteSettings.clinicShortName}`
+  : `${siteSettings.departmentName} | ${siteSettings.clinicShortName}`;
+const makeDesc =
+  description ||
+  "Сучасна променева терапія у Дніпрі. Лінійні прискорювачі Elekta Versa HD, Synergy, система BrainLAB, КТ-розмітка, брахітерапія та гамма-терапія за програмою НСЗУ.";
 ---
-
-    
 
 <!DOCTYPE html>
 <html lang="uk" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{makeTitle}</title>
-    <SEO title={makeTitle} description="Сучасна променева терапія у Дніпрі." />
+    <SEO title={makeTitle} description={makeDesc} />
+
+    {/* Миттєве відновлення налаштувань доступності до рендеру сторінки (без миготіння) */}
+    <script is:inline>
+      (function () {
+        try {
+          var raw = localStorage.getItem("dokod_a11y_v1");
+          if (raw) {
+            var cfg = JSON.parse(raw);
+            var root = document.documentElement;
+            if (cfg.font && cfg.font !== "normal") {
+              root.setAttribute("data-a11y-font", cfg.font);
+            }
+            if (cfg.contrast && cfg.contrast !== "normal") {
+              root.setAttribute("data-a11y-contrast", cfg.contrast);
+            }
+            if (cfg.motion === "reduce") {
+              root.setAttribute("data-a11y-motion", "reduce");
+            }
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  
 
-
-    
-    
-
-  <!-- Основний фон тепер не білий, а світло-сірий bg-slate-50 -->
-  <body class="bg-slate-50 text-slate-900 antialiased min-h-screen relative overflow-x-hidden">
-    
-    
-
-
-    <!-- ДЕКОРАТИВНІ ЕЛЕМЕНТИ ФОНУ (Тепер яскравіші та анімовані) -->
-    <div class="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-      <!-- Велика синя пляма зліва зверху -->
+  <body class="bg-slate-50 text-slate-900 antialiased min-h-screen relative overflow-x-hidden flex flex-col">
+    {/* ДЕКОРАТИВНІ ЕЛЕМЕНТИ ФОНУ */}
+    <div id="bg-blobs" class="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
       <div class="absolute top-[-15%] left-[-10%] w-[800px] h-[800px] bg-blue-400/20 rounded-full blur-[120px] animate-blob"></div>
-      
-      <!-- Бірюзова пляма справа посередині -->
       <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-cyan-400/20 rounded-full blur-[100px] animate-blob animation-delay-2000"></div>
-      
-      <!-- М'яка фіолетова/індиго пляма знизу зліва -->
       <div class="absolute bottom-[-10%] left-[10%] w-[700px] h-[700px] bg-indigo-400/15 rounded-full blur-[130px] animate-blob animation-delay-4000"></div>
     </div>
 
     <Navbar hideSubNav={hideSubNav} />
-    <slot />
 
-
+    <div class="flex-1">
+      <slot />
+    </div>
 
     <Footer />
-    
+
+    {/* ГЛОБАЛЬНЕ СПОВІЩЕННЯ TOAST (Для копіювання телефонів, адрес, посилань) */}
+    <div
+      id="global-toast"
+      role="status"
+      aria-live="polite"
+      class="fixed top-6 right-6 z-[1100] flex items-center gap-3 px-5 py-3.5 bg-emerald-600 text-white rounded-2xl shadow-2xl shadow-emerald-900/20 font-bold text-sm pointer-events-none opacity-0 -translate-y-6 transition-all duration-300"
+    >
+      <Icon name="bx:check-circle" class="w-5 h-5 shrink-0" />
+      <span id="global-toast-message">Скопійовано в буфер обміну</span>
+    </div>
+
+    {/* ГЛОБАЛЬНА КНОПКА ПРОКРУТКИ ВГОРУ (Працює на всіх сторінках сайту) */}
+    <button
+      id="scroll-to-top"
+      type="button"
+      class="fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[100] bg-white/85 hover:bg-blue-600 backdrop-blur-xl text-blue-600 hover:text-white p-3.5 md:p-4 rounded-full border border-blue-200/80 shadow-xl shadow-blue-900/10 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none hover:-translate-y-1 active:scale-95 cursor-pointer"
+      aria-label="Прокрутити сторінку вгору"
+      title="Вгору"
+    >
+      <Icon name="bx:chevron-up" class="w-7 h-7 md:w-8 md:h-8" />
+    </button>
+
     <style is:global>
-      /* Анімація для «плаваючих» плям, щоб вони повільно рухалися */
       @keyframes blob {
         0%, 100% { transform: translate(0px, 0px) scale(1); }
-        33% { transform: translate(40px, -60px) scale(1.1); }
-        66% { transform: translate(-30px, 30px) scale(0.9); }
+        33% { transform: translate(40px, -60px) scale(1.08); }
+        66% { transform: translate(-30px, 30px) scale(0.94); }
       }
-      
+
       .animate-blob {
-        animation: blob 12s infinite alternate ease-in-out;
+        animation: blob 14s infinite alternate ease-in-out;
       }
-      
+
       .animation-delay-2000 { animation-delay: 2s; }
       .animation-delay-4000 { animation-delay: 4s; }
 
-      img { content-visibility: auto; }
-      
-      /* Гарний скролбар під новий фон */
+      /* Усунено img { content-visibility: auto; }, що спричиняло стрибки CLS та миготіння зображень */
+      img {
+        max-width: 100%;
+      }
+
+      /* Скролбар */
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       ::-webkit-scrollbar-thumb:hover { background: #94a1b4; }
+
+      /* --- РЕЖИМ ДОСТУПНОСТІ ДЛЯ ЛЮДЕЙ ІЗ ПОРУШЕННЯМ ЗОРУ --- */
+      html[data-a11y-font="large"] {
+        font-size: 112.5% !important;
+      }
+      html[data-a11y-font="xlarge"] {
+        font-size: 125% !important;
+      }
+
+      /* Високий контраст (світлий: чорним по білому) */
+      html[data-a11y-contrast="high"] body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+      }
+      html[data-a11y-contrast="high"] #bg-blobs {
+        display: none !important;
+      }
+      html[data-a11y-contrast="high"] p,
+      html[data-a11y-contrast="high"] span,
+      html[data-a11y-contrast="high"] li,
+      html[data-a11y-contrast="high"] h1,
+      html[data-a11y-contrast="high"] h2,
+      html[data-a11y-contrast="high"] h3,
+      html[data-a11y-contrast="high"] h4 {
+        color: #000000 !important;
+        -webkit-text-fill-color: currentColor !important;
+      }
+      html[data-a11y-contrast="high"] a {
+        text-decoration: underline;
+      }
+      html[data-a11y-contrast="high"] .glass-card,
+      html[data-a11y-contrast="high"] .feature-card,
+      html[data-a11y-contrast="high"] .pj__card,
+      html[data-a11y-contrast="high"] article {
+        background: #ffffff !important;
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+      }
+
+      /* Високий контраст (темний: білим/жовтим по чорному) */
+      html[data-a11y-contrast="dark"] body {
+        background-color: #090d16 !important;
+        color: #f8fafc !important;
+      }
+      html[data-a11y-contrast="dark"] #bg-blobs {
+        display: none !important;
+      }
+      html[data-a11y-contrast="dark"] header > div,
+      html[data-a11y-contrast="dark"] .glass-card,
+      html[data-a11y-contrast="dark"] .feature-card,
+      html[data-a11y-contrast="dark"] .pj__card,
+      html[data-a11y-contrast="dark"] article,
+      html[data-a11y-contrast="dark"] details,
+      html[data-a11y-contrast="dark"] .bg-white,
+      html[data-a11y-contrast="dark"] .bg-white\/70,
+      html[data-a11y-contrast="dark"] .bg-white\/80 {
+        background: #111827 !important;
+        color: #f8fafc !important;
+        border-color: #475569 !important;
+      }
+      html[data-a11y-contrast="dark"] h1,
+      html[data-a11y-contrast="dark"] h2,
+      html[data-a11y-contrast="dark"] h3,
+      html[data-a11y-contrast="dark"] h4 {
+        color: #fde047 !important;
+        -webkit-text-fill-color: #fde047 !important;
+      }
+      html[data-a11y-contrast="dark"] p,
+      html[data-a11y-contrast="dark"] li,
+      html[data-a11y-contrast="dark"] span {
+        color: #f1f5f9 !important;
+      }
+
+      /* Вимкнення анімацій */
+      html[data-a11y-motion="reduce"] *,
+      html[data-a11y-motion="reduce"] *::before,
+      html[data-a11y-motion="reduce"] *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
     </style>
+
+    <script is:inline>
+      // Глобальна функція показу Toast-повідомлення
+      window.showGlobalToast = function (message) {
+        const toast = document.getElementById("global-toast");
+        const msgEl = document.getElementById("global-toast-message");
+        if (!toast || !msgEl) return;
+        msgEl.textContent = message || "Скопійовано";
+        toast.classList.remove("opacity-0", "-translate-y-6");
+        toast.classList.add("opacity-100", "translate-y-0");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => {
+          toast.classList.add("opacity-0", "-translate-y-6");
+          toast.classList.remove("opacity-100", "translate-y-0");
+        }, 2800);
+      };
+
+      function initGlobalLayoutControls() {
+        const toTopBtn = document.getElementById("scroll-to-top");
+
+        function handleScroll() {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          if (scrollTop > 320) {
+            toTopBtn?.classList.remove("translate-y-20", "opacity-0", "pointer-events-none");
+          } else {
+            toTopBtn?.classList.add("translate-y-20", "opacity-0", "pointer-events-none");
+          }
+        }
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll();
+
+        toTopBtn?.addEventListener("click", () => {
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+          });
+        });
+
+        // Глобальна підтримка кнопок копіювання [data-copy] на будь-якій сторінці
+        document.querySelectorAll("[data-copy]").forEach((btn) => {
+          if (btn.hasAttribute("data-copy-bound")) return;
+          btn.setAttribute("data-copy-bound", "true");
+          btn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const val = btn.getAttribute("data-copy") || "";
+            if (!val) return;
+            try {
+              await navigator.clipboard.writeText(val);
+              btn.classList.add("copied");
+              setTimeout(() => btn.classList.remove("copied"), 2000);
+              window.showGlobalToast(`Скопійовано: ${val}`);
+            } catch (err) {
+              // Fallback для старих браузерів
+              const ta = document.createElement("textarea");
+              ta.value = val;
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand("copy");
+              document.body.removeChild(ta);
+              window.showGlobalToast(`Скопійовано: ${val}`);
+            }
+          });
+        });
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initGlobalLayoutControls);
+      } else {
+        initGlobalLayoutControls();
+      }
+      document.addEventListener("astro:after-swap", initGlobalLayoutControls);
+    </script>
   </body>
 </html>

@@ -2,18 +2,22 @@
 import { Astronav, MenuItems, MenuIcon } from "astro-navbar";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import fullLogo from "../../assets/full-logo.png"; 
-import Search from "../Search.astro"; 
+import fullLogo from "../../assets/full-logo.png";
+import Search from "../Search.astro";
+import { siteSettings } from "../../data";
 
 const { hideSubNav } = Astro.props;
 
 const menuitems = [
   { title: "Персонал", path: "/doctors" },
   { title: "Новини", path: "/all-news" },
-  { title: "Вакансії", path: "/vacancies" }
+  { title: "Вакансії", path: "/vacancies" },
 ];
 
-const mainClinic = { title: "На головну клініки", path: "https://dokod.org.ua/" };
+const mainClinic = {
+  title: "На головну клініки",
+  path: siteSettings.mainClinicUrl || "https://dokod.org.ua/",
+};
 
 const departments = [
   { id: "linac", btnTitle: "Мегавольтна терапія" },
@@ -21,127 +25,254 @@ const departments = [
   { id: "brachy", btnTitle: "Брахітерапія" },
   { id: "nearfocus", btnTitle: "Рентгентерапія" },
   { id: "ct", btnTitle: "КТ-розмітка" },
-  { id: "mlt", btnTitle: "Реабілітація" }
+  { id: "mlt", btnTitle: "Реабілітація" },
 ];
 
-const { id: currentId } = Astro.params; 
-const currentIndex = departments.findIndex(d => d.id === currentId);
+const { id: currentId } = Astro.params;
+const currentIndex = departments.findIndex((d) => d.id === currentId);
 const isServiceDetailPage = currentIndex !== -1;
 
-const prevIndex = isServiceDetailPage ? (currentIndex - 1 + departments.length) % departments.length : 0;
-const nextIndex = isServiceDetailPage ? (currentIndex + 1) % departments.length : 0;
+const prevIndex = isServiceDetailPage
+  ? (currentIndex - 1 + departments.length) % departments.length
+  : 0;
+const nextIndex = isServiceDetailPage
+  ? (currentIndex + 1) % departments.length
+  : 0;
 
-const prevPath = isServiceDetailPage ? `/services/${departments[prevIndex].id}` : '';
-const nextPath = isServiceDetailPage ? `/services/${departments[nextIndex].id}` : '';
+const prevPath = isServiceDetailPage ? `/services/${departments[prevIndex].id}` : "";
+const nextPath = isServiceDetailPage ? `/services/${departments[nextIndex].id}` : "";
 
-const prevTitle = isServiceDetailPage ? departments[prevIndex].btnTitle : '';
-const nextTitle = isServiceDetailPage ? departments[nextIndex].btnTitle : '';
-const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : '';
+const prevTitle = isServiceDetailPage ? departments[prevIndex].btnTitle : "";
+const nextTitle = isServiceDetailPage ? departments[nextIndex].btnTitle : "";
+const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : "";
 ---
 
 <header class="w-full relative xl:sticky xl:top-0 z-[100] transition-all duration-300">
-  <div class="bg-transparent xl:bg-white/70 xl:backdrop-blur-xl border-transparent xl:border-b xl:border-white/60 shadow-none xl:shadow-sm relative z-20">
-    <div class="max-w-[1800px] mx-auto px-5 font-sans">
+  <div class="bg-transparent xl:bg-white/75 xl:backdrop-blur-xl border-transparent xl:border-b xl:border-white/60 shadow-none xl:shadow-sm relative z-20">
+    <div class="max-w-[1800px] mx-auto px-4 sm:px-5 font-sans">
       <div class="flex flex-col xl:flex-row items-center py-3 xl:py-2 gap-4">
         <Astronav>
           <div class="flex w-full xl:w-auto items-center justify-between relative z-50">
             <div class="flex items-center gap-2 sm:gap-4">
-              <a href="/" class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95" data-target="home">
-                <Image src={fullLogo} alt="Лого" class="h-10 md:h-12 xl:h-14 w-auto object-contain" loading="eager" />
+              <a
+                href="/"
+                class="logo-home-trigger flex items-center shrink-0 transition-transform hover:scale-105 active:scale-95"
+                data-target="home"
+              >
+                <Image
+                  src={fullLogo}
+                  alt="Логотип КНП ДОКОД ДОР"
+                  class="h-10 md:h-12 xl:h-14 w-auto object-contain"
+                  loading="eager"
+                />
               </a>
               <div class="flex items-center border-l border-slate-200 pl-2 sm:pl-4">
-                <span class="text-slate-500 font-bold text-[9px] sm:text-[12px] uppercase leading-tight">КНТ "ДОКОД" ДОР</span>
+                <span class="text-slate-600 font-bold text-[9px] sm:text-[12px] uppercase leading-tight">
+                  {siteSettings.clinicShortName}
+                </span>
               </div>
             </div>
-            <div class="flex items-center gap-3 xl:hidden">
-              <a href="#contacts" class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-4 py-2 flex items-center gap-2 font-bold text-xs active:scale-95">
-                <Icon name="bx:bxs-phone-call" class="w-4 h-4" /> Зв'язок
+
+            {/* МОБІЛЬНІ КНОПКИ В ШАПЦІ */}
+            <div class="flex items-center gap-2 sm:gap-2.5 xl:hidden">
+              {/* Кнопка доступності (мобільна) */}
+              <button
+                type="button"
+                data-a11y-toggle
+                class="p-2 rounded-full bg-white/90 border border-slate-200 text-slate-700 hover:text-blue-600 shadow-xs active:scale-95 transition-all cursor-pointer"
+                aria-label="Версія для людей із порушенням зору"
+                title="Версія для людей із порушенням зору"
+              >
+                <Icon name="bx:show" class="w-5 h-5" />
+              </button>
+
+              {/* Виправлена кнопка Зв'язок — працює з будь-якої сторінки */}
+              <a
+                href="/#contacts"
+                data-contacts-link="true"
+                class="text-blue-600 bg-blue-50 border border-blue-100 rounded-full px-3.5 py-2 flex items-center gap-1.5 font-bold text-xs active:scale-95 shadow-2xs"
+              >
+                <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
+                <span>Зв'язок</span>
               </a>
-              
-              <div id="burger-wrapper" class="p-1.5 bg-white/85 backdrop-blur-2xl border border-white/90 rounded-2xl flex items-center justify-center shadow-sm active:scale-95 transition-all">
+
+              <div
+                id="burger-wrapper"
+                class="p-1.5 bg-white/85 backdrop-blur-2xl border border-white/90 rounded-2xl flex items-center justify-center shadow-sm active:scale-95 transition-all"
+              >
                 <MenuIcon class="w-7 h-7 text-slate-800" />
               </div>
             </div>
           </div>
 
-          <MenuItems id="mobile-menu-overlay" class="hidden fixed inset-0 z-40 bg-black/5 backdrop-blur-xs xl:relative xl:inset-auto xl:z-auto xl:flex xl:w-auto xl:bg-transparent xl:backdrop-blur-none mt-0 xl:ml-auto">
-            
-            <ul id="mobile-menu-panel" class="flex flex-col w-full max-w-[300px] h-[calc(100vh-95px)] mt-[75px] mr-5 mb-4 ml-auto bg-white/85 backdrop-blur-2xl border border-white/90 p-5 pt-5 pb-14 shadow-2xl shadow-blue-950/5 overflow-y-auto gap-1 rounded-[2.2rem] xl:flex-row xl:w-auto xl:max-w-none xl:h-auto xl:bg-transparent xl:backdrop-blur-none xl:border-none xl:p-0 xl:pt-0 xl:mt-0 xl:mr-0 xl:mb-0 xl:ml-0 xl:shadow-none xl:overflow-visible xl:items-center 2xl:gap-4">
-              
-              <Search />
+          <MenuItems
+            id="mobile-menu-overlay"
+            class="hidden fixed inset-0 z-40 bg-black/10 backdrop-blur-xs xl:relative xl:inset-auto xl:z-auto xl:flex xl:w-auto xl:bg-transparent xl:backdrop-blur-none mt-0 xl:ml-auto"
+          >
+            <ul
+              id="mobile-menu-panel"
+              class="flex flex-col w-full max-w-[310px] h-[calc(100vh-95px)] mt-[75px] mr-4 mb-4 ml-auto bg-white/95 backdrop-blur-2xl border border-white/90 p-5 pt-5 pb-14 shadow-2xl shadow-blue-950/10 overflow-y-auto gap-1 rounded-[2.2rem] xl:flex-row xl:w-auto xl:max-w-none xl:h-auto xl:bg-transparent xl:backdrop-blur-none xl:border-none xl:p-0 xl:pt-0 xl:mt-0 xl:mr-0 xl:mb-0 xl:ml-0 xl:shadow-none xl:overflow-visible xl:items-center 2xl:gap-3"
+            >
+              <li class="w-full xl:w-auto">
+                <Search />
+              </li>
 
               <div class="xl:hidden px-2 mt-4 mb-1.5 flex items-center gap-2">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Сторінки</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Сторінки
+                </p>
                 <div class="flex-1 h-px bg-slate-500/10"></div>
               </div>
 
               {menuitems.map((item) => (
                 <li>
-                  <a href={item.path} class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group">
+                  <a
+                    href={item.path}
+                    class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group"
+                  >
                     <span>{item.title}</span>
-                    <Icon name="bx:chevron-right" class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5" />
+                    <Icon
+                      name="bx:chevron-right"
+                      class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5"
+                    />
                   </a>
                 </li>
               ))}
 
               <div class="xl:hidden px-2 mt-5 mb-1.5 flex items-center gap-2">
-                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Детальніше про:</p>
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                  Детальніше про:
+                </p>
                 <div class="flex-1 h-px bg-slate-500/10"></div>
               </div>
 
               {departments.map((dept) => (
                 <li class="xl:hidden">
-                  <a href={`/services/${dept.id}`} class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group">
+                  <a
+                    href={`/services/${dept.id}`}
+                    class="mobile-nav-link flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[14px] font-bold text-slate-700 hover:bg-white/60 hover:text-blue-600 transition-all group"
+                  >
                     <span>{dept.btnTitle}</span>
-                    <Icon name="bx:chevron-right" class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5" />
+                    <Icon
+                      name="bx:chevron-right"
+                      class="w-4 h-4 text-slate-400 xl:hidden group-hover:text-blue-500 transition-transform group-hover:translate-x-0.5"
+                    />
                   </a>
                 </li>
               ))}
 
               <div class="hidden xl:block w-px h-6 bg-slate-200 mx-1"></div>
-              
-              <li class="mt-4 xl:mt-0">
-                <a href={mainClinic.path} target="_blank" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-white/80 transition-all">
-                  <Icon name="bx:link-external" class="w-4 h-4 opacity-50" />
+
+              {/* Кнопка доступності для людей із порушенням зору (Десктоп + Мобільне меню) */}
+              <li class="mt-2 xl:mt-0">
+                <button
+                  type="button"
+                  data-a11y-toggle
+                  class="w-full xl:w-auto flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full bg-slate-100/90 hover:bg-slate-900 text-slate-700 hover:text-white border border-slate-200/80 font-bold text-[12px] transition-all cursor-pointer active:scale-95"
+                  aria-label="Налаштування доступності для людей із порушенням зору"
+                  title="Версія для людей із порушенням зору"
+                >
+                  <Icon name="bx:show" class="w-4 h-4 shrink-0" />
+                  <span class="xl:hidden 2xl:inline">Людям із порушенням зору</span>
+                  <span class="hidden xl:inline 2xl:hidden">Аа</span>
+                </button>
+              </li>
+
+              <li class="mt-2 xl:mt-0">
+                <a
+                  href={mainClinic.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center justify-center gap-2 px-4 py-2 rounded-full bg-white/60 text-slate-700 font-bold text-[13px] hover:bg-slate-800 hover:text-white border border-slate-200/80 transition-all"
+                >
+                  <Icon name="bx:link-external" class="w-4 h-4 opacity-60" />
                   <span>{mainClinic.title}</span>
                 </a>
               </li>
 
               <li class="hidden xl:flex">
-                <a href="#contacts" class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                <a
+                  href="/#contacts"
+                  data-contacts-link="true"
+                  class="flex items-center gap-2 bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold text-[13px] hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all"
+                >
                   <Icon name="bx:bxs-phone-call" class="w-4 h-4" />
                   <span>Зв'язок</span>
                 </a>
               </li>
 
+              {/* Мобільна нижня панель з реальними соцмережами */}
               <li class="xl:hidden mt-auto pt-5 border-t border-slate-500/10 flex flex-col items-center text-center gap-4">
                 <div class="flex items-center gap-2.5">
                   <Image src={fullLogo} alt="Лого" class="h-9 w-auto object-contain" />
                   <div class="text-left border-l border-slate-300 pl-2">
-                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-800 leading-tight">КНТ "ДОКОД" ДОР</p>
-                    <p class="text-[9px] text-slate-500 font-medium">Радіологічний департамент</p>
+                    <p class="text-[10px] font-black uppercase tracking-wider text-slate-800 leading-tight">
+                      {siteSettings.clinicShortName}
+                    </p>
+                    <p class="text-[9px] text-slate-500 font-medium">
+                      Радіологічний департамент
+                    </p>
                   </div>
                 </div>
-                
+
                 <div class="flex flex-wrap items-center justify-center gap-2 mt-0.5 text-slate-600 w-full">
-                  <a href="https://www.facebook.com/" target="_blank" aria-label="Facebook" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-blue-600 active:scale-90 transition-all shadow-sm">
-                    <Icon name="bx:bxl-facebook" class="w-4 h-4" />
-                  </a>
-                  <a href="https://www.instagram.com/" target="_blank" aria-label="Instagram" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-pink-600 active:scale-90 transition-all shadow-sm">
-                    <Icon name="bx:bxl-instagram" class="w-4 h-4" />
-                  </a>
-                  <a href="https://www.tiktok.com/" target="_blank" aria-label="TikTok" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-black active:scale-90 transition-all shadow-sm">
-                    <Icon name="bx:bxl-tiktok" class="w-4 h-4" />
-                  </a>
-                  <a href="https://t.me/" target="_blank" aria-label="Telegram" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-blue-500 active:scale-90 transition-all shadow-sm">
-                    <Icon name="bx:bxl-telegram" class="w-4 h-4" />
-                  </a>
-                  <a href="https://www.youtube.com/" target="_blank" aria-label="YouTube" class="p-2 bg-white/60 border border-white/80 rounded-full hover:bg-white hover:text-red-600 active:scale-90 transition-all shadow-sm">
-                    <Icon name="bx:bxl-youtube" class="w-4 h-4" />
-                  </a>
+                  {siteSettings.socials.facebook && (
+                    <a
+                      href={siteSettings.socials.facebook}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Facebook"
+                      class="p-2 bg-white/80 border border-slate-200 rounded-full hover:bg-white hover:text-blue-600 active:scale-90 transition-all shadow-xs"
+                    >
+                      <Icon name="bx:bxl-facebook" class="w-4 h-4" />
+                    </a>
+                  )}
+                  {siteSettings.socials.instagram && (
+                    <a
+                      href={siteSettings.socials.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Instagram"
+                      class="p-2 bg-white/80 border border-slate-200 rounded-full hover:bg-white hover:text-pink-600 active:scale-90 transition-all shadow-xs"
+                    >
+                      <Icon name="bx:bxl-instagram" class="w-4 h-4" />
+                    </a>
+                  )}
+                  {siteSettings.socials.tiktok && (
+                    <a
+                      href={siteSettings.socials.tiktok}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="TikTok"
+                      class="p-2 bg-white/80 border border-slate-200 rounded-full hover:bg-white hover:text-black active:scale-90 transition-all shadow-xs"
+                    >
+                      <Icon name="bx:bxl-tiktok" class="w-4 h-4" />
+                    </a>
+                  )}
+                  {siteSettings.socials.telegram && (
+                    <a
+                      href={siteSettings.socials.telegram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="Telegram"
+                      class="p-2 bg-white/80 border border-slate-200 rounded-full hover:bg-white hover:text-blue-500 active:scale-90 transition-all shadow-xs"
+                    >
+                      <Icon name="bx:bxl-telegram" class="w-4 h-4" />
+                    </a>
+                  )}
+                  {siteSettings.socials.youtube && (
+                    <a
+                      href={siteSettings.socials.youtube}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="YouTube"
+                      class="p-2 bg-white/80 border border-slate-200 rounded-full hover:bg-white hover:text-red-600 active:scale-90 transition-all shadow-xs"
+                    >
+                      <Icon name="bx:bxl-youtube" class="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
               </li>
-
             </ul>
           </MenuItems>
         </Astronav>
@@ -149,24 +280,143 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
     </div>
   </div>
 
-  { !hideSubNav && (
-    <div id="dept-panel" class="hidden xl:flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500">
+  {/* ПАНЕЛЬ НАЛАШТУВАНЬ ДОСТУПНОСТІ (ВЕРСІЯ ДЛЯ ЛЮДЕЙ ІЗ ПОРУШЕННЯМ ЗОРУ) */}
+  <div
+    id="a11y-panel"
+    role="region"
+    aria-label="Налаштування доступності"
+    class="hidden fixed xl:absolute right-4 left-4 sm:left-auto top-20 xl:top-full xl:right-8 xl:mt-2 z-[120] sm:w-[360px] bg-white border-2 border-slate-900 rounded-3xl shadow-2xl p-5 font-sans text-slate-900"
+  >
+    <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200">
+      <div class="flex items-center gap-2">
+        <Icon name="bx:show" class="w-5 h-5 text-blue-600" />
+        <h3 class="text-sm font-black uppercase tracking-wider">Налаштування зору</h3>
+      </div>
+      <button
+        type="button"
+        id="a11y-close"
+        class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 cursor-pointer"
+        aria-label="Закрити панель доступності"
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      {/* Розмір шрифту */}
+      <div>
+        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+          Розмір тексту:
+        </span>
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            data-a11y-font-btn="normal"
+            class="a11y-opt-btn py-2 px-3 rounded-xl border-2 border-slate-200 font-bold text-xs hover:border-blue-600 cursor-pointer transition-all"
+          >
+            100% (А)
+          </button>
+          <button
+            type="button"
+            data-a11y-font-btn="large"
+            class="a11y-opt-btn py-2 px-3 rounded-xl border-2 border-slate-200 font-bold text-sm hover:border-blue-600 cursor-pointer transition-all"
+          >
+            115% (А+)
+          </button>
+          <button
+            type="button"
+            data-a11y-font-btn="xlarge"
+            class="a11y-opt-btn py-2 px-3 rounded-xl border-2 border-slate-200 font-bold text-base hover:border-blue-600 cursor-pointer transition-all"
+          >
+            130% (А++)
+          </button>
+        </div>
+      </div>
+
+      {/* Контрастність */}
+      <div>
+        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+          Контрастність кольорів:
+        </span>
+        <div class="grid grid-cols-3 gap-2">
+          <button
+            type="button"
+            data-a11y-contrast-btn="normal"
+            class="a11y-opt-btn py-2 px-2 rounded-xl border-2 border-slate-200 font-bold text-xs hover:border-blue-600 cursor-pointer transition-all"
+          >
+            Звичайна
+          </button>
+          <button
+            type="button"
+            data-a11y-contrast-btn="high"
+            class="a11y-opt-btn py-2 px-2 rounded-xl border-2 border-black bg-white text-black font-black text-xs hover:bg-slate-100 cursor-pointer transition-all"
+          >
+            Чорно-біла
+          </button>
+          <button
+            type="button"
+            data-a11y-contrast-btn="dark"
+            class="a11y-opt-btn py-2 px-2 rounded-xl border-2 border-slate-900 bg-slate-900 text-yellow-300 font-black text-xs hover:bg-slate-800 cursor-pointer transition-all"
+          >
+            Темна
+          </button>
+        </div>
+      </div>
+
+      {/* Анімації */}
+      <div class="pt-1">
+        <label class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
+          <span class="text-xs font-bold text-slate-800">Вимкнути анімації та рух</span>
+          <input
+            type="checkbox"
+            id="a11y-motion-toggle"
+            class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+          />
+        </label>
+      </div>
+
+      {/* Скинути */}
+      <button
+        type="button"
+        id="a11y-reset"
+        class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-600 font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+      >
+        Скинути до стандартних налаштувань
+      </button>
+    </div>
+  </div>
+
+  {!hideSubNav && (
+    <div
+      id="dept-panel"
+      class="hidden xl:flex justify-center px-5 pt-3 pb-2 relative z-10 transition-all duration-500"
+    >
       {isServiceDetailPage ? (
         <div class="bg-white/80 backdrop-blur-2xl p-2 rounded-[3.5rem] border border-white/60 shadow-2xl flex items-center gap-2 pointer-events-auto">
-          <a href={prevPath} class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all">
+          <a
+            href={prevPath}
+            class="group flex items-center gap-3 pl-2 pr-4 py-2 rounded-full hover:bg-slate-50 transition-all"
+          >
             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
               <Icon name="bx:chevron-left" class="w-6 h-6" />
             </div>
-            <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+            <span class="hidden lg:block text-[11px] font-bold text-slate-400 uppercase tracking-tighter opacity-70 group-hover:opacity-100 transition-opacity">
               {prevTitle}
             </span>
           </a>
           <div class="px-10 py-1 text-center min-w-[200px] border-x border-slate-100">
-            <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">Відділення</span>
-            <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">{currentTitle}</h2>
+            <span class="block text-[9px] text-blue-600 font-black uppercase tracking-[0.4em] mb-0.5">
+              Відділення
+            </span>
+            <h2 class="text-xl font-black text-slate-900 tracking-tighter uppercase whitespace-nowrap">
+              {currentTitle}
+            </h2>
           </div>
-          <a href={nextPath} class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right">
-            <span class="hidden lg:block text-[11px] font-bold text-slate-300 uppercase tracking-tighter opacity-50 group-hover:opacity-100 transition-opacity">
+          <a
+            href={nextPath}
+            class="group flex items-center gap-3 pr-2 pl-4 py-2 rounded-full hover:bg-slate-50 transition-all text-right"
+          >
+            <span class="hidden lg:block text-[11px] font-bold text-slate-400 uppercase tracking-tighter opacity-70 group-hover:opacity-100 transition-opacity">
               {nextTitle}
             </span>
             <div class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-100 text-slate-400 group-hover:bg-blue-600 group-hover:text-white transition-all shadow-sm">
@@ -175,9 +425,14 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
           </a>
         </div>
       ) : (
-        <div class="bg-white/70 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
+        <div class="bg-white/75 backdrop-blur-xl p-1.5 rounded-[2.5rem] border border-white/60 shadow-2xl flex flex-wrap justify-center gap-1.5 pointer-events-auto no-scrollbar overflow-x-auto max-w-full">
           {departments.map((dept) => (
-            <a href={`/services/${dept.id}`} class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white">{dept.btnTitle}</a>
+            <a
+              href={`/services/${dept.id}`}
+              class="px-5 py-2.5 rounded-[1.8rem] font-bold text-[13px] transition-all duration-300 whitespace-nowrap active:scale-95 text-slate-600 hover:bg-blue-600 hover:text-white"
+            >
+              {dept.btnTitle}
+            </a>
           ))}
         </div>
       )}
@@ -186,51 +441,213 @@ const currentTitle = isServiceDetailPage ? departments[currentIndex].btnTitle : 
 </header>
 
 <style>
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  .dept-hidden { transform: translateY(-110%); opacity: 0; pointer-events: none; }
-  #dept-panel { transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear; will-change: transform; }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .dept-hidden {
+    transform: translateY(-110%);
+    opacity: 0;
+    pointer-events: none;
+  }
+  #dept-panel {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s linear;
+    will-change: transform;
+  }
 </style>
 
 <script>
-  let lastScrollTop = 0;
-  const panel = document.getElementById('dept-panel');
-  const threshold = 10;
+  function initNavbarAndA11y() {
+    let lastScrollTop = 0;
+    const panel = document.getElementById("dept-panel");
+    const threshold = 10;
 
-  window.addEventListener('scroll', () => {
-    if (window.innerWidth >= 1280) {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const distance = Math.abs(scrollTop - lastScrollTop);
-      if (distance > threshold) {
-        if (scrollTop > lastScrollTop && scrollTop > 80) {
-          panel?.classList.add('dept-hidden');
-        } else {
-          panel?.classList.remove('dept-hidden');
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (window.innerWidth >= 1280) {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const distance = Math.abs(scrollTop - lastScrollTop);
+          if (distance > threshold) {
+            if (scrollTop > lastScrollTop && scrollTop > 80) {
+              panel?.classList.add("dept-hidden");
+            } else {
+              panel?.classList.remove("dept-hidden");
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+          }
         }
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      },
+      { passive: true }
+    );
+
+    const menuOverlay = document.getElementById("mobile-menu-overlay");
+    const menuPanel = document.getElementById("mobile-menu-panel");
+    const getToggleBtn = () =>
+      document.querySelector("#burger-wrapper button") as HTMLElement | null;
+
+    const closeMobileMenuIfNeeded = () => {
+      if (window.innerWidth < 1280 && menuOverlay && !menuOverlay.classList.contains("hidden")) {
+        getToggleBtn()?.click();
+        document.body.classList.remove("overflow-hidden");
       }
+    };
+
+    if (menuOverlay) {
+      const observer = new MutationObserver(() => {
+        if (!menuOverlay.classList.contains("hidden") && window.innerWidth < 1280) {
+          document.body.classList.add("overflow-hidden");
+        } else {
+          document.body.classList.remove("overflow-hidden");
+        }
+      });
+      observer.observe(menuOverlay, { attributes: true, attributeFilter: ["class"] });
     }
-  }, { passive: true });
 
-  const menuOverlay = document.getElementById('mobile-menu-overlay');
-  const menuPanel = document.getElementById('mobile-menu-panel');
-  
-  const getToggleBtn = () => document.querySelector('#burger-wrapper button') as HTMLElement;
-
-  if (menuOverlay) {
-    const observer = new MutationObserver(() => {
-      if (!menuOverlay.classList.contains('hidden')) {
-        document.body.classList.add('overflow-hidden');
-      } else {
-        document.body.classList.remove('overflow-hidden');
+    menuOverlay?.addEventListener("click", (e) => {
+      if (window.innerWidth < 1280 && menuPanel && !menuPanel.contains(e.target as Node)) {
+        closeMobileMenuIfNeeded();
       }
     });
-    observer.observe(menuOverlay, { attributes: true, attributeFilter: ['class'] });
+
+    // Закриваємо мобільне меню при кліку по пунктах навігації
+    document.querySelectorAll(".mobile-nav-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMobileMenuIfNeeded();
+      });
+    });
+
+    // Коректна обробка кнопки "Зв'язок" з будь-якої сторінки
+    document.querySelectorAll('[data-contacts-link="true"]').forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        closeMobileMenuIfNeeded();
+        const isHomePage =
+          window.location.pathname === "/" || window.location.pathname === "/index.html";
+        if (isHomePage) {
+          const contactsEl = document.getElementById("contacts");
+          if (contactsEl) {
+            e.preventDefault();
+            contactsEl.scrollIntoView({ behavior: "smooth" });
+            history.replaceState(null, "", "/#contacts");
+          }
+        }
+      });
+    });
+
+    // --- ЛОГІКА РЕЖИМУ ДОСТУПНОСТІ ---
+    const A11Y_KEY = "dokod_a11y_v1";
+    const a11yPanel = document.getElementById("a11y-panel");
+    const a11yClose = document.getElementById("a11y-close");
+    const a11yReset = document.getElementById("a11y-reset");
+    const motionToggle = document.getElementById("a11y-motion-toggle") as HTMLInputElement | null;
+    const fontBtns = document.querySelectorAll("[data-a11y-font-btn]");
+    const contrastBtns = document.querySelectorAll("[data-a11y-contrast-btn]");
+
+    function getA11yState() {
+      try {
+        const saved = localStorage.getItem(A11Y_KEY);
+        return saved ? JSON.parse(saved) : { font: "normal", contrast: "normal", motion: "normal" };
+      } catch {
+        return { font: "normal", contrast: "normal", motion: "normal" };
+      }
+    }
+
+    function applyA11yState(state: { font: string; contrast: string; motion: string }) {
+      const root = document.documentElement;
+      if (state.font && state.font !== "normal") {
+        root.setAttribute("data-a11y-font", state.font);
+      } else {
+        root.removeAttribute("data-a11y-font");
+      }
+
+      if (state.contrast && state.contrast !== "normal") {
+        root.setAttribute("data-a11y-contrast", state.contrast);
+      } else {
+        root.removeAttribute("data-a11y-contrast");
+      }
+
+      if (state.motion === "reduce") {
+        root.setAttribute("data-a11y-motion", "reduce");
+      } else {
+        root.removeAttribute("data-a11y-motion");
+      }
+
+      if (motionToggle) {
+        motionToggle.checked = state.motion === "reduce";
+      }
+
+      fontBtns.forEach((b) => {
+        const val = b.getAttribute("data-a11y-font-btn");
+        b.classList.toggle("ring-2", val === state.font);
+        b.classList.toggle("ring-blue-600", val === state.font);
+        b.classList.toggle("bg-blue-50", val === state.font);
+      });
+
+      contrastBtns.forEach((b) => {
+        const val = b.getAttribute("data-a11y-contrast-btn");
+        b.classList.toggle("ring-2", val === state.contrast);
+        b.classList.toggle("ring-blue-600", val === state.contrast);
+      });
+
+      try {
+        localStorage.setItem(A11Y_KEY, JSON.stringify(state));
+      } catch {}
+    }
+
+    applyA11yState(getA11yState());
+
+    document.querySelectorAll("[data-a11y-toggle]").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeMobileMenuIfNeeded();
+        a11yPanel?.classList.toggle("hidden");
+      });
+    });
+
+    a11yClose?.addEventListener("click", () => {
+      a11yPanel?.classList.add("hidden");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (
+        a11yPanel &&
+        !a11yPanel.classList.contains("hidden") &&
+        !a11yPanel.contains(e.target as Node)
+      ) {
+        a11yPanel.classList.add("hidden");
+      }
+    });
+
+    fontBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const state = getA11yState();
+        state.font = btn.getAttribute("data-a11y-font-btn") || "normal";
+        applyA11yState(state);
+      });
+    });
+
+    contrastBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const state = getA11yState();
+        state.contrast = btn.getAttribute("data-a11y-contrast-btn") || "normal";
+        applyA11yState(state);
+      });
+    });
+
+    motionToggle?.addEventListener("change", () => {
+      const state = getA11yState();
+      state.motion = motionToggle.checked ? "reduce" : "normal";
+      applyA11yState(state);
+    });
+
+    a11yReset?.addEventListener("click", () => {
+      applyA11yState({ font: "normal", contrast: "normal", motion: "normal" });
+    });
   }
 
-  menuOverlay?.addEventListener('click', (e) => {
-    if (window.innerWidth < 1280 && menuPanel && !menuPanel.contains(e.target as Node)) {
-      getToggleBtn()?.click();
-    }
-  });
+  initNavbarAndA11y();
+  document.addEventListener("astro:after-swap", initNavbarAndA11y);
 </script>

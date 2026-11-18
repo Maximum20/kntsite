@@ -1,6 +1,8 @@
 export interface Doctor {
+  id?: string;
   name: string;
   surname: string;
+  fullNamePatronymic?: string;
   role: string;
   department: string;
   initials: string;
@@ -11,6 +13,8 @@ export interface Doctor {
   education: string;
   achievements: string;
   color: string;
-
   badge?: string;
+  isHead?: boolean;
+  order?: number;
+  isVisible?: boolean;
 }

@@ -1,20 +1,21 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import DoctorCard from '../components/DoctorCard.astro';
-import SearchBar from '../components/SearchBar.astro';
-import { Icon } from "astro-icon/components";
-import { doctors } from '../data'; 
-import TeamGallery from '@components/TeamGallery.astro';
+export const prerender = true;
 
-// Фільтруємо завідувачку для окремого блоку
-const boss = doctors.find(d => d.surname === "Сніжинська");
-// Всі інші для сітки
-const specialists = doctors.filter(d => d.surname !== "Сніжинська");
+import Layout from "../layouts/Layout.astro";
+import DoctorCard from "../components/DoctorCard.astro";
+import SearchBar from "../components/SearchBar.astro";
+import { Icon } from "astro-icon/components";
+import { doctors } from "../data";
+import TeamGallery from "@components/TeamGallery.astro";
+
+// Фільтруємо керівника відділення для акцентного блоку (за прапорцем isHead або прізвищем)
+const boss = doctors.find((d) => d.isHead) || doctors.find((d) => d.surname === "Сніжинська");
+// Всі інші спеціалісти для сітки
+const specialists = doctors.filter((d) => d !== boss);
 ---
 
 <Layout title="Наша команда" hideSubNav={true}>
   <main class="min-h-screen py-8 px-4 md:px-8 bg-slate-50/50">
-    
     <!-- Навігація -->
     <div class="relative z-20 px-2 md:px-12 flex items-center mb-12">
       <a href="/" class="inline-flex items-center gap-4 group">
@@ -34,22 +35,21 @@ const specialists = doctors.filter(d => d.surname !== "Сніжинська");
       </p>
     </header>
 
-    <!-- Компонент пошуку -->
+    <!-- Компонент пошуку та фільтрації персоналу -->
     <SearchBar />
 
     <div class="container mx-auto px-4 mt-16">
-      
-      <!-- 1. АКЦЕНТНИЙ БЛОК: Завідувачка -->
+      <!-- 1. АКЦЕНТНИЙ БЛОК: Керівництво відділення -->
       {boss && (
         <div id="headSection" class="flex flex-col lg:flex-row items-center justify-center gap-10 lg:gap-16 mb-24 max-w-6xl mx-auto px-2">
           <div class="w-full max-w-[400px] shrink-0 relative z-10">
             <DoctorCard doctor={boss} />
           </div>
-          
+
           <div class="relative w-full max-w-xl">
             <div class="absolute -top-10 -left-10 w-32 h-32 bg-blue-100 rounded-full blur-3xl opacity-40 -z-10"></div>
-            
-            <div class="bg-white/70 backdrop-blur-md p-8 md:p-12 rounded-[3rem] border border-white shadow-xl shadow-slate-200/50 relative">
+
+            <div class="bg-white/80 backdrop-blur-md p-8 md:p-12 rounded-[3rem] border border-white shadow-xl shadow-slate-200/50 relative">
               <span class="inline-block text-amber-600 font-black tracking-[0.2em] uppercase text-[10px] mb-4 px-4 py-1.5 bg-amber-50 rounded-full">
                 Очільниця команди
               </span>
@@ -60,14 +60,15 @@ const specialists = doctors.filter(d => d.surname !== "Сніжинська");
 
               <div class="space-y-6">
                 <p class="text-slate-600 text-base md:text-lg leading-relaxed font-medium italic border-l-4 border-[#1a365d]/20 pl-6">
-                  "Робота нашого відділення побудована на високих міжнародних стандартах. 
-                  Ми об'єднали кращих спеціалістів, щоб забезпечити точність та безпеку для кожного пацієнта."
+                  "Робота нашого відділення побудована на високих міжнародних стандартах. Ми об'єднали кращих спеціалістів, щоб забезпечити точність та безпеку для кожного пацієнта."
                 </p>
 
                 <div class="pt-4 mt-8 border-t border-slate-100">
-                  <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">Завідувачка відділення</span>
+                  <span class="block text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 mb-2">
+                    {boss.badge || "Завідувачка відділення"}
+                  </span>
                   <p class="font-serif text-xl md:text-2xl font-bold text-[#1a365d]">
-                    Сніжинська Валерія Іванівна
+                    {boss.fullNamePatronymic || `${boss.surname} ${boss.name}`}
                   </p>
                 </div>
               </div>
@@ -83,22 +84,30 @@ const specialists = doctors.filter(d => d.surname !== "Сніжинська");
 
       <div id="doctorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto">
         {specialists.map((doctor, index) => (
-          <div class={`doctor-wrapper transition-all duration-500 ${index >= 6 ? 'hidden opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+          <div
+            data-initial-paged={index >= 6 ? "true" : "false"}
+            class={`doctor-wrapper transition-all duration-500 ${
+              index >= 6 ? "hidden opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+            }`}
+          >
             <DoctorCard doctor={doctor} />
           </div>
         ))}
       </div>
 
       <!-- Кнопка "Показати ще" -->
-      <div id="loadMoreContainer" class="text-center py-16">
-        <button 
-          id="loadMoreBtn" 
-          class="inline-flex items-center gap-3 px-10 py-4 bg-[#1a365d] text-white font-bold rounded-2xl hover:bg-[#254a7c] transition-all shadow-xl shadow-blue-900/10 active:scale-95"
-        >
-          <span>Показати ще фахівців</span>
-          <Icon name="bx:chevron-down" class="w-5 h-5" />
-        </button>
-      </div>
+      {specialists.length > 6 && (
+        <div id="loadMoreContainer" class="text-center py-16">
+          <button
+            id="loadMoreBtn"
+            type="button"
+            class="inline-flex items-center gap-3 px-10 py-4 bg-[#1a365d] text-white font-bold rounded-2xl hover:bg-[#254a7c] transition-all shadow-xl shadow-blue-900/10 active:scale-95 cursor-pointer"
+          >
+            <span>Показати ще фахівців</span>
+            <Icon name="bx:chevron-down" class="w-5 h-5" />
+          </button>
+        </div>
+      )}
 
       <!-- Повідомлення про відсутність результатів (для пошуку) -->
       <div id="noResults" class="hidden text-center py-20">
@@ -108,67 +117,68 @@ const specialists = doctors.filter(d => d.surname !== "Сніжинська");
     </div>
 
     <TeamGallery />
-
   </main>
 </Layout>
 
 <style>
   .doctor-wrapper.is-visible {
     display: block !important;
-    animation: fadeInUp 0.6s ease forwards;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    animation: fadeInUp 0.5s ease forwards;
   }
 
   @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>
 
 <script>
   function initTeamPage() {
     // 1. Логіка карток (відкриття анкет)
-    const cards = document.querySelectorAll('.doctor-card');
-    cards.forEach(card => {
-      card.addEventListener('click', (e) => {
-        // Якщо клікнули на посилання всередині або кнопку, не закриваємо
-        if (card.classList.contains('is-expanded')) {
-          card.classList.remove('is-expanded');
+    const cards = document.querySelectorAll(".doctor-card");
+    cards.forEach((card) => {
+      card.addEventListener("click", () => {
+        if (card.classList.contains("is-expanded")) {
+          card.classList.remove("is-expanded");
         } else {
-          cards.forEach(c => c.classList.remove('is-expanded'));
-          card.classList.add('is-expanded');
+          cards.forEach((c) => c.classList.remove("is-expanded"));
+          card.classList.add("is-expanded");
         }
       });
     });
 
     // 2. Логіка "Показати ще"
-    const grid = document.getElementById('doctorsGrid');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
-    const loadMoreContainer = document.getElementById('loadMoreContainer');
-    
+    const grid = document.getElementById("doctorsGrid");
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
+    const loadMoreContainer = document.getElementById("loadMoreContainer");
+
     if (grid && loadMoreBtn) {
-      const itemsPerRow = 3; 
-      const rowsToLoad = 2;
-      const step = itemsPerRow * rowsToLoad; // Додаємо по 6 карток
+      const step = 6;
+      loadMoreBtn.addEventListener("click", () => {
+        const hiddenItems = grid.querySelectorAll(".doctor-wrapper.hidden");
+        Array.from(hiddenItems)
+          .slice(0, step)
+          .forEach((item) => {
+            item.classList.remove("hidden");
+            item.removeAttribute("data-initial-paged");
+            setTimeout(() => item.classList.add("is-visible"), 10);
+          });
 
-      loadMoreBtn.addEventListener('click', () => {
-        const hiddenItems = grid.querySelectorAll('.doctor-wrapper.hidden');
-        
-        Array.from(hiddenItems).slice(0, step).forEach(item => {
-          item.classList.remove('hidden');
-          // Невелика затримка для красивого ефекту появи
-          setTimeout(() => item.classList.add('is-visible'), 10);
-        });
-
-        // Ховаємо кнопку, якщо карток більше немає
-        if (grid.querySelectorAll('.doctor-wrapper.hidden').length === 0) {
-          loadMoreContainer?.classList.add('hidden');
+        if (grid.querySelectorAll(".doctor-wrapper.hidden").length === 0) {
+          loadMoreContainer?.classList.add("hidden");
         }
       });
     }
   }
 
-  // Запуск логіки
   initTeamPage();
-  // Перезапуск при навігації в Astro
-  document.addEventListener('astro:after-swap', initTeamPage);
+  document.addEventListener("astro:after-swap", initTeamPage);
 </script>

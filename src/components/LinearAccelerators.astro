@@ -1,106 +1,88 @@
 ---
-// LinearAccelerators.astro - Компонент для презентації лінійних прискорювачів
+import { equipmentData } from "../data";
+
+const accelerators =
+  equipmentData.accelerators && equipmentData.accelerators.length > 0
+    ? equipmentData.accelerators
+    : [
+        {
+          name: "Elekta Synergy Platform",
+          image: "/hero/platform.jpg",
+          imaging: "iView",
+          controlSystem: "",
+          description:
+            "Надійна платформа з перевіреною системою візуалізації для точного позиціонування пацієнта",
+        },
+        {
+          name: "Elekta Synergy",
+          image: "/hero/synergy2.jpg",
+          imaging: "XVI, iView",
+          controlSystem: "",
+          description:
+            "Розширена система з подвійною візуалізацією для максимальної точності променевої терапії",
+        },
+        {
+          name: "Elekta VersaHD",
+          image: "/hero/versahd.jpg",
+          imaging: "XVI, iView",
+          controlSystem: "BrainLAB",
+          description:
+            "Найсучасніша система з контролем дихання і високоточним позиціонуванням BrainLAB для складних випадків",
+        },
+      ];
 ---
 
-<section class="linear-accelerators">
+<section id="accelerators" class="linear-accelerators scroll-mt-28">
   <div class="container">
     <div class="section-header">
-      <h2 class="section-title">Сучасне обладнання для променевої терапії</h2>
-      <p class="section-subtitle">
-        У нашому центрі встановлено три лінійних прискорювача Elekta останнього покоління
-        для високоточного лікування онкологічних захворювань
-      </p>
+      <h2 class="section-title">{equipmentData.sectionTitle}</h2>
+      <p class="section-subtitle">{equipmentData.sectionSubtitle}</p>
     </div>
 
     <div class="accelerators-grid">
-      <!-- Elekta Synergy Platform -->
-      <div class="accelerator-card">
-        <div class="card-image">
-          <img
-            src="/hero/platform.jpg"
-            alt="Elekta Synergy Platform"
-            loading="lazy"
-          />
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">Elekta Synergy Platform</h3>
-          <div class="tech-details">
-            <div class="detail-item">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Система візуалізації: <strong>iView</strong></span>
-            </div>
+      {accelerators.map((acc) => (
+        <div class="accelerator-card">
+          <div class="card-image">
+            <img
+              src={acc.image || "/hero/versahd.jpg"}
+              alt={acc.name}
+              width="600"
+              height="400"
+              loading="lazy"
+            />
           </div>
-          <p class="card-description">
-            Надійна платформа з перевіреною системою візуалізації для точного позиціонування пацієнта
-          </p>
-        </div>
-      </div>
-
-      <!-- Elekta Synergy -->
-      <div class="accelerator-card">
-        <div class="card-image">
-          <img
-            src="/hero/synergy2.jpg"
-            alt="Elekta Synergy"
-            loading="lazy"
-          />
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">Elekta Synergy</h3>
-          <div class="tech-details">
-            <div class="detail-item">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Система візуалізації: <strong>XVI, iView</strong></span>
+          <div class="card-content">
+            <h3 class="card-title">{acc.name}</h3>
+            <div class="tech-details">
+              {acc.imaging && (
+                <div class="detail-item">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Система візуалізації: <strong>{acc.imaging}</strong></span>
+                </div>
+              )}
+              {acc.controlSystem && (
+                <div class="detail-item highlight">
+                  <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  <span>Система контролю: <strong>{acc.controlSystem}</strong></span>
+                </div>
+              )}
             </div>
+            <p class="card-description">{acc.description}</p>
           </div>
-          <p class="card-description">
-            Розширена система з подвійною візуалізацією для максимальної точності променевої терапії
-          </p>
         </div>
-      </div>
-
-      <!-- Elekta VersaHD -->
-      <div class="accelerator-card">
-        <div class="card-image">
-          <img
-            src="/hero/versahd.jpg"
-            alt="Elekta VersaHD"
-            loading="lazy"
-          />
-        </div>
-        <div class="card-content">
-          <h3 class="card-title">Elekta VersaHD</h3>
-          <div class="tech-details">
-            <div class="detail-item">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Система візуалізації: <strong>XVI, iView</strong></span>
-            </div>
-            <div class="detail-item highlight">
-              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              <span>Система контролю: <strong>BrainLAB</strong></span>
-            </div>
-          </div>
-          <p class="card-description">
-            Найсучасніша система з контролем дихання і високоточним позиціонуванням BrainLAB для складних випадків
-          </p>
-        </div>
-      </div>
+      ))}
     </div>
 
     <!-- BrainLAB System Section -->
     <div class="brainlab-section">
       <div class="brainlab-header">
-        <h3 class="brainlab-title">Система BrainLAB</h3>
+        <h3 class="brainlab-title">Система BrainLAB ExacTrac Dynamic</h3>
         <p class="brainlab-subtitle">
-          Передова технологія контролю дихання і позиціонування для високоточної променевої терапії
+          Передова технологія контролю дихання і позиціонування для високоточної променевої терапії та радіохірургії
         </p>
       </div>
       <div class="brainlab-gallery">
@@ -108,6 +90,8 @@
           <img
             src="/hero/brain1.jpg"
             alt="Система BrainLAB - контрольна панель"
+            width="700"
+            height="450"
             loading="lazy"
           />
         </div>
@@ -115,6 +99,8 @@
           <img
             src="/hero/brain0.jpg"
             alt="Система BrainLAB - робоче місце"
+            width="700"
+            height="450"
             loading="lazy"
           />
         </div>
@@ -127,7 +113,7 @@
             </svg>
           </div>
           <h4>Контроль дихання</h4>
-          <p>Синхронізація опромінення з диханням пацієнта</p>
+          <p>Синхронізація опромінення з диханням пацієнта у реальному часі</p>
         </div>
         <div class="feature">
           <div class="feature-icon">
@@ -137,7 +123,7 @@
             </svg>
           </div>
           <h4>Точне позиціонування</h4>
-          <p>Субміліметрова точність опромінення пухлини</p>
+          <p>Субміліметрова точність опромінення пухлини завдяки 4D тепло-оптичній камері</p>
         </div>
         <div class="feature">
           <div class="feature-icon">
@@ -146,17 +132,16 @@
             </svg>
           </div>
           <h4>Захист здорових тканин</h4>
-          <p>Мінімальний вплив на навколишні органи</p>
+          <p>Мінімальний вплив на навколишні критичні органи (серце, легені, спинний мозок)</p>
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
 <style>
   .linear-accelerators {
-    padding: 100px 24px;
+    padding: 80px 24px;
     background: transparent;
   }
 
@@ -167,21 +152,21 @@
 
   .section-header {
     text-align: center;
-    margin-bottom: 72px;
+    margin-bottom: 64px;
   }
 
   .section-title {
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: 2.75rem;
+    font-weight: 800;
     color: #1e293b;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     line-height: 1.2;
   }
 
   .section-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     color: #64748b;
-    max-width: 800px;
+    max-width: 820px;
     margin: 0 auto;
     line-height: 1.7;
   }
@@ -189,26 +174,28 @@
   .accelerators-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    margin-bottom: 96px;
+    gap: 36px;
+    margin-bottom: 80px;
   }
 
   .accelerator-card {
     background: white;
-    border-radius: 20px;
+    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    box-shadow: 0 4px 12px -1px rgb(0 0 0 / 0.08);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
   }
 
   .accelerator-card:hover {
-    transform: translateY(-12px);
+    transform: translateY(-8px);
     box-shadow: 0 24px 48px -12px rgb(0 0 0 / 0.15);
   }
 
   .card-image {
     width: 100%;
-    height: 360px;
+    height: 340px;
     overflow: hidden;
     background: #f1f5f9;
   }
@@ -221,41 +208,39 @@
   }
 
   .accelerator-card:hover .card-image img {
-    transform: scale(1.08);
+    transform: scale(1.06);
   }
 
   .card-content {
-    padding: 32px;
+    padding: 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .card-title {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 1.65rem;
+    font-weight: 800;
     color: #0f172a;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .tech-details {
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 18px;
   }
 
   .detail-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 12px 16px;
     background: #f8fafc;
-    border-radius: 10px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
     color: #475569;
-    transition: all 0.2s ease;
-  }
-
-  .detail-item:hover {
-    background: #f1f5f9;
   }
 
   .detail-item.highlight {
@@ -264,13 +249,9 @@
     color: #1e40af;
   }
 
-  .detail-item.highlight:hover {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  }
-
   .detail-item strong {
     color: #0f172a;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .detail-item.highlight strong {
@@ -285,115 +266,95 @@
 
   .card-description {
     color: #64748b;
-    line-height: 1.7;
-    font-size: 1rem;
+    line-height: 1.65;
+    font-size: 0.98rem;
   }
 
-  /* BrainLAB Section */
   .brainlab-section {
     background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     border-radius: 28px;
-    padding: 64px;
+    padding: 56px;
     color: white;
   }
 
   .brainlab-header {
     text-align: center;
-    margin-bottom: 56px;
+    margin-bottom: 48px;
   }
 
   .brainlab-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 16px;
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 14px;
     color: white;
   }
 
   .brainlab-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     color: #cbd5e1;
     max-width: 720px;
     margin: 0 auto;
-    line-height: 1.7;
+    line-height: 1.65;
   }
 
   .brainlab-gallery {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 32px;
-    margin-bottom: 56px;
+    gap: 28px;
+    margin-bottom: 48px;
   }
 
   .brainlab-image {
-    border-radius: 16px;
+    border-radius: 18px;
     overflow: hidden;
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3), 0 10px 10px -5px rgb(0 0 0 / 0.2);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .brainlab-image:hover {
-    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3);
   }
 
   .brainlab-image img {
     width: 100%;
-    height: 380px;
+    height: 360px;
     object-fit: cover;
-    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .brainlab-image:hover img {
-    transform: scale(1.06);
   }
 
   .brainlab-features {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
+    gap: 28px;
   }
 
   .feature {
     text-align: center;
-    padding: 32px 24px;
+    padding: 28px 22px;
     background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
     backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-  }
-
-  .feature:hover {
-    background: rgba(255, 255, 255, 0.12);
-    transform: translateY(-4px);
   }
 
   .feature-icon {
-    width: 56px;
-    height: 56px;
-    margin: 0 auto 20px;
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 18px;
     color: #60a5fa;
   }
 
   .feature h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 12px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 10px;
     color: white;
   }
 
   .feature p {
     color: #cbd5e1;
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 0.95rem;
+    line-height: 1.55;
   }
 
-  /* Responsive */
   @media (max-width: 1024px) {
     .accelerators-grid {
       grid-template-columns: repeat(2, 1fr);
-      gap: 32px;
     }
-
     .brainlab-features {
       grid-template-columns: 1fr;
     }
@@ -401,87 +362,20 @@
 
   @media (max-width: 768px) {
     .linear-accelerators {
-      padding: 64px 20px;
+      padding: 48px 16px;
     }
-
-    .section-header {
-      margin-bottom: 48px;
-    }
-
     .section-title {
-      font-size: 2rem;
+      font-size: 1.9rem;
     }
-
-    .section-subtitle {
-      font-size: 1.125rem;
-    }
-
     .accelerators-grid {
       grid-template-columns: 1fr;
-      gap: 28px;
-      margin-bottom: 64px;
     }
-
-    .card-image {
-      height: 280px;
-    }
-
-    .card-content {
-      padding: 24px;
-    }
-
-    .card-title {
-      font-size: 1.5rem;
-    }
-
     .brainlab-section {
-      padding: 40px 24px;
+      padding: 32px 20px;
     }
-
-    .brainlab-header {
-      margin-bottom: 40px;
-    }
-
-    .brainlab-title {
-      font-size: 1.75rem;
-    }
-
-    .brainlab-subtitle {
-      font-size: 1.125rem;
-    }
-
     .brainlab-gallery {
       grid-template-columns: 1fr;
-      gap: 24px;
-      margin-bottom: 40px;
     }
-
-    .brainlab-image img {
-      height: 300px;
-    }
-
-    .feature {
-      padding: 24px 20px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .section-title {
-      font-size: 1.75rem;
-    }
-
-    .section-subtitle {
-      font-size: 1rem;
-    }
-
-    .card-image {
-      height: 240px;
-    }
-
-    .card-title {
-      font-size: 1.375rem;
-    }
-
     .brainlab-image img {
       height: 260px;
     }

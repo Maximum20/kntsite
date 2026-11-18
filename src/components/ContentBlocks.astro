@@ -89,15 +89,30 @@ const { type = "", items = [], title = "", icon = "", text = "", variant = "defa
   </div>
 )}
 
-{/* EXPANDABLE СЕКЦІЯ (ACCORDION В ACCORDION) */}
-{type === 'expandable' && (
+{/* EXPANDABLE СЕКЦІЯ (ACCORDION В ACCORDION: підтримує і поодинокий слот, і масив items) */}
+{type === 'expandable' && items && items.length > 0 ? (
+  <div class="space-y-3 my-4 not-prose">
+    {items.map((item: any) => (
+      <details class="bg-white border-2 border-slate-200 rounded-xl overflow-hidden group/exp hover:border-blue-300 transition-all">
+        <summary class="flex items-center justify-between p-4 cursor-pointer list-none hover:bg-slate-50 transition-all">
+          <div class="flex items-center gap-3">
+            {(item.icon || icon) && <span class="text-xl">{item.icon || icon}</span>}
+            <span class="font-bold text-slate-800">{item.title}</span>
+          </div>
+          <Icon name="bx:chevron-down" class="w-5 h-5 text-slate-500 group-open/exp:rotate-180 transition-transform shrink-0" />
+        </summary>
+        <div class="p-4 pt-2 text-sm text-slate-600 leading-relaxed border-t border-slate-100" set:html={item.content || item.text || ''} />
+      </details>
+    ))}
+  </div>
+) : type === 'expandable' && (
   <details class="my-4 bg-white border-2 border-slate-200 rounded-xl overflow-hidden group/exp hover:border-blue-300 transition-all not-prose">
     <summary class="flex items-center justify-between p-4 cursor-pointer list-none hover:bg-slate-50 transition-all">
       <div class="flex items-center gap-3">
         {icon && <span class="text-xl">{icon}</span>}
         <span class="font-bold text-slate-800">{title}</span>
       </div>
-      <Icon name="bx:chevron-down" class="w-5 h-5 text-slate-500 group-open/exp:rotate-180 transition-transform" />
+      <Icon name="bx:chevron-down" class="w-5 h-5 text-slate-500 group-open/exp:rotate-180 transition-transform shrink-0" />
     </summary>
     <div class="p-4 pt-2 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
       <slot />
@@ -256,12 +271,13 @@ const { type = "", items = [], title = "", icon = "", text = "", variant = "defa
 {type === 'emoji-cards' && (
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-6 not-prose">
     {items.map((item: any, idx: number) => (
-      <div class="flex items-center gap-3 p-4 bg-white border-2 border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all group" style={`animation-delay: ${idx * 80}ms`}>
+      <div class="flex items-start gap-3 p-4 bg-white border-2 border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all group" style={`animation-delay: ${idx * 80}ms`}>
         <div class="flex-shrink-0 text-3xl sm:text-4xl group-hover:scale-125 group-hover:rotate-12 transition-all">
-          {item.icon}
+          {item.icon || item.emoji}
         </div>
         <div class="flex-1 min-w-0">
           <h4 class="font-black text-sm sm:text-base text-slate-800">{item.title}</h4>
+          {item.text && <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">{item.text}</p>}
         </div>
       </div>
     ))}
@@ -269,10 +285,11 @@ const { type = "", items = [], title = "", icon = "", text = "", variant = "defa
 )}
 
 <script>
-  // Alpine.js для табів
-  if (typeof window !== 'undefined' && !window.Alpine) {
+  // Безпечне одноразове завантаження Alpine.js для табів
+  if (typeof window !== 'undefined' && !(window as any).Alpine && !(window as any).__alpineLoading) {
+    (window as any).__alpineLoading = true;
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js';
+    script.src = 'https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js';
     script.defer = true;
     document.head.appendChild(script);
   }

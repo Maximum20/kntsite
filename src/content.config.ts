@@ -1,55 +1,84 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// src/content.config.ts
 const services = defineCollection({
-  loader: glob({ pattern: "**/*.mdx", base: "./src/content/services" }),
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/services' }),
   schema: z.object({
-    title: z.string(),
-    subtitle: z.string().optional(),
-    description: z.string().optional(),
+    title: z.string().default('Відділення променевої терапії'),
+    subtitle: z.string().optional().default('Напрямок лікування'),
+    description: z.string().optional().default(''),
     image: z.string().optional(),
   }),
 });
 
 const news = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdoc}", base: "./src/content/news" }),
-  schema: ({ image }) => z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string(),
-    image: image().optional(),
-  }),
-});
-
-// src/content.config.ts
-// src/content.config.ts
-const vacancies = defineCollection({
-  loader: glob({ pattern: "**/*.{md,mdoc,mdx}", base: "./src/content/vacancies" }), 
-  schema: ({ image }) => z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    isActive: z.boolean().default(true),
-    description: z.string().optional(),
-    image: image().optional(),
-    benefits: z.array(z.object({
-      title: z.string(),
+  loader: glob({ pattern: '**/*.{md,mdoc}', base: './src/content/news' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().default('Новина відділення'),
+      date: z.coerce.date().optional().default(() => new Date()),
+      category: z.string().optional().default('Новина'),
+      tags: z.array(z.string()).optional().default([]),
+      isPinned: z.boolean().optional().default(false),
+      description: z.string().optional().default(''),
       image: image().optional(),
-    })).optional(),
+    }),
+});
 
-    // 👇 Додаємо сюди контакти
-    contacts: z.object({
-      phone: z.string().optional(),
-      email: z.string().optional(),
-      messengerUrl: z.string().optional(),
-      messengerName: z.string().optional(),
-    }).optional(),
+const staff = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/staff' }),
+  schema: z.object({
+    surname: z.string().default(''),
+    name: z.string().optional().default(''),
+    fullNamePatronymic: z.string().optional().default(''),
+    badge: z.string().optional().default(''),
+    isHead: z.boolean().optional().default(false),
+    role: z.string().optional().default('Лікар з радіаційної онкології'),
+    department: z.string().optional().default('Мегавольтна терапія'),
+    bio: z.string().optional().default(''),
+    image: z.string().optional().default('/hero/raddepartment.jpg'),
+    experience: z.string().optional().default(''),
+    specializations: z.array(z.string()).optional().default([]),
+    education: z.string().optional().default('-'),
+    achievements: z.string().optional().default(''),
+    color: z.string().optional().default('from-slate-600 to-slate-700'),
+    order: z.number().optional().default(10),
+    isVisible: z.boolean().optional().default(true),
   }),
 });
 
-// Експортуємо УСІ колекції
-export const collections = { 
-  'services': services,
-  'news': news,
-  'vacancies': vacancies // 👈 Додано сюди
+const vacancies = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdoc,mdx}', base: './src/content/vacancies' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().default('Вакансія'),
+      date: z.coerce.date().optional().default(() => new Date()),
+      isActive: z.boolean().optional().default(true),
+      description: z.string().optional().default(''),
+      image: image().optional(),
+      benefits: z
+        .array(
+          z.object({
+            title: z.string().default(''),
+            image: image().optional(),
+          })
+        )
+        .optional()
+        .default([]),
+      contacts: z
+        .object({
+          phone: z.string().optional().default(''),
+          email: z.string().optional().default(''),
+          messengerUrl: z.string().optional().default(''),
+          messengerName: z.string().optional().default('Telegram'),
+        })
+        .optional(),
+    }),
+});
+
+export const collections = {
+  services,
+  news,
+  staff,
+  vacancies,
 };

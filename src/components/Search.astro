@@ -1,582 +1,903 @@
 ---
 import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
+import { doctors, siteSettings, equipmentData, patientRouteData } from "../data";
+
+const allNews = (await getCollection("news")) || [];
+const allVacancies = (await getCollection("vacancies")) || [];
+
+// Формуємо комплексний клієнтський пошуковий індекс під час збірки (SSG)
+const staticPagesAndEquipment = [
+  {
+    title: "Мегавольтна терапія (Лінійні прискорювачі Elekta)",
+    subtitle: "Золотий стандарт радіаційної онкології: IMRT, VMAT, IGRT, SBRT та система BrainLAB",
+    url: "/services/linac",
+    category: "Сторінка",
+    icon: "⚡",
+    tags: [
+      "мегавольтна", "лінійний прискорювач", "прискорювач", "лінійник", "linac", "опромінення",
+      "електа", "elekta", "versa hd", "synergy", "imrt", "vmat", "igrt", "sbrt", "радіотерапія",
+      "променева терапія", "фотони", "електрони", "лікування раку", "пухлина"
+    ]
+  },
+  {
+    title: "Лінійний прискорювач Elekta Versa HD + BrainLAB ExacTrac Dynamic",
+    subtitle: "Стереотаксична радіохірургія, 4D-контроль дихання та субміліметрова точність",
+    url: "/services/linac#accelerators",
+    category: "Обладнання",
+    icon: "🎯",
+    tags: [
+      "versa", "versahd", "brainlab", "брейнлаб", "exactrac", "стереотаксис", "радіохірургія",
+      "прискорювач", "опромінення", "контроль дихання", "теплова камера", "апарат", "обладнання", "elekta"
+    ]
+  },
+  {
+    title: "Лінійні прискорювачі Elekta Synergy та Synergy Platform",
+    subtitle: "3D-візуалізація XVI / iViewGT та високоточне ротаційне опромінення VMAT / IMRT",
+    url: "/services/linac#accelerators",
+    category: "Обладнання",
+    icon: "🔬",
+    tags: [
+      "synergy", "сінерджі", "platform", "elekta", "електа", "xvi", "iview", "прискорювач",
+      "опромінення", "апарат", "обладнання", "vmat", "imrt"
+    ]
+  },
+  {
+    title: "КТ-розмітка та топометрична симуляція (Toshiba Aquilion)",
+    subtitle: "3D-планування у системі Monaco, індивідуальні термопластичні маски та вакуумні матраци",
+    url: "/services/ct",
+    category: "Сторінка",
+    icon: "🖥️",
+    tags: [
+      "кт", "комп'ютерна томографія", "розмітка", "топометрія", "симуляція", "маска",
+      "термопластична маска", "вакуумний матрац", "планування", "monaco", "контурування",
+      "toshiba", "aquilion", "татуювання", "мітки", "підготовка"
+    ]
+  },
+  {
+    title: "Дистанційна гамма-терапія (Theratron Elite 80, АГАТ-Р1)",
+    subtitle: "Надійне дистанційне опромінення джерелами Кобальт-60",
+    url: "/services/gamma",
+    category: "Сторінка",
+    icon: "☢️",
+    tags: [
+      "гамма", "гамма-терапія", "кобальт", "theratron", "тератрон", "агат", "опромінення",
+      "дистанційна терапія"
+    ]
+  },
+  {
+    title: "Брахітерапія (Контактна променева терапія MultiSource HDR)",
+    subtitle: "Внутрішньопорожнинне високоточне опромінення (гінекологія, простата, молочна залоза)",
+    url: "/services/brachy",
+    category: "Сторінка",
+    icon: "🎯",
+    tags: [
+      "брахітерапія", "контактна", "внутрішньопорожнинна", "multisource", "hdr", "ldr",
+      "іридій", "кобальт", "шийка матки", "простата", "гінекологія", "аплікатор", "зерна"
+    ]
+  },
+  {
+    title: "Близькофокусна рентгенотерапія",
+    subtitle: "Безопераційне лікування новоутворень шкіри (базаліома), келоїдних рубців та п'яткової шпори",
+    url: "/services/nearfocus",
+    category: "Сторінка",
+    icon: "📡",
+    tags: [
+      "рентген", "рентгенотерапія", "близькофокусна", "близький фокус", "шкіра", "рак шкіри",
+      "базаліома", "меланома", "рубець", "келоїд", "п'яткова шпора", "шпора", "поверхнева"
+    ]
+  },
+  {
+    title: "Реабілітація та магнітотерапія",
+    subtitle: "Фізіотерапевтичне відновлення після опромінення, лікування фіброзів, лімфостазу та суглобів",
+    url: "/services/mlt",
+    category: "Сторінка",
+    icon: "🧲",
+    tags: [
+      "реабілітація", "магнітотерапія", "магніт", "відновлення", "фізіотерапія", "фіброз",
+      "лімфостаз", "набряк", "артроз", "суглоби", "дерматит", "mlt"
+    ]
+  },
+  {
+    title: "Підготовка до променевої терапії та Маршрут пацієнта (Чекліст)",
+    subtitle: "Інтерактивний чекліст документів, аналізів, дисків КТ/МРТ та кроків перед першим візитом",
+    url: "/#patient-checklist",
+    category: "Пацієнту",
+    icon: "📋",
+    tags: [
+      "підготовка", "маршрут", "шлях пацієнта", "чекліст", "документи", "довідка", "аналізи",
+      "кров", "паспорт", "іпн", "гістологія", "біопсія", "диск", "флешка", "мрт", "пэт",
+      "перший візит", "що брати", "консиліум", "одяг", "як підготуватися"
+    ]
+  },
+  {
+    title: "Направлення та безкоштовне лікування (Програма НСЗУ)",
+    subtitle: "Як отримати електронне направлення та пройти курс променевої терапії безоплатно",
+    url: "/#faq-section",
+    category: "Пацієнту",
+    icon: "🏥",
+    tags: [
+      "направлення", "електронне направлення", "нсзу", "безкоштовно", "безоплатно", "ціна",
+      "вартість", "оплата", "гарантії", "сімейний лікар", "онколог", "державна програма", "faq", "питання"
+    ]
+  },
+  {
+    title: "Графік роботи, телефони реєстратури та адреса",
+    subtitle: `${siteSettings.schedule} • ${siteSettings.phones.map((p) => p.number).join(", ")} • вул. Космічна, 21`,
+    url: "/#contacts",
+    category: "Сторінка",
+    icon: "📞",
+    tags: [
+      "контакти", "телефон", "реєстратура", "адреса", "графік", "години роботи", "розклад",
+      "як доїхати", "маршрут", "карта", "космічна", "гавриленка", "ребініна", "дніпро",
+      "пошта", "email", "запис", "записатися", "прийом", "зв'язок"
+    ]
+  },
+  {
+    title: "Персонал відділення (Усі лікарі, фізики та медсестри)",
+    subtitle: "Повний склад команди: радіаційні онкологи, рентгенологи, медичні фізики",
+    url: "/doctors",
+    category: "Сторінка",
+    icon: "👨‍⚕️",
+    tags: [
+      "персонал", "лікарі", "команда", "спеціалісти", "фахівці", "радіолог", "онколог",
+      "медичний фізик", "фізики", "рентгенолог", "медсестра", "завідувачка"
+    ]
+  },
+  {
+    title: "Архів новин та публікацій відділення",
+    subtitle: "Події, впровадження нових технологій та досягнення центру",
+    url: "/all-news",
+    category: "Сторінка",
+    icon: "📰",
+    tags: ["новини", "публікації", "статті", "події", "архів", "блог"]
+  },
+  {
+    title: "Актуальні вакансії відділення",
+    subtitle: "Приєднуйтесь до команди радіологічного центру КНП «ДОКОД» ДОР",
+    url: "/vacancies",
+    category: "Сторінка",
+    icon: "💼",
+    tags: ["вакансії", "робота", "працевлаштування", "кар'єра", "рентгенолаборант", "лаборант"]
+  }
+];
+
+// Додаємо кожного спеціаліста окремою карткою в пошуковий індекс
+const doctorItems = doctors.map((doc) => ({
+  title: `${doc.surname} ${doc.name}`,
+  subtitle: `${doc.badge ? doc.badge + " • " : ""}${doc.role} (${doc.department}, досвід: ${doc.experience})`,
+  url: `/doctors?doctor=${encodeURIComponent(doc.surname)}`,
+  category: "Лікар",
+  icon: "👩‍⚕️",
+  tags: [
+    doc.surname.toLowerCase(),
+    doc.name.toLowerCase(),
+    (doc.fullNamePatronymic || "").toLowerCase(),
+    doc.role.toLowerCase(),
+    doc.department.toLowerCase(),
+    ...(doc.specializations || []).map((s) => s.toLowerCase()),
+    doc.badge ? doc.badge.toLowerCase() : "",
+    "лікар", "спеціаліст", "фахівець", "радіолог", "онколог", "консультація"
+  ].filter(Boolean)
+}));
+
+// Додаємо всі новини
+const newsItems = allNews.map((item) => ({
+  title: item.data.title,
+  subtitle: `${item.data.category || "Новина"} • ${item.data.date.toLocaleDateString("uk-UA")} — ${item.data.description || ""}`,
+  url: `/news/${item.id}`,
+  category: "Новина",
+  icon: "📰",
+  tags: [
+    item.data.title.toLowerCase(),
+    (item.data.description || "").toLowerCase(),
+    (item.data.category || "новина").toLowerCase(),
+    ...(item.data.tags || []).map((t: string) => t.toLowerCase()),
+    "новина", "стаття"
+  ]
+}));
+
+// Додаємо всі вакансії
+const vacancyItems = allVacancies.map((item) => ({
+  title: `Вакансія: ${item.data.title}`,
+  subtitle: item.data.description || "Актуальна пропозиція роботи у відділенні",
+  url: `/vacancies/${item.id}`,
+  category: "Сторінка",
+  icon: "💼",
+  tags: [
+    (item.data.title || "").toLowerCase(),
+    (item.data.description || "").toLowerCase(),
+    "вакансія", "робота", "лаборант", "рентгенлаборант"
+  ]
+}));
+
+// Додаємо методики з сінглтона обладнання
+const methodItems = (equipmentData.methods || []).map((m) => ({
+  title: `Метод ${m.code}: ${m.title}`,
+  subtitle: m.description,
+  url: "/#methods-section",
+  category: "Обладнання",
+  icon: "⚡",
+  tags: [
+    m.code.toLowerCase(),
+    m.title.toLowerCase(),
+    m.description.toLowerCase(),
+    "метод", "опромінення", "технологія", "лікування"
+  ]
+}));
 
 const searchIndex = [
-  { title: "Мегавольтна терапія (Лінійні прискорювачі)", tags: ["лінійник", "linac", "електа", "elekta", "versa", "опромінення", "пухлина"], url: "/services/linac", category: "відділення" },
-  { title: "КТ-розмітка (Симуляція)", tags: ["кт", "комп'ютерна томографія", "симуляція", "планування"], url: "/services/ct", category: "послуга" },
-  { title: "Брахітерапія", tags: ["контактна променева терапія", "джерело", "іридій"], url: "/services/brachy", category: "відділення" },
-  { title: "Діденко Олександр Петрович", tags: ["лікар", "радіолог", "онколог", "завідувач"], url: "/doctors", category: "лікар" },
-  { title: "Контакти та графік роботи", tags: ["телефон", "адреса", "як доїхати", "головний лікар"], url: "/#contacts", category: "інфо" }
+  ...staticPagesAndEquipment,
+  ...doctorItems,
+  ...methodItems,
+  ...newsItems,
+  ...vacancyItems
+];
+
+// Швидкі пресети для блоку "Часто шукають / Може бути корисним"
+const quickPresets = [
+  {
+    label: "Підготовка до променевої терапії",
+    query: "Підготовка до променевої терапії",
+    href: "/#patient-checklist",
+    icon: "📋",
+    badge: "Чекліст"
+  },
+  {
+    label: "Лінійні прискорювачі Elekta",
+    query: "Elekta",
+    href: "/services/linac",
+    icon: "⚡",
+    badge: "Обладнання"
+  },
+  {
+    label: "Персонал відділення",
+    query: "Лікар",
+    href: "/doctors",
+    icon: "👨‍⚕️",
+    badge: "Команда"
+  },
+  {
+    label: "Направлення та безкоштовне лікування (НСЗУ)",
+    query: "НСЗУ направлення",
+    href: "/#faq-section",
+    icon: "🏥",
+    badge: "НСЗУ"
+  },
+  {
+    label: "Графік роботи та контакти",
+    query: "Контакти реєстратура",
+    href: "/#contacts",
+    icon: "📞",
+    badge: "Контакти"
+  },
+  {
+    label: "КТ-розмітка та симуляція",
+    query: "КТ-розмітка",
+    href: "/services/ct",
+    icon: "🖥️",
+    badge: "Планування"
+  }
 ];
 ---
 
 {/* --- 1. КНОПКИ В ШАПЦІ --- */}
-<div class="flex items-center gap-3 mr-2 xl:mr-6 xl:ml-4">
-  
+<div class="flex items-center gap-2.5 mr-1 xl:mr-4 xl:ml-2">
   {/* БУЛЬБАШКА СОЦМЕРЕЖ */}
-  <div class="hidden xl:flex items-center gap-4 bg-white/60 p-2 px-4 rounded-full border border-slate-200/50 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:bg-white/80">
-    <a href="https://www.facebook.com/kz.kod.dor" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-600 transition-all hover:scale-110" aria-label="Facebook">
-      <Icon name="bx:bxl-facebook-circle" class="w-5 h-5" />
-    </a>
-    <a href="https://t.me/dokod_dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-sky-500 transition-all hover:scale-110" aria-label="Telegram">
-      <Icon name="bx:bxl-telegram" class="w-5 h-5" />
-    </a>
-    <a href="https://www.instagram.com/dokod.dp/" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-500 transition-all hover:scale-110" aria-label="Instagram">
-      <Icon name="bx:bxl-instagram" class="w-5 h-5" />
-    </a>
-    <a href="https://www.youtube.com/@dokodlic" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-600 transition-all hover:scale-110" aria-label="YouTube">
-      <Icon name="bx:bxl-youtube" class="w-5 h-5" />
-    </a>
-    <a href="https://www.tiktok.com/@dokod.dp" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-900 transition-all hover:scale-110" aria-label="TikTok">
-      <Icon name="bx:bxl-tiktok" class="w-5 h-5" />
-    </a>
+  <div class="hidden xl:flex items-center gap-3.5 bg-white/60 p-2 px-3.5 rounded-full border border-slate-200/50 shadow-sm backdrop-blur-md transition-all hover:shadow-md hover:bg-white/80">
+    {siteSettings.socials.facebook && (
+      <a href={siteSettings.socials.facebook} target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-blue-600 transition-all hover:scale-110" aria-label="Facebook">
+        <Icon name="bx:bxl-facebook-circle" class="w-5 h-5" />
+      </a>
+    )}
+    {siteSettings.socials.telegram && (
+      <a href={siteSettings.socials.telegram} target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-sky-500 transition-all hover:scale-110" aria-label="Telegram">
+        <Icon name="bx:bxl-telegram" class="w-5 h-5" />
+      </a>
+    )}
+    {siteSettings.socials.instagram && (
+      <a href={siteSettings.socials.instagram} target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-pink-500 transition-all hover:scale-110" aria-label="Instagram">
+        <Icon name="bx:bxl-instagram" class="w-5 h-5" />
+      </a>
+    )}
+    {siteSettings.socials.youtube && (
+      <a href={siteSettings.socials.youtube} target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-red-600 transition-all hover:scale-110" aria-label="YouTube">
+        <Icon name="bx:bxl-youtube" class="w-5 h-5" />
+      </a>
+    )}
+    {siteSettings.socials.tiktok && (
+      <a href={siteSettings.socials.tiktok} target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-900 transition-all hover:scale-110" aria-label="TikTok">
+        <Icon name="bx:bxl-tiktok" class="w-5 h-5" />
+      </a>
+    )}
   </div>
 
-  {/* БУЛЬБАШКА ПОШУКУ З АНІМАЦІЄЮ ТЕКСТУ */}
-  <div class="flex items-center">
-    <button 
-      id="search-trigger" 
-      class="group relative flex items-center justify-start h-10 w-10 xl:hover:w-56 bg-blue-600 text-white rounded-full transition-all duration-500 ease-in-out overflow-hidden shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer"
-      aria-label="Відкрити інтелектуальний пошук"
+  {/* БУЛЬБАШКА ПОШУКУ */}
+  <div class="flex items-center w-full xl:w-auto">
+    <button
+      id="search-trigger"
+      type="button"
+      class="group relative flex items-center justify-start h-10 w-full xl:w-10 xl:hover:w-60 bg-blue-600 text-white rounded-full transition-all duration-500 ease-in-out overflow-hidden shadow-lg shadow-blue-500/20 active:scale-95 cursor-pointer px-3 xl:px-0"
+      aria-label="Відкрити розумний пошук по сайту (Ctrl+K)"
     >
-      <div class="flex items-center justify-center min-w-[40px] h-10">
+      <div class="flex items-center justify-center min-w-[28px] xl:min-w-[40px] h-10 shrink-0">
         <Icon name="bx:bx-search" class="w-5 h-5" />
       </div>
-
-      <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-150 font-bold text-[13px] tracking-tight pr-6">
-        Інтелектуальний пошук
+      <span class="whitespace-nowrap opacity-100 xl:opacity-0 xl:group-hover:opacity-100 transition-opacity duration-300 xl:delay-100 font-bold text-[13px] tracking-tight pr-4">
+        Розумний пошук по сайту
       </span>
     </button>
   </div>
 </div>
 
-{/* --- 2. ВІКНО ПОШУКУ (MODAL) --- */}
-<div id="search-modal" class="fixed inset-0 z-[999] hidden bg-slate-950/60 backdrop-blur-xl items-center justify-center p-0 md:p-6 lg:p-8 font-sans">
-  
-  {/* Картка модалки: на смартфонах 100dvh, на ПК max-w-5xl і висота 88vh */}
-  <div class="bg-white w-full h-[100dvh] md:h-[88vh] md:max-h-[850px] md:max-w-4xl lg:max-w-5xl rounded-none md:rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.25)] overflow-hidden flex flex-col border-0 md:border md:border-slate-100 transition-all">
+{/* --- 2. ВІКНО РОЗУМНОГО ПОШУКУ (MODAL) --- */}
+<div
+  id="search-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Інтелектуальний пошук по сайту"
+  class="fixed inset-0 z-[999] hidden bg-slate-950/60 backdrop-blur-xl items-start md:items-center justify-center p-0 md:p-6 lg:p-8 font-sans"
+>
+  <div class="bg-white w-full h-[100dvh] md:h-auto md:max-h-[86vh] md:max-w-3xl lg:max-w-4xl rounded-none md:rounded-[2rem] shadow-[0_25px_70px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col border-0 md:border md:border-slate-100 transition-all">
     
-    {/* ВЕРХНЯ ПАНЕЛЬ: Перемикач вкладок + Кнопка закриття */}
-    <div class="p-3 md:p-4 bg-slate-50/90 border-b border-slate-100 shrink-0 flex items-center justify-between gap-3">
-      <div class="relative flex flex-1 bg-slate-200/60 p-1 rounded-xl max-w-sm sm:max-w-md">
-        <button id="tab-offline" type="button" class="relative flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-blue-600 cursor-pointer">Пошук</button>
-        <button id="tab-ai" type="button" class="relative flex-1 py-2 text-xs font-bold uppercase tracking-wider transition-colors z-10 text-slate-500 cursor-pointer">AI Асистент</button>
-        <div id="tab-indicator" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-sm transition-transform duration-300 ease-out"></div>
+    {/* ВЕРХНЯ ПАНЕЛЬ З ПОЛЕМ ПОШУКУ */}
+    <div class="p-4 sm:p-5 bg-gradient-to-b from-slate-50 to-white border-b border-slate-100 shrink-0">
+      <div class="flex items-center justify-between mb-3 px-1">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+          <span class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+            Інтелектуальний пошук • КНП «ДОКОД» ДОР
+          </span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="hidden sm:inline-flex items-center gap-1 text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md">
+            <kbd class="font-sans">↑↓</kbd> навігація • <kbd class="font-sans">Enter</kbd> вибір • <kbd class="font-sans">Esc</kbd> закрити
+          </span>
+          <button
+            id="modal-close-btn"
+            type="button"
+            class="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all cursor-pointer shrink-0"
+            aria-label="Закрити вікно пошуку"
+          >
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <button 
-        id="modal-close-btn" 
-        type="button" 
-        class="w-9 h-9 flex items-center justify-center rounded-xl bg-slate-200/60 hover:bg-slate-300/80 text-slate-500 hover:text-slate-800 transition-all cursor-pointer shrink-0"
-        aria-label="Закрити вікно"
-      >
-        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+      {/* Поле вводу */}
+      <div class="relative flex items-center gap-3 bg-white px-4 sm:px-5 py-3.5 rounded-2xl border-2 border-slate-200 focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all shadow-sm">
+        <Icon name="bx:bx-search" class="w-6 h-6 text-blue-600 shrink-0" />
+        <input
+          id="search-input"
+          type="text"
+          placeholder="Введіть запит (напр.: прискорювач, Сніжинська, направлення, аналізи, КТ)..."
+          class="bg-transparent border-none outline-none w-full font-semibold text-slate-800 placeholder:text-slate-400 placeholder:font-normal text-sm sm:text-base"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button
+          id="search-clear-btn"
+          type="button"
+          class="hidden px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 text-xs font-bold transition-colors cursor-pointer shrink-0"
+        >
+          Очистити
+        </button>
+      </div>
     </div>
 
-    {/* ОСНОВНИЙ БЛОК КОНТЕНТУ */}
-    <div class="flex flex-col flex-1 overflow-hidden">
+    {/* ОСНОВНА ОБЛАСТЬ СПИСКУ ПІДКАЗОК ТА РЕЗУЛЬТАТІВ */}
+    <div id="search-scroll-area" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 custom-scrollbar">
       
-      {/* 1. ВКЛАДКА ТРАДИЦІЙНОГО ПОШУКУ */}
-      <div id="offline-content" class="flex flex-col flex-1 p-4 sm:p-6 md:p-8 overflow-hidden transition-all duration-300">
-        <div class="relative flex items-center gap-4 bg-slate-50 px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl border border-slate-200 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-50 transition-all shrink-0">
-          <Icon name="bx:bx-search" class="w-5 h-5 text-slate-400" />
-          <input 
-            id="search-input" 
-            type="text" 
-            placeholder="Шукайте лікаря або відділення..." 
-            class="bg-transparent border-none outline-none w-full font-medium text-slate-700 placeholder:text-slate-400 text-base" 
-            autocomplete="off" 
-          />
-        </div>
-
-        <div class="mt-6 overflow-y-auto no-scrollbar flex-1">
-          <div id="suggestions-box">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 px-1">Швидкі посилання:</p>
-            <div class="flex flex-wrap gap-2">
-              {["#лікар", "#відділення", "лінійний прискорювач"].map(q => (
-                <button class="tag-btn px-4 py-2 rounded-full bg-slate-100 text-slate-600 text-xs font-semibold hover:bg-blue-600 hover:text-white transition-all active:scale-95 cursor-pointer" data-query={q}>
-                  {q.replace('#', '')}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div id="results-list" class="space-y-3 hidden">
-            {/* Результати офлайн пошуку */}
-          </div>
-        </div>
-      </div>
-
-      {/* 2. ВКЛАДКА AI ЧАТУ */}
-      <div id="ai-content" class="hidden flex-col flex-1 overflow-hidden transition-all duration-300 opacity-0">
-        
-        {/* Область повідомлень зі скролом */}
-        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-4 p-4 sm:p-6 md:p-8 no-scrollbar">
-          <div class="flex justify-start">
-            <div class="bg-blue-50/80 text-blue-900 p-4 rounded-2xl rounded-tl-xs text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed border border-blue-100/80 shadow-xs">
-              Вітаю! Я AI-помічник радіологічного відділення. Підкажу інформацію про лікарів, наші лінійні прискорювачі та Brainlab, підготовку або запис на консультацію.
-            </div>
-          </div>
-        </div>
-
-        {/* Закріплена нижня панель вводу */}
-        <div class="p-3 sm:p-4 bg-slate-50/90 border-t border-slate-100 shrink-0">
-          <form id="ai-chat-form" class="flex items-center gap-2">
-            <div class="relative flex-1">
-              <input 
-                id="ai-chat-input" 
-                type="text" 
-                placeholder="Запитайте будь-що..." 
-                class="w-full bg-white border border-slate-200 rounded-xl pl-4 pr-10 py-3 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-all disabled:bg-slate-100" 
-                autocomplete="off" 
-              />
-              <div id="ai-loader" class="hidden absolute right-3 top-1/2 -translate-y-1/2">
-                <div class="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              id="ai-send-btn" 
-              class="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white p-3 rounded-xl transition-colors flex items-center justify-center shrink-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
-              aria-label="Надіслати"
+      {/* СТАН ДО ВВЕДЕННЯ ТЕКСТУ: МИТТЄВИЙ ВИПАДАЮЧИЙ СПИСОК "ЧАСТО ШУКАЮТЬ" */}
+      <div id="suggestions-box" class="space-y-6">
+        <div>
+          <div class="flex items-center justify-between mb-3 px-1">
+            <p class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">
+              🔥 Часто шукають / Може бути корисним
+            </p>
+            <button
+              id="shuffle-suggestions-btn"
+              type="button"
+              class="text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1 cursor-pointer transition-colors"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-            </button>
-          </form>
-
-          <div class="flex justify-between items-center mt-2 px-1">
-            <span class="text-[10px] text-slate-400 font-medium">ШІ Радіологічного відділення</span>
-            <button id="clear-chat" type="button" class="text-[10px] uppercase font-bold text-slate-400 hover:text-red-500 transition-colors cursor-pointer">
-              Очистити чат
+              <span>Оновити підбірку</span>
+              <Icon name="bx:refresh" class="w-4 h-4" />
             </button>
           </div>
-        </div>
 
+          {/* Швидкі теги-фільтри (заповнюють пошук або переходять) */}
+          <div class="flex flex-wrap gap-2 mb-5">
+            {[
+              { label: "Лінійні прискорювачі Elekta", q: "прискорювач" },
+              { label: "Підготовка та аналізи", q: "аналізи" },
+              { label: "Направлення НСЗУ", q: "направлення" },
+              { label: "Система BrainLAB", q: "brainlab" },
+              { label: "Лікарі-радіологи", q: "лікар" },
+              { label: "КТ-розмітка (маска)", q: "кт" },
+              { label: "Брахітерапія", q: "брахітерапія" },
+              { label: "Телефони та графік", q: "контакти" }
+            ].map((chip) => (
+              <button
+                type="button"
+                class="tag-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-blue-600 text-slate-700 hover:text-white text-xs font-bold transition-all active:scale-95 cursor-pointer border border-slate-200/60 hover:border-blue-600"
+                data-query={chip.q}
+              >
+                <Icon name="bx:search-alt-2" class="w-3.5 h-3.5 opacity-60" />
+                <span>{chip.label}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Швидкі картки переходів (підтримують навігацію клавіатурою ↑ ↓ Enter) */}
+          <div id="default-cards-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {quickPresets.map((preset) => (
+              <a
+                href={preset.href}
+                class="search-nav-item group flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/80 hover:bg-blue-50/80 border border-slate-200/70 hover:border-blue-300 transition-all"
+              >
+                <div class="flex items-center gap-3 min-w-0">
+                  <span class="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-lg shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
+                    {preset.icon}
+                  </span>
+                  <div class="min-w-0">
+                    <span class="block text-[9px] font-black uppercase tracking-widest text-blue-600 mb-0.5">
+                      {preset.badge}
+                    </span>
+                    <span class="block text-xs sm:text-sm font-bold text-slate-800 group-hover:text-blue-700 truncate">
+                      {preset.label}
+                    </span>
+                  </div>
+                </div>
+                <Icon name="bx:chevron-right" class="w-5 h-5 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" />
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* ЖИВІ РЕЗУЛЬТАТИ ПОШУКУ */}
+      <div id="results-container" class="hidden space-y-3">
+        <div class="flex items-center justify-between px-1">
+          <span id="results-count" class="text-[11px] font-black uppercase tracking-widest text-slate-400">
+            Знайдено результатів: 0
+          </span>
+          <span class="text-[11px] text-slate-400 font-medium">
+            Натисніть <kbd class="px-1.5 py-0.5 bg-slate-100 rounded text-slate-600 font-bold">Enter</kbd> для переходу
+          </span>
+        </div>
+        <div id="results-list" class="space-y-2" role="listbox"></div>
+      </div>
+
+    </div>
+
+    {/* НИЖНІЙ КОЛОНТИТУЛ МОДАЛКИ */}
+    <div class="px-5 py-3 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 shrink-0">
+      <div class="flex items-center gap-2">
+        <Icon name="bx:phone-call" class="w-4 h-4 text-blue-600" />
+        <span>Реєстратура: <strong class="text-slate-700">{siteSettings.phones[0]?.number || "(056) 720-79-01"}</strong></span>
+      </div>
+      <a href="/#contacts" class="search-QuickCloseLink font-bold text-blue-600 hover:underline flex items-center gap-1">
+        <span>Усі контакти та маршрут</span>
+        <Icon name="bx:right-arrow-alt" class="w-4 h-4" />
+      </a>
     </div>
 
   </div>
   <div id="search-close" class="fixed inset-0 -z-10 cursor-pointer"></div>
 </div>
 
-<script define:vars={{ searchIndex }}>
-  const STORAGE_KEY = 'dokod_ai_chat_history_v3';
-  const ACTIVE_TAB_KEY = 'dokod_modal_active_tab_v3';
+<script is:inline define:vars={{ searchIndex, quickPresets }}>
+  (function initSmartSearch() {
+    // Словник медичних синонімів та семантичних асоціацій
+    const SYNONYM_MAP = [
+      {
+        triggers: ["прискорювач", "опромінення", "лінійник", "електа", "elekta", "versa", "synergy", "imrt", "vmat", "igrt", "sbrt", "промені", "променева", "радіотерапія"],
+        expand: ["мегавольтна", "elekta", "versa hd", "synergy", "brainlab"]
+      },
+      {
+        triggers: ["брейнлаб", "brainlab", "стереотаксис", "радіохірургія", "кіберніж", "точність", "дихання"],
+        expand: ["brainlab", "versa hd", "мрія здійснилась", "стереотаксис"]
+      },
+      {
+        triggers: ["довідка", "аналізи", "аналіз", "документи", "паспорт", "направлення", "електронне", "перший візит", "підготовка", "що брати", "гістологія", "біопсія", "диск", "чекліст"],
+        expand: ["підготовка", "маршрут", "чекліст", "направлення", "нсзу", "кт-розмітка"]
+      },
+      {
+        triggers: ["нсзу", "безкоштовно", "безоплатно", "ціна", "вартість", "платно", "гроші", "оплата", "гарантії"],
+        expand: ["нсзу", "безкоштовне", "направлення"]
+      },
+      {
+        triggers: ["лікар", "лікарі", "онколог", "радіолог", "спеціаліст", "завідувачка", "завідуюча", "персонал", "фізик", "рентгенолог", "медсестра"],
+        expand: ["лікар", "персонал", "радіолог"]
+      },
+      {
+        triggers: ["кт", "томограф", "томографія", "маска", "розмітка", "симуляція", "топометрія", "тату", "мітки", "контраст"],
+        expand: ["кт-розмітка", "топометрія", "toshiba"]
+      },
+      {
+        triggers: ["телефон", " подзвонити", "адреса", "як доїхати", "де знаходиться", "космічна", "гавриленка", "ребініна", "графік", "години", "розклад", "реєстратура", "контакти", "запис"],
+        expand: ["контакти", "реєстратура", "графік", "космічна"]
+      },
+      {
+        triggers: ["шкіра", "базаліома", "родимка", "меланома", "рубець", "келоїд", "шпора", "близький", "рентген"],
+        expand: ["близькофокусна", "рентгенотерапія", "шкіра"]
+      },
+      {
+        triggers: ["матка", "шийка", "простата", "гінекологія", "контактна", "іридій", "брахі", "аплікатор"],
+        expand: ["брахітерапія", "контактна"]
+      },
+      {
+        triggers: ["кобальт", "тератрон", "агат", "гамма"],
+        expand: ["гамма-терапія", "кобальт"]
+      },
+      {
+        triggers: ["магніт", "реабілітація", "відновлення", "набряк", "лімфостаз", "фіброз", "суглоб"],
+        expand: ["магнітотерапія", "реабілітація"]
+      }
+    ];
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const modal = document.getElementById('search-modal');
-    if (modal) document.body.appendChild(modal);
-  });
+    const CATEGORY_STYLES = {
+      "Сторінка": "bg-blue-50 text-blue-700 border-blue-200",
+      "Лікар": "bg-emerald-50 text-emerald-700 border-emerald-200",
+      "Обладнання": "bg-purple-50 text-purple-700 border-purple-200",
+      "Пацієнту": "bg-amber-50 text-amber-800 border-amber-200",
+      "Новина": "bg-cyan-50 text-cyan-700 border-cyan-200"
+    };
 
-  const trigger = document.getElementById('search-trigger');
-  const modal = document.getElementById('search-modal');
-  const closeBackdrop = document.getElementById('search-close');
-  const closeBtn = document.getElementById('modal-close-btn');
-  const searchInput = document.getElementById('search-input');
-  
-  const tOff = document.getElementById('tab-offline');
-  const tAI = document.getElementById('tab-ai');
-  const indicator = document.getElementById('tab-indicator');
-  
-  const cOff = document.getElementById('offline-content');
-  const cAI = document.getElementById('ai-content');
-  
-  const resultsList = document.getElementById('results-list');
-  const suggestionsBox = document.getElementById('suggestions-box');
-  
-  const chatMessages = document.getElementById('chat-messages');
-  const chatForm = document.getElementById('ai-chat-form');
-  const aiChatInput = document.getElementById('ai-chat-input');
-  const aiSendBtn = document.getElementById('ai-send-btn');
-  const clearChatBtn = document.getElementById('clear-chat');
-  const aiLoader = document.getElementById('ai-loader');
-
-  let currentTab = 'offline';
-  let chatHistory = [];
-
-  const switchToTab = (tab, savePreference = true) => {
-    currentTab = tab;
-    if (savePreference) {
-      sessionStorage.setItem(ACTIVE_TAB_KEY, tab);
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
     }
 
-    if (tab === 'ai') {
-      indicator.style.transform = 'translateX(100%)';
-      tAI.classList.replace('text-slate-500', 'text-blue-600');
-      tOff.classList.replace('text-blue-600', 'text-slate-500');
-      cOff.classList.add('hidden');
-      cAI.classList.remove('hidden');
-      cAI.classList.add('flex');
-      setTimeout(() => { 
-        cAI.style.opacity = '1'; 
-        aiChatInput?.focus();
-        if (chatMessages) chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 10);
-    } else {
-      indicator.style.transform = 'translateX(0)';
-      tOff.classList.replace('text-slate-500', 'text-blue-600');
-      tAI.classList.replace('text-blue-600', 'text-slate-500');
-      cAI.classList.add('hidden');
-      cAI.classList.remove('flex');
-      cAI.style.opacity = '0';
-      cOff.classList.remove('hidden');
-      searchInput?.focus();
-    }
-  };
+    function highlightText(text, tokens) {
+      const safeText = escapeHtml(text);
+      if (!tokens || tokens.length === 0) return safeText;
+      const validTokens = tokens
+        .filter((t) => t.length >= 1)
+        .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+      if (validTokens.length === 0) return safeText;
 
-  tOff?.addEventListener('click', () => switchToTab('offline'));
-  tAI?.addEventListener('click', () => switchToTab('ai'));
-
-  trigger?.addEventListener('click', () => {
-    modal?.classList.remove('hidden');
-    modal?.classList.add('flex');
-    document.body.style.overflow = 'hidden';
-
-    const savedTab = sessionStorage.getItem(ACTIVE_TAB_KEY);
-    if (savedTab === 'ai' || chatHistory.length > 0) {
-      switchToTab('ai', false);
-    } else {
-      switchToTab('offline', false);
-    }
-  });
-
-  const hideModal = () => {
-    modal?.classList.add('hidden');
-    modal?.classList.remove('flex');
-    document.body.style.overflow = 'auto';
-  };
-
-  closeBackdrop?.addEventListener('click', hideModal);
-  closeBtn?.addEventListener('click', hideModal);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !modal?.classList.contains('hidden')) {
-      hideModal();
-    }
-  });
-
-  function performSearch(query) {
-    const rawQ = query.toLowerCase().trim();
-    if (rawQ.length < 2) {
-      resultsList?.classList.add('hidden');
-      suggestionsBox?.classList.remove('hidden');
-      return;
-    }
-    suggestionsBox?.classList.add('hidden');
-    resultsList?.classList.remove('hidden');
-    const filtered = searchIndex.filter(item => 
-      item.title.toLowerCase().includes(rawQ) || item.tags.some(t => t.includes(rawQ))
-    );
-    renderResults(filtered);
-  }
-
-  function renderResults(results) {
-    if (!resultsList) return;
-    resultsList.innerHTML = results.length === 0 
-      ? `<p class="text-sm text-slate-400 py-8 text-center">Нічого не знайдено</p>`
-      : results.map(item => `
-          <a href="${item.url}" class="group flex items-center justify-between p-4 rounded-xl bg-slate-50 hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-all">
-            <div class="flex flex-col">
-              <span class="text-[9px] font-bold uppercase text-blue-500 tracking-tighter mb-0.5">${item.category}</span>
-              <span class="font-semibold text-slate-700 group-hover:text-blue-700 transition-colors">${item.title}</span>
-            </div>
-            <div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-slate-300 group-hover:text-blue-600 shadow-xs transition-all">
-               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="9 5l7 7-7 7" /></svg>
-            </div>
-          </a>
-        `).join('');
-  }
-
-  function formatMarkdown(text) {
-    let escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-    escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    escaped = escaped.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-blue-600 underline font-semibold hover:text-blue-800 transition-colors">$1</a>');
-    return escaped;
-  }
-
-  function generateCardsHtml(text) {
-    const lower = text.toLowerCase();
-    const cards = [];
-
-    // Brainlab
-    if (lower.includes('brainlab') || lower.includes('стереотаксис') || lower.includes('радіохірург')) {
-      cards.push({
-        title: 'Система Brainlab & Versa HD',
-        desc: 'Стереотаксична радіохірургія та прискорювачі',
-        href: '/services/linac',
-        icon: '⚡'
-      });
-      cards.push({
-        title: 'Новина: «Мрія здійснилась»',
-        desc: 'Про встановлення системи Brainlab',
-        href: '/news/mriya-zdijsnilas',
-        icon: '📰'
-      });
+      const regex = new RegExp(`(${validTokens.join("|")})`, "gi");
+      return safeText.replace(
+        regex,
+        '<mark class="bg-amber-200/80 text-slate-900 rounded px-0.5 font-extrabold">$1</mark>'
+      );
     }
 
-    // Лікарі
-    const docKeywords = ['лікар', 'онколог', 'галій', 'сніжинськ', 'мал', 'діденко', 'лук\'яшко', 'гончар', 'примаков', 'рижов', 'трубіцин', 'землянськ'];
-    if (docKeywords.some(k => lower.includes(k)) && !cards.some(c => c.href === '/doctors')) {
-      cards.push({
-        title: 'Лікарі радіологічного відділення',
-        desc: 'Повний список фахівців та лікарів-радіологів',
-        href: '/doctors',
-        icon: '👨‍⚕️'
-      });
-    }
+    function setupSearchElements() {
+      const modal = document.getElementById("search-modal");
+      if (modal && modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
 
-    // Контакти / Запис / Реєстратура -> ведемо на /#contacts
-    if (lower.includes('запис') || lower.includes('реєстратур') || lower.includes('контакт') || lower.includes('телефон') || lower.includes('направленн')) {
-      if (!cards.some(c => c.href === '/#contacts')) {
-        cards.push({
-          title: 'Контакти та реєстратура',
-          desc: 'Телефони, адреса та порядок прийому',
-          href: '/#contacts',
-          icon: '📞'
+      const trigger = document.getElementById("search-trigger");
+      const closeBackdrop = document.getElementById("search-close");
+      const closeBtn = document.getElementById("modal-close-btn");
+      const searchInput = document.getElementById("search-input");
+      const clearBtn = document.getElementById("search-clear-btn");
+      const suggestionsBox = document.getElementById("suggestions-box");
+      const resultsContainer = document.getElementById("results-container");
+      const resultsList = document.getElementById("results-list");
+      const resultsCount = document.getElementById("results-count");
+      const shuffleBtn = document.getElementById("shuffle-suggestions-btn");
+      const defaultCardsList = document.getElementById("default-cards-list");
+
+      if (!modal || !searchInput) return;
+
+      let activeIndex = -1;
+
+      function getNavigableItems() {
+        if (!resultsContainer.classList.contains("hidden")) {
+          return Array.from(resultsList.querySelectorAll(".search-nav-item"));
+        }
+        return Array.from(defaultCardsList.querySelectorAll(".search-nav-item"));
+      }
+
+      function updateActiveSelection() {
+        const items = getNavigableItems();
+        items.forEach((el, idx) => {
+          if (idx === activeIndex) {
+            el.classList.add("ring-2", "ring-blue-500", "bg-blue-50/90", "border-blue-400");
+            el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+          } else {
+            el.classList.remove("ring-2", "ring-blue-500", "bg-blue-50/90", "border-blue-400");
+          }
         });
       }
-    }
 
-    // Лінійні прискорювачі Elekta
-    if ((lower.includes('versa') || lower.includes('synergy') || lower.includes('прискорювач') || lower.includes('vmat') || lower.includes('imrt')) && !cards.some(c => c.href === '/services/linac')) {
-      cards.push({
-        title: 'Лінійні прискорювачі Elekta',
-        desc: 'Versa HD та Synergy Platform',
-        href: '/services/linac',
-        icon: '⚡'
-      });
-    }
+      function openModal() {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.style.overflow = "hidden";
+        activeIndex = -1;
+        updateActiveSelection();
+        setTimeout(() => searchInput.focus(), 20);
+      }
 
-    // КТ
-    if (lower.includes('кт') || lower.includes('томограф') || lower.includes('симуляці') || lower.includes('маск')) {
-      cards.push({
-        title: 'КТ-симуляція (Toshiba Aquilion)',
-        desc: 'Топометрична розмітка та підготовка',
-        href: '/services/ct',
-        icon: '🖥️'
-      });
-    }
+      function closeModal() {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.style.overflow = "";
+        activeIndex = -1;
+      }
 
-    // Гамма-терапія
-    if (lower.includes('гамма') || lower.includes('кобальт') || lower.includes('theratron') || lower.includes('агат')) {
-      cards.push({
-        title: 'Гамма-терапевтичні комплекси',
-        desc: 'Theratron Elite 80 та АГАТ-Р1',
-        href: '/services/gamma',
-        icon: '☢️'
-      });
-    }
+      function performSmartSearch(rawQuery) {
+        const cleanQuery = (rawQuery || "").toLowerCase().trim();
+        clearBtn.classList.toggle("hidden", cleanQuery.length === 0);
 
-    // Брахітерапія
-    if (lower.includes('брахітерапі')) {
-      cards.push({
-        title: 'Брахітерапія',
-        desc: 'Контактне внутрішньопорожнинне опромінення',
-        href: '/services/brachy',
-        icon: '🎯'
-      });
-    }
+        if (cleanQuery.length === 0) {
+          resultsContainer.classList.add("hidden");
+          suggestionsBox.classList.remove("hidden");
+          activeIndex = -1;
+          updateActiveSelection();
+          return;
+        }
 
-    // Близькофокусна терапія
-    if (lower.includes('близькофокусн') || lower.includes('шкір')) {
-      cards.push({
-        title: 'Рентгенотерапія шкіри',
-        desc: 'Лікування новоутворень шкіри',
-        href: '/services/nearfocus',
-        icon: '🔬'
-      });
-    }
+        suggestionsBox.classList.add("hidden");
+        resultsContainer.classList.remove("hidden");
 
-    if (cards.length === 0) return '';
+        // Розбиваємо введений запит на окремі слова (підтримка 1-2 літер та 2+ слів)
+        const queryTokens = cleanQuery.split(/\s+/).filter(Boolean);
 
-    return `
-      <div class="mt-3.5 pt-3 border-t border-slate-200/60 flex flex-col gap-2">
-        <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Швидкий перехід:</div>
-        ${cards.map(c => `
-          <a 
-            href="${c.href}" 
-            class="flex items-center justify-between p-2.5 bg-white border border-slate-200/90 rounded-xl hover:border-blue-500 hover:bg-blue-50/40 transition-all shadow-xs group"
-          >
-            <div class="flex items-center gap-2.5">
-              <span class="text-base p-1.5 bg-slate-100 rounded-lg group-hover:bg-blue-100 transition-colors">${c.icon}</span>
-              <div>
-                <div class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">${c.title}</div>
-                <div class="text-[11px] text-slate-500">${c.desc}</div>
+        // Розширюємо семантичними асоціаціями
+        const expandedTerms = new Set(queryTokens);
+        SYNONYM_MAP.forEach((group) => {
+          const matched = group.triggers.some((trig) =>
+            queryTokens.some((tok) =>
+              tok.length >= 2 ? trig.includes(tok) || tok.includes(trig) : trig.startsWith(tok)
+            )
+          );
+          if (matched) {
+            group.expand.forEach((e) => expandedTerms.add(e));
+          }
+        });
+
+        const scored = [];
+
+        searchIndex.forEach((item) => {
+          const titleLower = (item.title || "").toLowerCase();
+          const subtitleLower = (item.subtitle || "").toLowerCase();
+          const tagsLower = (item.tags || []).map((t) => String(t).toLowerCase());
+          let score = 0;
+
+          // 1. Прямі збіги з тим, що ввів користувач (найвищий пріоритет)
+          let allTokensMatched = true;
+          for (const tok of queryTokens) {
+            let tokenMatched = false;
+            if (titleLower.includes(tok)) {
+              score += titleLower.startsWith(tok) ? 45 : 30;
+              tokenMatched = true;
+            }
+            if (tagsLower.some((t) => t === tok || t.startsWith(tok))) {
+              score += 25;
+              tokenMatched = true;
+            } else if (tagsLower.some((t) => t.includes(tok))) {
+              score += 15;
+              tokenMatched = true;
+            }
+            if (subtitleLower.includes(tok)) {
+              score += 10;
+              tokenMatched = true;
+            }
+            if (!tokenMatched) {
+              allTokensMatched = false;
+            }
+          }
+
+          if (allTokensMatched && queryTokens.length > 1) {
+            score += 35; // Бонус за точний збіг обох слів
+          }
+
+          // 2. Семантичні асоціації (якщо користувач ввів синонім)
+          if (queryTokens[0].length >= 2) {
+            expandedTerms.forEach((term) => {
+              if (!queryTokens.includes(term)) {
+                if (titleLower.includes(term) || tagsLower.some((t) => t.includes(term))) {
+                  score += 12;
+                }
+              }
+            });
+          }
+
+          if (score > 0) {
+            scored.push({ item, score });
+          }
+        });
+
+        scored.sort((a, b) => b.score - a.score);
+        const topResults = scored.slice(0, 12).map((s) => s.item);
+
+        if (resultsCount) {
+          resultsCount.textContent = `Знайдено результатів: ${topResults.length}`;
+        }
+
+        if (topResults.length === 0) {
+          resultsList.innerHTML = `
+            <div class="text-center py-10 px-4 bg-slate-50 rounded-2xl border border-slate-100">
+              <div class="text-3xl mb-2">🔍</div>
+              <p class="text-sm font-bold text-slate-700 mb-1">За запитом «${escapeHtml(rawQuery)}» прямих збігів не знайдено</p>
+              <p class="text-xs text-slate-500 mb-4">Спробуйте інше формулювання або перейдіть до популярних розділів:</p>
+              <div class="flex flex-wrap justify-center gap-2">
+                <a href="/services/linac" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">⚡ Лінійні прискорювачі</a>
+                <a href="/doctors" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">👨‍⚕️ Лікарі відділення</a>
+                <a href="/#patient-checklist" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">📋 Маршрут пацієнта</a>
+                <a href="/#contacts" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">📞 Контакти</a>
               </div>
             </div>
-            <svg class="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all shrink-0 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        `).join('')}
-      </div>
-    `;
-  }
-
-  function appendUserBubble(text) {
-    const div = document.createElement('div');
-    div.className = 'flex justify-end animate-in fade-in slide-in-from-bottom-2';
-    div.innerHTML = `
-      <div class="bg-blue-600 text-white rounded-2xl rounded-tr-xs shadow-xs p-3.5 text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed">
-        ${text}
-      </div>
-    `;
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  function createBotBubbleHolder() {
-    const div = document.createElement('div');
-    div.className = 'flex justify-start animate-in fade-in slide-in-from-bottom-2';
-
-    const bubble = document.createElement('div');
-    bubble.className = 'bg-slate-100 text-slate-800 rounded-2xl rounded-tl-xs border border-slate-200/70 shadow-xs p-3.5 text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed';
-
-    const textSpan = document.createElement('div');
-    textSpan.className = 'whitespace-pre-wrap';
-    bubble.appendChild(textSpan);
-
-    const cardsSpan = document.createElement('div');
-    bubble.appendChild(cardsSpan);
-
-    div.appendChild(bubble);
-    chatMessages.appendChild(div);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    return { textSpan, cardsSpan };
-  }
-
-  function restoreChatHistory() {
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        chatHistory = JSON.parse(saved);
-        if (Array.isArray(chatHistory) && chatHistory.length > 0) {
-          chatMessages.innerHTML = '';
-          chatHistory.forEach(msg => {
-            if (msg.role === 'user') {
-              appendUserBubble(msg.content);
-            } else {
-              const { textSpan, cardsSpan } = createBotBubbleHolder();
-              textSpan.innerHTML = formatMarkdown(msg.content);
-              const cardsHtml = generateCardsHtml(msg.content);
-              if (cardsHtml) cardsSpan.innerHTML = cardsHtml;
-            }
-          });
-          chatMessages.scrollTop = chatMessages.scrollHeight;
+          `;
+          activeIndex = -1;
+          return;
         }
+
+        resultsList.innerHTML = topResults
+          .map((item) => {
+            const catClass =
+              CATEGORY_STYLES[item.category] || "bg-slate-100 text-slate-700 border-slate-200";
+            return `
+              <a
+                href="${escapeHtml(item.url)}"
+                role="option"
+                class="search-nav-item group flex items-center justify-between p-3.5 sm:p-4 rounded-2xl bg-slate-50/70 hover:bg-blue-50/70 border border-slate-200/70 hover:border-blue-300 transition-all"
+              >
+                <div class="flex items-start gap-3.5 min-w-0 pr-3">
+                  <span class="w-10 h-10 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-lg shrink-0 mt-0.5 shadow-2xs group-hover:scale-105 transition-transform">
+                    ${escapeHtml(item.icon || "📄")}
+                  </span>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                      <span class="px-2 py-0.5 text-[9px] font-black uppercase tracking-wider rounded-md border ${catClass}">
+                        ${escapeHtml(item.category)}
+                      </span>
+                    </div>
+                    <div class="text-sm sm:text-base font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-snug">
+                      ${highlightText(item.title, queryTokens)}
+                    </div>
+                    ${
+                      item.subtitle
+                        ? `<div class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">${highlightText(item.subtitle, queryTokens)}</div>`
+                        : ""
+                    }
+                  </div>
+                </div>
+                <div class="w-8 h-8 flex items-center justify-center rounded-full bg-white text-slate-400 group-hover:bg-blue-600 group-hover:text-white shadow-2xs transition-all shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </a>
+            `;
+          })
+          .join("");
+
+        activeIndex = 0;
+        updateActiveSelection();
+
+        // Закриваємо модалку при кліку на результат (особливо важливо для якірних посилань типу /#contacts)
+        resultsList.querySelectorAll(".search-nav-item").forEach((link) => {
+          link.addEventListener("click", () => {
+            closeModal();
+          });
+        });
       }
-    } catch (e) {
-      console.warn('Не вдалося відновити історію чату', e);
-    }
-  }
 
-  restoreChatHistory();
+      trigger?.addEventListener("click", openModal);
+      closeBackdrop?.addEventListener("click", closeModal);
+      closeBtn?.addEventListener("click", closeModal);
 
-  async function handleAiChat() {
-    const question = aiChatInput.value.trim();
-    if (!question) return;
-
-    appendUserBubble(question);
-    chatHistory.push({ role: 'user', content: question });
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
-
-    aiChatInput.value = "";
-    aiChatInput.disabled = true;
-    aiSendBtn.disabled = true;
-    aiLoader?.classList.remove('hidden');
-
-    const { textSpan, cardsSpan } = createBotBubbleHolder();
-    let fullResponse = "";
-
-    try {
-      const response = await fetch('/api/chats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: chatHistory }),
+      modal.querySelectorAll(".search-nav-item, .search-QuickCloseLink").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeModal();
+        });
       });
 
-      if (!response.ok || !response.body) throw new Error('Помилка сервера');
+      searchInput.addEventListener("input", (e) => {
+        performSmartSearch(e.target.value);
+      });
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
+      searchInput.addEventListener("focus", () => {
+        if (!searchInput.value.trim()) {
+          suggestionsBox.classList.remove("hidden");
+          resultsContainer.classList.add("hidden");
+        }
+      });
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        fullResponse += decoder.decode(value, { stream: true });
-        textSpan.innerHTML = formatMarkdown(fullResponse);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-
-      chatHistory.push({ role: 'assistant', content: fullResponse });
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(chatHistory));
-
-      const cardsHtml = generateCardsHtml(fullResponse);
-      if (cardsHtml) {
-        cardsSpan.innerHTML = cardsHtml;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-    } catch (err) {
-      console.error(err);
-      if (!fullResponse) {
-        textSpan.textContent = "Вибачте, виникла помилка зв'язку з сервером.";
-      }
-    } finally {
-      aiLoader?.classList.add('hidden');
-      aiChatInput.disabled = false;
-      aiSendBtn.disabled = false;
-      aiChatInput.focus();
-    }
-  }
-
-  chatForm?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    handleAiChat();
-  });
-
-  searchInput?.addEventListener('input', (e) => {
-    if (currentTab === 'offline') performSearch(e.target.value);
-  });
-
-  clearChatBtn?.addEventListener('click', () => {
-    chatHistory = [];
-    sessionStorage.removeItem(STORAGE_KEY);
-    chatMessages.innerHTML = `
-      <div class="flex justify-start">
-        <div class="bg-blue-50/80 text-blue-900 p-4 rounded-2xl rounded-tl-xs text-sm max-w-[90%] sm:max-w-[80%] leading-relaxed border border-blue-100/80 shadow-xs">
-          Чат очищено. Чим я можу вам допомогти?
-        </div>
-      </div>
-    `;
-    aiChatInput?.focus();
-  });
-
-  document.querySelectorAll('.tag-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const q = btn.getAttribute('data-query');
-      if (searchInput) {
-        searchInput.value = q;
-        if (currentTab === 'offline') performSearch(q);
+      clearBtn?.addEventListener("click", () => {
+        searchInput.value = "";
+        performSmartSearch("");
         searchInput.focus();
-      }
-    });
-  });
+      });
+
+      // Клік по швидкому тегу
+      modal.querySelectorAll(".tag-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const q = btn.getAttribute("data-query") || "";
+          searchInput.value = q;
+          performSmartSearch(q);
+          searchInput.focus();
+        });
+      });
+
+      // Рандомізація / оновлення підбірки швидких карток
+      shuffleBtn?.addEventListener("click", () => {
+        const cards = Array.from(defaultCardsList.children);
+        for (let i = cards.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          defaultCardsList.appendChild(cards[j]);
+        }
+      });
+
+      // Клавіатурна навігація (↑, ↓, Enter, Esc, Ctrl+K)
+      document.addEventListener("keydown", (e) => {
+        // Відкриття за Ctrl+K або Cmd+K
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+          e.preventDefault();
+          if (modal.classList.contains("hidden")) {
+            openModal();
+          } else {
+            closeModal();
+          }
+          return;
+        }
+
+        if (modal.classList.contains("hidden")) return;
+
+        if (e.key === "Escape") {
+          e.preventDefault();
+          if (searchInput.value.trim().length > 0) {
+            searchInput.value = "";
+            performSmartSearch("");
+          } else {
+            closeModal();
+          }
+          return;
+        }
+
+        const items = getNavigableItems();
+        if (items.length === 0) return;
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          activeIndex = (activeIndex + 1) % items.length;
+          updateActiveSelection();
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          activeIndex = (activeIndex - 1 + items.length) % items.length;
+          updateActiveSelection();
+        } else if (e.key === "Enter" && activeIndex >= 0 && items[activeIndex]) {
+          e.preventDefault();
+          const targetHref = items[activeIndex].getAttribute("href");
+          closeModal();
+          if (targetHref) {
+            window.location.href = targetHref;
+          }
+        }
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", setupSearchElements);
+    } else {
+      setupSearchElements();
+    }
+    document.addEventListener("astro:after-swap", setupSearchElements);
+  })();
 </script>
 
 <style>
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  #chat-messages { scroll-behavior: smooth; }
-  input:focus { outline: none; }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+  }
+  input:focus {
+    outline: none;
+  }
 </style>

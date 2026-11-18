@@ -1,0 +1,22 @@
+{
+  "surname": "Землянська",
+  "name": "Олександра",
+  "fullNamePatronymic": "Землянська Олександра",
+  "badge": "",
+  "isHead": false,
+  "role": "Лікар з радіаційної онкології",
+  "department": "Мегавольтна терапія",
+  "bio": "Спеціалізується на прецизійній променевій терапії та індивідуальному плануванні опромінення.",
+  "image": "/hero/doctors/zemlyanska.jpg",
+  "experience": "14 років",
+  "specializations": [
+    "Променева терапія",
+    "IMRT/VMAT",
+    "Контурування"
+  ],
+  "education": "Вища медична освіта",
+  "achievements": "Досвід лікування складних клінічних випадків",
+  "color": "from-slate-600 to-slate-700",
+  "order": 4,
+  "isVisible": true
+}

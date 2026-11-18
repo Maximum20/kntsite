@@ -1,33 +1,42 @@
 ---
-import { getEntry, render } from 'astro:content';
-import { Image } from 'astro:assets';
+export const prerender = true;
+
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import Layout from '../../layouts/Layout.astro';
+import Layout from "../../layouts/Layout.astro";
 
-// 1. Отримуємо slug прямо з параметрів URL (назва файлу [slug].astro)
-const { slug } = Astro.params;
-
-if (!slug) {
-  return Astro.redirect('/vacancies');
+export async function getStaticPaths() {
+  const vacancies = await getCollection("vacancies");
+  return vacancies.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
 }
 
-// 2. Завантажуємо конкретну вакансію з колекції за її ID/slug
-const entry = await getEntry('vacancies', slug);
-
-// Якщо такої вакансії немає (наприклад, ввели неправильний URL) — кидаємо на 404
+const { entry } = Astro.props;
 if (!entry) {
-  return Astro.redirect('/404');
+  return Astro.redirect("/vacancies");
 }
 
-// 3. Рендеримо MDX контент
 const { Content } = await render(entry);
+
+// Безпечне форматування посилання на месенджер (якщо введено без https://)
+const rawMessengerUrl = entry.data?.contacts?.messengerUrl?.trim() || "";
+const safeMessengerUrl = rawMessengerUrl
+  ? /^https?:\/\//i.test(rawMessengerUrl)
+    ? rawMessengerUrl
+    : `https://${rawMessengerUrl}`
+  : "";
 ---
 
-<Layout title={`${entry.data?.title || 'Вакансія'} | Центр`}>
+<Layout title={`${entry.data?.title || "Вакансія"}`} description={entry.data?.description}>
   <main class="py-16 md:py-24 bg-slate-50/50">
     <div class="container mx-auto px-5 max-w-4xl">
-      
-      <a href="/vacancies" class="inline-flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors mb-8 font-bold uppercase text-[10px] tracking-[0.2em]">
+      <a
+        href="/vacancies"
+        class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-600 transition-colors mb-8 font-bold uppercase text-[10px] tracking-[0.2em]"
+      >
         <Icon name="bx:left-arrow-alt" class="w-5 h-5" /> Назад до вакансій
       </a>
 
@@ -43,8 +52,12 @@ const { Content } = await render(entry);
             </span>
           )}
         </div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">{entry.data?.title}</h1>
-        <p class="text-slate-500 text-lg font-medium leading-relaxed">{entry.data?.description || ''}</p>
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight">
+          {entry.data?.title}
+        </h1>
+        <p class="text-slate-500 text-lg font-medium leading-relaxed">
+          {entry.data?.description || ""}
+        </p>
       </div>
 
       {entry.data?.benefits && entry.data.benefits.length > 0 && (
@@ -54,8 +67,12 @@ const { Content } = await render(entry);
             {entry.data.benefits.map((benefit) => (
               <div class="bg-white rounded-3xl border border-slate-100 p-6 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
                 {benefit.image && (
-                  <div class="aspect-[16/9] overflow-hidden rounded-2xl relative">
-                    <Image src={benefit.image} alt={benefit.title || 'Benefit'} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div class="aspect-[16/9] overflow-hidden rounded-2xl relative bg-slate-100">
+                    <Image
+                      src={benefit.image}
+                      alt={benefit.title || "Перевага"}
+                      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                 )}
                 <h3 class="font-bold text-slate-800 text-lg leading-snug">{benefit.title}</h3>
@@ -70,41 +87,52 @@ const { Content } = await render(entry);
         <Content />
       </div>
 
-      <!-- 👇 БЛОК КОНТАКТІВ ВСТАВЛЕНО СЮДИ -->
-      {entry.data?.contacts && (entry.data.contacts.phone || entry.data.contacts.email || entry.data.contacts.messengerUrl) && (
-        <div class="mt-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl shadow-blue-500/20 flex flex-col lg:flex-row items-center justify-between gap-8">
-          <div class="max-w-md text-center lg:text-left">
-            <h2 class="text-3xl font-black mb-3 tracking-tight">Зацікавила вакансія?</h2>
-            <p class="text-blue-100 font-medium leading-relaxed">
-              Не відкладайте! Зв'яжіться з нами прямо зараз телефоном, у месенджерах або надсилайте своє резюме на пошту.
-            </p>
+      <!-- Блок контактів -->
+      {entry.data?.contacts &&
+        (entry.data.contacts.phone || entry.data.contacts.email || safeMessengerUrl) && (
+          <div class="mt-12 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[2.5rem] p-8 md:p-12 text-white shadow-xl shadow-blue-500/20 flex flex-col lg:flex-row items-center justify-between gap-8">
+            <div class="max-w-md text-center lg:text-left">
+              <h2 class="text-3xl font-black mb-3 tracking-tight">Зацікавила вакансія?</h2>
+              <p class="text-blue-100 font-medium leading-relaxed">
+                Не відкладайте! Зв'яжіться з нами прямо зараз телефоном, у месенджерах або надсилайте своє резюме на пошту.
+              </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 w-full lg:w-auto justify-center">
+              {entry.data.contacts.phone && (
+                <a
+                  href={`tel:${entry.data.contacts.phone.replace(/\s+/g, "")}`}
+                  class="flex items-center justify-center gap-3 px-6 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-all shadow-md text-sm whitespace-nowrap"
+                >
+                  <Icon name="bx:phone" class="w-5 h-5 text-blue-500" />
+                  {entry.data.contacts.phone}
+                </a>
+              )}
+
+              {safeMessengerUrl && (
+                <a
+                  href={safeMessengerUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="flex items-center justify-center gap-3 px-6 py-4 bg-sky-500/20 backdrop-blur-md text-white border border-sky-400/30 font-bold rounded-2xl hover:bg-sky-500/30 transition-all text-sm whitespace-nowrap"
+                >
+                  <Icon name="bx:message-rounded-dots" class="w-5 h-5 text-sky-300" />
+                  {entry.data.contacts.messengerName || "Messenger"}
+                </a>
+              )}
+
+              {entry.data.contacts.email && (
+                <a
+                  href={`mailto:${entry.data.contacts.email}`}
+                  class="flex items-center justify-center gap-3 px-6 py-4 bg-white/10 backdrop-blur-md text-white border border-white/10 font-bold rounded-2xl hover:bg-white/20 transition-all text-sm whitespace-nowrap"
+                >
+                  <Icon name="bx:envelope" class="w-5 h-5 text-blue-200" />
+                  {entry.data.contacts.email}
+                </a>
+              )}
+            </div>
           </div>
-          
-          <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-4 w-full lg:w-auto justify-center">
-            {entry.data.contacts.phone && (
-              <a href={`tel:${entry.data.contacts.phone.replace(/\s+/g, '')}`} class="flex items-center justify-center gap-3 px-6 py-4 bg-white text-blue-600 font-bold rounded-2xl hover:bg-blue-50 transition-all shadow-md text-sm whitespace-nowrap">
-                <Icon name="bx:phone" class="w-5 h-5 text-blue-500" />
-                {entry.data.contacts.phone}
-              </a>
-            )}
-
-            {entry.data.contacts.messengerUrl && (
-              <a href={entry.data.contacts.messengerUrl} target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-3 px-6 py-4 bg-sky-500/20 backdrop-blur-md text-white border border-sky-400/30 font-bold rounded-2xl hover:bg-sky-500/30 transition-all text-sm whitespace-nowrap">
-                <Icon name="bx:message-rounded-dots" class="w-5 h-5 text-sky-300" />
-                {entry.data.contacts.messengerName || 'Messenger'}
-              </a>
-            )}
-
-            {entry.data.contacts.email && (
-              <a href={`mailto:${entry.data.contacts.email}`} class="flex items-center justify-center gap-3 px-6 py-4 bg-white/10 backdrop-blur-md text-white border border-white/10 font-bold rounded-2xl hover:bg-white/20 transition-all text-sm whitespace-nowrap">
-                <Icon name="bx:envelope" class="w-5 h-5 text-blue-200" />
-                {entry.data.contacts.email}
-              </a>
-            )}
-          </div>
-        </div>
-      )}
-
+        )}
     </div>
   </main>
 </Layout>

@@ -2,31 +2,32 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
 import vercel from '@astrojs/vercel';
-import keystatic from '@keystatic/astro'; // Додаємо адмінку
-import react from '@astrojs/react';     // Адмінці потрібен React
-//import { mdx } from 'node_modules/@keystatic/core/dist/declarations/src/form/fields';
+import keystatic from '@keystatic/astro';
+import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 
-
 export default defineConfig({
-  // Твій сайт
-  site: 'https://kntsite.vercel.app', 
-  
-  // Працюємо як сервер для API та адмінки
-  output: 'server',
-  
-  // Використовуємо Vercel
-  adapter: vercel(),
+  site: 'https://kntsite.vercel.app',
 
-  // Додаємо нові інтеграції до існуючих
+  // Статична генерація (SSG) за замовчуванням для всіх публічних сторінок (0 навантаження на функції Vercel).
+  // Маршрути адмінки Keystatic мають власний prerender = false і працюють динамічно через адаптер Vercel.
+  output: 'static',
+
+  adapter: vercel({
+    imageService: false,
+  }),
+
   integrations: [
-    icon(), 
-    react(),     // Потрібен для інтерфейсу Keystatic
-    keystatic(),  // Сама адмінка
-    mdx()
+    icon(),
+    react(),
+    keystatic(),
+    mdx(),
   ],
 
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 1200,
+    },
   },
 });

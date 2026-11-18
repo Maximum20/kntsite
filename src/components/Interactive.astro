@@ -152,13 +152,7 @@ const { type = "", items = [], title = "", value = 0, max = 100, color = "blue" 
 
 {/* TESTIMONIAL CAROUSEL */}
 {type === 'testimonial-carousel' && (
-  <div class="my-12 not-prose" x-data="{ activeSlide: 0, autoplay: true }" x-init="
-    setInterval(() => {
-      if (autoplay) {
-        activeSlide = (activeSlide + 1) % {items.length}
-      }
-    }, 5000)
-  ">
+  <div class="my-12 not-prose" x-data="{ activeSlide: 0, autoplay: true }" x-init={`setInterval(() => { if (autoplay) { activeSlide = (activeSlide + 1) % ${items.length || 1} } }, 5000)`}>
     <div class="relative">
       {/* Slides */}
       <div class="overflow-hidden rounded-3xl">

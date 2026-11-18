@@ -1,71 +1,106 @@
 ---
-import { doctors } from '../data'; 
+import { doctors } from "../data";
 
-const departments = ["Мегавольтна терапія", "Гамма-терапія", "Брахітерапія", "Близький фокус", "КТ-розмітка", "Реабілітація"];
-const roles = ["Лікар з радіаційної онкології", "Лікар-рентгенолог", "Медичний фізик", "Медична сестра", "Старша медична сестра", "Інженер-програміст"];
+const departments = Array.from(
+  new Set([
+    "Мегавольтна терапія",
+    "Гамма-терапія",
+    "Брахітерапія",
+    "Близький фокус",
+    "КТ-розмітка",
+    "Реабілітація",
+    ...doctors.map((d) => d.department).filter(Boolean),
+  ])
+);
 
-const baseChip = "filter-chip px-4 py-2 md:px-5 md:py-2.5 bg-white border border-slate-200 rounded-xl text-[10px] md:text-xs font-bold text-slate-600 transition-all hover:border-slate-400 active:scale-95";
-const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white shadow-lg shadow-slate-200 px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-[10px] md:text-xs font-bold transition-all active:scale-95";
+const roles = Array.from(
+  new Set([
+    "Лікар з радіаційної онкології",
+    "Лікар-рентгенолог",
+    "Медичний фізик",
+    "Старша медична сестра",
+    ...doctors.map((d) => d.role).filter(Boolean),
+  ])
+);
+
+const baseChip =
+  "filter-chip px-4 py-2 md:px-5 md:py-2.5 bg-white border border-slate-200 rounded-xl text-[10px] md:text-xs font-bold text-slate-600 transition-all hover:border-slate-400 active:scale-95 cursor-pointer";
+const activeChip =
+  "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white shadow-lg shadow-slate-200 px-4 py-2 md:px-5 md:py-2.5 rounded-xl text-[10px] md:text-xs font-bold transition-all active:scale-95 cursor-pointer";
 ---
 
 <div class="max-w-6xl mx-auto px-4 mb-12 relative z-[70]">
-  <div class="backdrop-blur-2xl bg-white/70 border border-white/80 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 p-5 md:p-8">
-    
+  <div class="backdrop-blur-2xl bg-white/75 border border-white/80 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 p-5 md:p-8">
     <div class="relative mb-6">
       <div class="relative group">
         <input
           type="text"
           id="nameSearch"
           autocomplete="off"
-          placeholder="Пошук..."
+          placeholder="Пошук фахівця за ім'ям, прізвищем або посадою..."
           class="w-full pl-5 pr-20 py-3.5 md:pl-7 md:pr-24 md:py-4 backdrop-blur-xl bg-white/90 border border-slate-200/60 rounded-2xl text-sm md:text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-slate-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all shadow-sm"
         />
-        
-        <button 
-          id="clearSearch" 
-          class="hidden absolute right-12 md:right-16 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-900 transition-colors z-10"
+
+        <button
+          id="clearSearch"
+          type="button"
+          aria-label="Очистити пошук"
+          class="hidden absolute right-12 md:right-16 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-slate-900 transition-colors z-10 cursor-pointer"
         >
           <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
 
         <div class="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
           <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8" stroke-width="2.5"/><path d="M21 21l-4.35-4.35" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="11" cy="11" r="8" stroke-width="2.5"></circle>
+            <path d="M21 21l-4.35-4.35" stroke-width="2.5" stroke-linecap="round"></path>
           </svg>
         </div>
       </div>
 
-      <div 
-        id="searchDropdown" 
+      <div
+        id="searchDropdown"
         class="hidden absolute left-0 right-0 top-full mt-3 max-h-[350px] overflow-y-auto z-[100] bg-white/95 backdrop-blur-xl border border-white/80 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] custom-scrollbar"
       >
         <div id="dropdownResults" class="p-3 space-y-1"></div>
       </div>
     </div>
 
-    <button id="toggleAdvanced" class="flex items-center justify-center gap-2 mx-auto text-slate-600 hover:text-slate-900 font-bold text-xs md:text-sm transition-all group mb-2">
-      <span>Розширені фільтри</span>
+    <button
+      id="toggleAdvanced"
+      type="button"
+      class="flex items-center justify-center gap-2 mx-auto text-slate-600 hover:text-slate-900 font-bold text-xs md:text-sm transition-all group mb-2 cursor-pointer"
+    >
+      <span>Розширені фільтри (відділення та посада)</span>
       <svg id="chevron" class="w-4 h-4 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
       </svg>
     </button>
 
     <div id="advancedPanel" class="hidden overflow-hidden pt-6 border-t border-slate-100 mt-4">
       <div class="space-y-6">
         <div>
-          <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Відділення</label>
+          <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">
+            Відділення
+          </label>
           <div class="flex flex-wrap gap-2" id="deptFilter">
-            <button class={activeChip} data-value="all">Всі</button>
-            {departments.map(dept => <button class={baseChip} data-value={dept}>{dept}</button>)}
+            <button type="button" class={activeChip} data-value="all">Всі</button>
+            {departments.map((dept) => (
+              <button type="button" class={baseChip} data-value={dept}>{dept}</button>
+            ))}
           </div>
         </div>
         <div>
-          <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">Посада</label>
+          <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">
+            Посада
+          </label>
           <div class="flex flex-wrap gap-2" id="roleFilter">
-            <button class={activeChip} data-value="all">Всі</button>
-            {roles.map(role => <button class={baseChip} data-value={role}>{role}</button>)}
+            <button type="button" class={activeChip} data-value="all">Всі</button>
+            {roles.map((role) => (
+              <button type="button" class={baseChip} data-value={role}>{role}</button>
+            ))}
           </div>
         </div>
       </div>
@@ -74,198 +109,286 @@ const activeChip = "filter-chip active bg-[#1a2b3b] border-[#1a2b3b] text-white 
 </div>
 
 <script is:inline define:vars={{ doctors }}>
-  function initFilters() {
-    const searchInput = document.getElementById('nameSearch');
-    const clearBtn = document.getElementById('clearSearch');
-    const dropdown = document.getElementById('searchDropdown');
-    const dropdownResults = document.getElementById('dropdownResults');
-    const toggleBtn = document.getElementById('toggleAdvanced');
-    const panel = document.getElementById('advancedPanel');
-    const chevron = document.getElementById('chevron');
-    const deptButtons = document.querySelectorAll('#deptFilter .filter-chip');
-    const roleButtons = document.querySelectorAll('#roleFilter .filter-chip');
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
 
-    let activeDept = 'all';
-    let activeRole = 'all';
+  function initFilters() {
+    const searchInput = document.getElementById("nameSearch");
+    const clearBtn = document.getElementById("clearSearch");
+    const dropdown = document.getElementById("searchDropdown");
+    const dropdownResults = document.getElementById("dropdownResults");
+    const toggleBtn = document.getElementById("toggleAdvanced");
+    const panel = document.getElementById("advancedPanel");
+    const chevron = document.getElementById("chevron");
+    const deptButtons = document.querySelectorAll("#deptFilter .filter-chip");
+    const roleButtons = document.querySelectorAll("#roleFilter .filter-chip");
+    const loadMoreContainer = document.getElementById("loadMoreContainer");
+
+    if (!searchInput) return;
+
+    let activeDept = "all";
+    let activeRole = "all";
 
     const activeClasses = "bg-[#1a2b3b] border-[#1a2b3b] text-white shadow-lg shadow-slate-200";
     const baseClasses = "bg-white border-slate-200 text-slate-600 shadow-none";
 
     function updateButtonStyles(buttons, activeBtn) {
-      buttons.forEach(btn => {
-        btn.classList.remove('active', ...activeClasses.split(' '));
-        btn.classList.add(...baseClasses.split(' '));
+      buttons.forEach((btn) => {
+        btn.classList.remove("active", ...activeClasses.split(" "));
+        btn.classList.add(...baseClasses.split(" "));
       });
-      activeBtn.classList.add('active', ...activeClasses.split(' '));
-      activeBtn.classList.remove(...baseClasses.split(' '));
+      activeBtn.classList.add("active", ...activeClasses.split(" "));
+      activeBtn.classList.remove(...baseClasses.split(" "));
     }
 
     function applyFilters() {
       const query = searchInput.value.toLowerCase().trim();
-      const isSearchActive = query.length > 0 || activeDept !== 'all' || activeRole !== 'all';
-      
-      if (clearBtn) clearBtn.classList.toggle('hidden', query.length === 0);
+      const isSearchActive = query.length > 0 || activeDept !== "all" || activeRole !== "all";
 
-      const cards = document.querySelectorAll('.doctor-card');
-      const noResults = document.getElementById('noResults');
-      const headSection = document.getElementById('headSection');
-      const specialistsTitle = document.getElementById('specialistsTitle');
-      
+      if (clearBtn) clearBtn.classList.toggle("hidden", !isSearchActive);
+
+      const cards = document.querySelectorAll(".doctor-card");
+      const noResults = document.getElementById("noResults");
+      const headSection = document.getElementById("headSection");
+      const specialistsTitle = document.getElementById("specialistsTitle");
+
       let hasMatches = false;
 
       if (specialistsTitle) {
-        specialistsTitle.style.display = isSearchActive ? 'none' : 'block';
+        specialistsTitle.style.display = isSearchActive ? "none" : "block";
       }
 
       if (headSection) {
-        const bossCard = headSection.querySelector('.doctor-card');
-        const bossName = bossCard?.dataset.name?.toLowerCase() || '';
-        const bossRole = bossCard?.dataset.role || '';
-        const bossDept = bossCard?.dataset.dept || '';
+        const bossCard = headSection.querySelector(".doctor-card");
+        const bossName = (bossCard?.dataset.name || "").toLowerCase();
+        const bossRole = bossCard?.dataset.role || "";
+        const bossDept = bossCard?.dataset.dept || "";
 
-        const matchesSearch = bossName.includes(query);
-        const matchesDept = activeDept === 'all' || bossDept === activeDept;
-        const matchesRole = activeRole === 'all' || bossRole === activeRole;
+        const matchesSearch =
+          bossName.includes(query) || bossRole.toLowerCase().includes(query);
+        const matchesDept = activeDept === "all" || bossDept === activeDept;
+        const matchesRole = activeRole === "all" || bossRole === activeRole;
 
         if (!isSearchActive) {
-          headSection.style.display = 'flex';
+          headSection.style.display = "flex";
         } else if (matchesSearch && matchesDept && matchesRole) {
-          headSection.style.display = 'flex';
+          headSection.style.display = "flex";
           hasMatches = true;
         } else {
-          headSection.style.display = 'none';
+          headSection.style.display = "none";
         }
       }
 
-      cards.forEach(card => {
-        if (card.closest('#headSection')) return;
+      cards.forEach((card) => {
+        if (card.closest("#headSection")) return;
+        const wrapper = card.closest(".doctor-wrapper");
 
-        const name = card.dataset.name?.toLowerCase() || '';
-        const role = card.dataset.role || '';
-        const dept = card.dataset.dept || '';
+        const name = (card.dataset.name || "").toLowerCase();
+        const role = card.dataset.role || "";
+        const dept = card.dataset.dept || "";
 
-        const matchesSearch = name.includes(query);
-        const matchesDept = activeDept === 'all' || dept === activeDept;
-        const matchesRole = activeRole === 'all' || role === activeRole;
+        const matchesSearch =
+          name.includes(query) || role.toLowerCase().includes(query);
+        const matchesDept = activeDept === "all" || dept === activeDept;
+        const matchesRole = activeRole === "all" || role === activeRole;
 
-        if (matchesSearch && matchesDept && matchesRole) {
-          card.style.display = 'block';
+        if (!isSearchActive) {
+          // Відновлюємо стан пагінації, якщо фільтр скинутий
+          const wasPaged = wrapper?.getAttribute("data-initial-paged") === "true";
+          if (wrapper) {
+            if (wasPaged) {
+              wrapper.classList.add("hidden");
+              wrapper.classList.remove("is-visible");
+            } else {
+              wrapper.classList.remove("hidden");
+              wrapper.classList.add("is-visible");
+            }
+          }
+          card.style.display = "block";
+          hasMatches = true;
+        } else if (matchesSearch && matchesDept && matchesRole) {
+          if (wrapper) {
+            wrapper.classList.remove("hidden");
+            wrapper.classList.add("is-visible");
+          }
+          card.style.display = "block";
           hasMatches = true;
         } else {
-          card.style.display = 'none';
-          card.classList.remove('is-expanded');
+          if (wrapper) {
+            wrapper.classList.add("hidden");
+            wrapper.classList.remove("is-visible");
+          }
+          card.style.display = "none";
+          card.classList.remove("is-expanded");
         }
       });
 
-      if (noResults) noResults.classList.toggle('hidden', hasMatches || !isSearchActive);
+      if (loadMoreContainer) {
+        const remainingHidden = document.querySelectorAll('#doctorsGrid .doctor-wrapper[data-initial-paged="true"]');
+        if (isSearchActive || remainingHidden.length === 0) {
+          loadMoreContainer.classList.add("hidden");
+        } else {
+          loadMoreContainer.classList.remove("hidden");
+        }
+      }
+
+      if (noResults) noResults.classList.toggle("hidden", hasMatches || !isSearchActive);
+    }
+
+    function selectAndFocusDoctor(fullName) {
+      searchInput.value = fullName;
+      dropdown?.classList.add("hidden");
+      applyFilters();
+
+      const targetCard = Array.from(document.querySelectorAll(".doctor-card")).find(
+        (c) => (c.dataset.name || "").toLowerCase().includes(fullName.toLowerCase())
+      );
+      if (targetCard) {
+        const wrapper = targetCard.closest(".doctor-wrapper");
+        if (wrapper) {
+          wrapper.classList.remove("hidden");
+          wrapper.classList.add("is-visible");
+        }
+        targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          if (!targetCard.classList.contains("is-expanded")) {
+            targetCard.click();
+          }
+        }, 180);
+      }
     }
 
     function renderDropdown() {
       const query = searchInput.value.toLowerCase().trim();
-      const filtered = doctors.filter(doc => {
-        const nameMatch = (doc.name + " " + doc.surname).toLowerCase().includes(query);
-        const deptMatch = activeDept === 'all' || doc.department === activeDept;
-        const roleMatch = activeRole === 'all' || doc.role === activeRole;
+      const filtered = doctors.filter((doc) => {
+        const nameMatch =
+          `${doc.name} ${doc.surname}`.toLowerCase().includes(query) ||
+          doc.role.toLowerCase().includes(query);
+        const deptMatch = activeDept === "all" || doc.department === activeDept;
+        const roleMatch = activeRole === "all" || doc.role === activeRole;
         return nameMatch && deptMatch && roleMatch;
       });
 
       if (filtered.length === 0) {
-        dropdown.classList.add('hidden');
+        dropdown?.classList.add("hidden");
         return;
       }
 
-      dropdownResults.innerHTML = filtered.map(doc => `
+      dropdownResults.innerHTML = filtered
+        .map(
+          (doc) => `
         <div class="dropdown-item flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 cursor-pointer transition-colors group" 
-             data-fullname="${doc.name} ${doc.surname}">
-          <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-100 flex-shrink-0">
-            <img src="${doc.image}" alt="${doc.name}" class="w-full h-full object-cover">
+             data-fullname="${escapeHtml(doc.name)} ${escapeHtml(doc.surname)}">
+          <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-100">
+            <img src="${escapeHtml(doc.image)}" alt="${escapeHtml(doc.name)}" class="w-full h-full object-cover" loading="lazy">
           </div>
           <div class="min-w-0">
-            <div class="text-sm font-bold text-slate-900 leading-tight group-hover:text-[#1a365d]">${doc.name} ${doc.surname}</div>
-            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">${doc.role}</div>
+            <div class="text-sm font-bold text-slate-900 leading-tight group-hover:text-[#1a365d]">${escapeHtml(doc.name)} ${escapeHtml(doc.surname)}</div>
+            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">${escapeHtml(doc.role)} • ${escapeHtml(doc.department)}</div>
           </div>
         </div>
-      `).join('');
+      `
+        )
+        .join("");
 
-      dropdown.classList.remove('hidden');
+      dropdown?.classList.remove("hidden");
 
-      document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const fullName = item.dataset.fullname;
-          searchInput.value = fullName;
-          dropdown.classList.add('hidden');
-          applyFilters();
-          
-          const targetCard = Array.from(document.querySelectorAll('.doctor-card'))
-            .find(c => c.dataset.name === fullName);
-          if (targetCard) {
-            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setTimeout(() => { if (!targetCard.classList.contains('is-expanded')) targetCard.click(); }, 100);
-          }
+      document.querySelectorAll(".dropdown-item").forEach((item) => {
+        item.addEventListener("click", () => {
+          const fullName = item.getAttribute("data-fullname") || "";
+          selectAndFocusDoctor(fullName);
         });
       });
     }
 
-    // ЛОГІКА ПОВНОГО СКИНУ (ХРЕСТИК)
-    clearBtn?.addEventListener('click', () => {
-      // 1. Скидаємо текст
-      searchInput.value = '';
-      
-      // 2. Скидаємо фільтри в пам'яті
-      activeDept = 'all';
-      activeRole = 'all';
-      
-      // 3. Візуально повертаємо кнопки "Всі" в активний стан
+    clearBtn?.addEventListener("click", () => {
+      searchInput.value = "";
+      activeDept = "all";
+      activeRole = "all";
+
       const defaultDeptBtn = document.querySelector('#deptFilter [data-value="all"]');
       const defaultRoleBtn = document.querySelector('#roleFilter [data-value="all"]');
       if (defaultDeptBtn) updateButtonStyles(deptButtons, defaultDeptBtn);
       if (defaultRoleBtn) updateButtonStyles(roleButtons, defaultRoleBtn);
-      
-      // 4. Приховуємо список та оновлюємо видимість карток
-      dropdown.classList.add('hidden');
+
+      dropdown?.classList.add("hidden");
       applyFilters();
+      if (window.location.search.includes("doctor=")) {
+        history.replaceState(null, "", window.location.pathname);
+      }
       searchInput.focus();
     });
 
-    searchInput.addEventListener('input', () => { applyFilters(); renderDropdown(); });
-    searchInput.addEventListener('focus', renderDropdown);
+    searchInput.addEventListener("input", () => {
+      applyFilters();
+      renderDropdown();
+    });
+    searchInput.addEventListener("focus", renderDropdown);
 
-    document.addEventListener('click', (e) => {
-      if (!searchInput.contains(e.target) && !dropdown.contains(e.target) && !clearBtn?.contains(e.target)) {
-        dropdown.classList.add('hidden');
+    document.addEventListener("click", (e) => {
+      if (
+        !searchInput.contains(e.target) &&
+        dropdown &&
+        !dropdown.contains(e.target) &&
+        !clearBtn?.contains(e.target)
+      ) {
+        dropdown.classList.add("hidden");
       }
     });
 
-    toggleBtn?.addEventListener('click', () => {
-      panel?.classList.toggle('hidden');
-      chevron?.classList.toggle('rotate-180');
+    toggleBtn?.addEventListener("click", () => {
+      panel?.classList.toggle("hidden");
+      chevron?.classList.toggle("rotate-180");
     });
 
-    deptButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeDept = btn.dataset.value || 'all';
+    deptButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeDept = btn.dataset.value || "all";
         updateButtonStyles(deptButtons, btn);
         applyFilters();
         if (document.activeElement === searchInput) renderDropdown();
       });
     });
 
-    roleButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        activeRole = btn.dataset.value || 'all';
+    roleButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeRole = btn.dataset.value || "all";
         updateButtonStyles(roleButtons, btn);
         applyFilters();
         if (document.activeElement === searchInput) renderDropdown();
       });
     });
+
+    // Перевіряємо URL-параметр ?doctor=... (прямий перехід із глобального розумного пошуку)
+    const params = new URLSearchParams(window.location.search);
+    const doctorParam = params.get("doctor");
+    if (doctorParam) {
+      setTimeout(() => {
+        selectAndFocusDoctor(doctorParam);
+      }, 150);
+    }
   }
 
   initFilters();
-  document.addEventListener('astro:after-swap', initFilters);
+  document.addEventListener("astro:after-swap", initFilters);
 </script>
 
 <style>
-  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-  .dropdown-item:active { background-color: #f1f5f9; transform: scale(0.98); }
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+  }
+  .dropdown-item:active {
+    background-color: #f1f5f9;
+    transform: scale(0.98);
+  }
 </style>

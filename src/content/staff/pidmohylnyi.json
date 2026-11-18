@@ -1,0 +1,22 @@
+{
+  "surname": "Підмогильний",
+  "name": "Євгеній",
+  "fullNamePatronymic": "Підмогильний Євгеній",
+  "badge": "",
+  "isHead": false,
+  "role": "Лікар з радіаційної онкології",
+  "department": "Мегавольтна терапія",
+  "bio": "Фахівець із сучасної мегавольтної променевої терапії на лінійних прискорювачах Elekta.",
+  "image": "/hero/doctors/pidmohylnyi.jpg",
+  "experience": "14 років",
+  "specializations": [
+    "IMRT/VMAT",
+    "SBRT",
+    "Мегавольтна терапія"
+  ],
+  "education": "Вища медична освіта",
+  "achievements": "Впровадження сучасних методик опромінення",
+  "color": "from-slate-600 to-slate-700",
+  "order": 5,
+  "isVisible": true
+}

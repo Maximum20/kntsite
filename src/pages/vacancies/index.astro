@@ -1,35 +1,39 @@
 ---
-import { getCollection } from 'astro:content';
-import { Icon } from "astro-icon/components";
-import { Image } from 'astro:assets';
-import Layout from '../../layouts/Layout.astro'; // 👈 Дві пари крапок!
+export const prerender = true;
 
-const allVacancies = await getCollection('vacancies') || [];
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+
+const allVacancies = (await getCollection("vacancies")) || [];
 const sortedVacancies = allVacancies.sort((a, b) => {
   const dateA = a.data?.date ? new Date(a.data.date).getTime() : 0;
   const dateB = b.data?.date ? new Date(b.data.date).getTime() : 0;
   return dateB - dateA;
 });
 
-const vacanciesData = sortedVacancies.map(item => ({
+const vacanciesData = sortedVacancies.map((item) => ({
   id: item.id,
-  title: item.data?.title || '',
-  description: item.data?.description || '',
-  date: item.data?.date ? new Date(item.data.date).toLocaleDateString('uk-UA') : '',
-  url: `/vacancies/${item.id}`
+  title: item.data?.title || "",
+  description: item.data?.description || "",
+  date: item.data?.date ? new Date(item.data.date).toLocaleDateString("uk-UA") : "",
+  url: `/vacancies/${item.id}`,
 }));
 ---
 
-<Layout title="Вакансії | Центр">
+<Layout title="Вакансії">
   <main class="py-16 md:py-24">
     <div class="container mx-auto px-5">
-      
       <div class="flex flex-col items-center text-center mb-16">
-        <a href="/" class="group flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors mb-6 font-bold uppercase text-[10px] tracking-[0.2em]">
-          <Icon name="bx:left-arrow-alt" class="w-5 h-5 transition-transform group-hover:-translate-x-1" /> 
+        <a
+          href="/"
+          class="group flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors mb-6 font-bold uppercase text-[10px] tracking-[0.2em]"
+        >
+          <Icon name="bx:left-arrow-alt" class="w-5 h-5 transition-transform group-hover:-translate-x-1" />
           На головну
         </a>
-  
+
         <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 tracking-tight mb-6">
           Актуальні <span class="text-blue-600">вакансії</span>
         </h1>
@@ -45,31 +49,34 @@ const vacanciesData = sortedVacancies.map(item => ({
             id="vacancySearch"
             autocomplete="off"
             placeholder="Пошук вакансії за назвою або змістом..."
-            class="w-full pl-6 pr-14 py-5 backdrop-blur-xl bg-white/40 border border-slate-200/50 rounded-3xl text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/5 transition-all shadow-xl shadow-slate-200/20"
+            class="w-full pl-6 pr-14 py-5 backdrop-blur-xl bg-white/70 border border-slate-200/80 rounded-3xl text-base font-medium text-slate-800 placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-4 focus:ring-blue-500/5 transition-all shadow-xl shadow-slate-200/20"
           />
           <div class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-colors group-focus-within:text-blue-600">
             <Icon name="bx:search" class="w-7 h-7" />
           </div>
         </div>
-        
-        <div id="vacancyDropdown" class="hidden absolute left-0 right-0 top-full mt-3 max-h-[400px] overflow-y-auto bg-white/95 backdrop-blur-2xl border border-slate-100 rounded-3xl shadow-2xl z-[100] custom-scrollbar">
+
+        <div
+          id="vacancyDropdown"
+          class="hidden absolute left-0 right-0 top-full mt-3 max-h-[400px] overflow-y-auto bg-white/95 backdrop-blur-2xl border border-slate-100 rounded-3xl shadow-2xl z-[100] custom-scrollbar"
+        >
           <div id="vacancyDropdownResults" class="p-4 space-y-2"></div>
         </div>
       </div>
 
       <div id="vacanciesGrid" class="grid gap-16 max-w-5xl mx-auto">
         {sortedVacancies.map((item) => (
-          <article 
+          <article
             class="vacancy-card group relative grid md:grid-cols-[1fr_1.5fr] gap-8 items-center border-b border-slate-100 pb-16 last:border-0"
-            data-title={item.data?.title?.toLowerCase() || ''}
-            data-desc={item.data?.description?.toLowerCase() || ''}
+            data-title={item.data?.title?.toLowerCase() || ""}
+            data-desc={item.data?.description?.toLowerCase() || ""}
           >
-            <div class="relative aspect-[4/3] overflow-hidden rounded-[2.5rem]">
+            <div class="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] bg-slate-100">
               {item.data?.image ? (
-                <Image 
-                  src={item.data.image} 
-                  alt={item.data.title || 'Vacancy'} 
-                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                <Image
+                  src={item.data.image}
+                  alt={item.data.title || "Вакансія"}
+                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
               ) : (
                 <div class="w-full h-full bg-slate-50 flex items-center justify-center text-slate-300">
@@ -92,24 +99,29 @@ const vacanciesData = sortedVacancies.map(item => ({
                     Архівна
                   </span>
                 )}
-                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">Позиція</span>
+                <span class="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest rounded-lg">
+                  Позиція
+                </span>
                 <span class="text-slate-400 font-bold text-xs flex items-center gap-1 ml-auto">
                   <Icon name="bx:calendar" class="w-4 h-4" />
-                  {item.data?.date ? new Date(item.data.date).toLocaleDateString('uk-UA') : ''}
+                  {item.data?.date ? new Date(item.data.date).toLocaleDateString("uk-UA") : ""}
                 </span>
               </div>
-              
+
               <h2 class="text-2xl md:text-3xl font-bold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors leading-tight">
                 <a href={`/vacancies/${item.id}`}>{item.data?.title}</a>
               </h2>
-             
+
               <p class="text-slate-500 leading-relaxed mb-6 line-clamp-3 font-medium">
-                {item.data?.description || ''}
+                {item.data?.description || ""}
               </p>
-              
+
               <div>
-                <a href={`/vacancies/${item.id}`} class="inline-flex items-center gap-2 font-bold text-slate-900 hover:text-blue-600 transition-all text-sm group/btn">
-                  Детальніше 
+                <a
+                  href={`/vacancies/${item.id}`}
+                  class="inline-flex items-center gap-2 font-bold text-slate-900 hover:text-blue-600 transition-all text-sm group/btn"
+                >
+                  Детальніше
                   <span class="w-8 h-[2px] bg-slate-200 transition-all group-hover/btn:w-12 group-hover/btn:bg-blue-600"></span>
                 </a>
               </div>
@@ -127,12 +139,21 @@ const vacanciesData = sortedVacancies.map(item => ({
 </Layout>
 
 <script is:inline define:vars={{ vacanciesData }}>
+  function escapeHtml(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
   function initVacancySearch() {
-    const searchInput = document.getElementById('vacancySearch');
-    const vacancyCards = document.querySelectorAll('.vacancy-card');
-    const noResults = document.getElementById('vacancyNoResults');
-    const dropdown = document.getElementById('vacancyDropdown');
-    const dropdownResults = document.getElementById('vacancyDropdownResults');
+    const searchInput = document.getElementById("vacancySearch");
+    const vacancyCards = document.querySelectorAll(".vacancy-card");
+    const noResults = document.getElementById("vacancyNoResults");
+    const dropdown = document.getElementById("vacancyDropdown");
+    const dropdownResults = document.getElementById("vacancyDropdownResults");
 
     if (!searchInput) return;
 
@@ -140,77 +161,95 @@ const vacanciesData = sortedVacancies.map(item => ({
       const query = searchInput.value.toLowerCase().trim();
       let hasMatches = false;
 
-      vacancyCards.forEach(card => {
-        const title = card.dataset.title || '';
-        const desc = card.dataset.desc || '';
+      vacancyCards.forEach((card) => {
+        const title = card.dataset.title || "";
+        const desc = card.dataset.desc || "";
         const isMatch = title.includes(query) || desc.includes(query);
 
         if (isMatch) {
-          card.style.display = 'grid';
+          card.style.display = "grid";
           hasMatches = true;
         } else {
-          card.style.display = 'none';
+          card.style.display = "none";
         }
       });
 
-      if (noResults) noResults.classList.toggle('hidden', hasMatches);
+      if (noResults) noResults.classList.toggle("hidden", hasMatches);
     }
 
     function renderDropdown() {
       const query = searchInput.value.toLowerCase().trim();
 
-      if (query.length < 2) {
-        if (dropdown) dropdown.classList.add('hidden');
+      if (query.length < 1) {
+        if (dropdown) dropdown.classList.add("hidden");
         return;
       }
 
-      const filtered = vacanciesData.filter(v => 
-        v.title.toLowerCase().includes(query) || 
-        v.description.toLowerCase().includes(query)
-      ).slice(0, 5);
+      const filtered = vacanciesData
+        .filter(
+          (v) =>
+            v.title.toLowerCase().includes(query) ||
+            v.description.toLowerCase().includes(query)
+        )
+        .slice(0, 5);
 
       if (filtered.length === 0) {
-        if (dropdown) dropdown.classList.add('hidden');
+        if (dropdown) dropdown.classList.add("hidden");
         return;
       }
 
       if (dropdownResults) {
-        dropdownResults.innerHTML = filtered.map(v => `
-          <a href="${v.url}" class="flex flex-col p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
-            <div class="text-xs font-black text-blue-500 uppercase tracking-widest mb-1">${v.date}</div>
-            <div class="text-sm font-bold text-slate-900 group-hover:text-blue-600">${v.title}</div>
+        dropdownResults.innerHTML = filtered
+          .map(
+            (v) => `
+          <a href="${escapeHtml(v.url)}" class="flex flex-col p-4 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
+            <div class="text-xs font-black text-blue-500 uppercase tracking-widest mb-1">${escapeHtml(v.date)}</div>
+            <div class="text-sm font-bold text-slate-900 group-hover:text-blue-600">${escapeHtml(v.title)}</div>
           </a>
-        `).join('');
+        `
+          )
+          .join("");
       }
-      if (dropdown) dropdown.classList.remove('hidden');
+      if (dropdown) dropdown.classList.remove("hidden");
     }
 
-    searchInput.addEventListener('input', () => {
+    searchInput.addEventListener("input", () => {
       applySearch();
       renderDropdown();
     });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
       if (!searchInput.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
-        dropdown.classList.add('hidden');
+        dropdown.classList.add("hidden");
       }
     });
   }
 
   initVacancySearch();
-  document.addEventListener('astro:after-swap', initVacancySearch);
+  document.addEventListener("astro:after-swap", initVacancySearch);
 </script>
 
 <style>
-  .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-  .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+  }
+
   .vacancy-card {
     animation: fadeIn 0.5s ease-out forwards;
   }
 
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 </style>

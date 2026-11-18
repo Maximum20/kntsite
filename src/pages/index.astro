@@ -1,133 +1,31 @@
 ---
+export const prerender = true;
+
 import Layout from "../layouts/Layout.astro";
 import Hero from "../components/hero.astro";
 import News from "../components/news.astro";
-import { Icon } from "astro-icon/components";
 import Contacts from "../components/contacts.astro";
-
-import { departments} from "../data/departments";
-import TechSection from "../components/TechSection.astro";
-import PatientJourney from '../components/PatientJourney.astro';
-import HeroAbout from '../components/HeroAbout.astro';
+import PatientJourney from "../components/PatientJourney.astro";
+import HeroAbout from "../components/HeroAbout.astro";
+import { siteSettings } from "../data";
 ---
 
 <Layout title="Відділення променевої терапії">
   <main class="font-sans relative">
-    
     <div id="dynamic-zone" class="transition-opacity duration-500 pt-4 md:pt-6">
-      <Hero 
-  title={departments[0].title} 
-  subtitle={departments[0].subtitle} 
-  description={departments[0].description} 
-/>
-
-      <TechSection departments={departments} />
+      <Hero
+        title={siteSettings.heroTitle}
+        subtitle={siteSettings.heroSubtitle}
+        description={siteSettings.heroDescription}
+      />
     </div>
-
 
     <HeroAbout />
 
-<PatientJourney />
+    <PatientJourney />
 
     <Contacts />
 
-
-    
-
-
     <News />
-
-
-<button 
-  id="scroll-to-top" 
-  class="fixed bottom-8 right-8 z-[100] 
-         /* Фонове скло з ніжно-блакитним відтінком */
-         bg-blue-50/30 backdrop-blur-xl 
-         /* Колір стрілочки та ідеальне коло */
-         text-blue-500 p-4 rounded-full 
-         /* Тонка блакитна рамка для чіткості */
-         border border-blue-100/50 
-         /* Дуже м'яка тінь */
-         shadow-lg shadow-blue-900/5
-         transition-all duration-700 
-         translate-y-20 opacity-0 
-         /* Ефекти при наведенні */
-         hover:bg-blue-100/40 hover:text-blue-600 hover:-translate-y-1 
-         active:scale-95"
-  aria-label="Вгору"
->
-  <Icon name="bx:chevron-up" class="w-8 h-8" />
-</button>
-
-
   </main>
 </Layout>
-
-<script define:vars={{ departments}}>
-  const buttons = document.querySelectorAll('.dept-btn');
-  const logoTrigger = document.querySelector('.logo-home-trigger');
-  const dynamicZone = document.getElementById('dynamic-zone');
-
-
-
-// Логіка для розумної кнопки
-  let lastScrollTop = 0;
-  const toTopBtn = document.getElementById('scroll-to-top');
-
-  window.addEventListener('scroll', () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    // 1. Якщо гортаємо ВГОРУ і ми відійшли від верху сторінки більше ніж на 400px — показуємо
-    if (scrollTop < lastScrollTop && scrollTop > 400) {
-      toTopBtn?.classList.remove('translate-y-20', 'opacity-0');
-    } 
-    // 2. Якщо гортаємо ВНИЗ або ми майже в самому верху — ховаємо
-    else {
-      toTopBtn?.classList.add('translate-y-20', 'opacity-0');
-    }
-
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-  }, { passive: true });
-
-  // Плавний скрол при натисканні
-  toTopBtn?.addEventListener('click', () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-
-
-
-
-
-
-
-  // Кліки по кнопках
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      buttons.forEach(b => {
-        b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg');
-        b.classList.add('text-slate-600');
-      });
-      btn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-      btn.classList.remove('text-slate-600');
-      updateContent(btn.dataset.target);
-    });
-  });
-
-  // Клік по лого
-  logoTrigger?.addEventListener('click', (e) => {
-    e.preventDefault();
-    buttons.forEach(b => {
-      b.classList.remove('active', 'bg-blue-600', 'text-white', 'shadow-lg');
-      b.classList.add('text-slate-600');
-    });
-    updateContent('home');
-  });
-
-  // Старт
-  window.addEventListener('DOMContentLoaded', () => {
-    updateContent('home');
-  });
-</script>

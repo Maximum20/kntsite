@@ -1,0 +1,22 @@
+{
+  "surname": "Лук'яшко",
+  "name": "Альона",
+  "fullNamePatronymic": "Лук'яшко Альона",
+  "badge": "",
+  "isHead": false,
+  "role": "Лікар з радіаційної онкології",
+  "department": "Мегавольтна терапія",
+  "bio": "Спеціалізується на високоточній променевій терапії з візуальним контролем (IGRT, VMAT).",
+  "image": "/hero/doctors/lukyashko.jpg",
+  "experience": "14 років",
+  "specializations": [
+    "IMRT/VMAT",
+    "IGRT",
+    "Радіаційна онкологія"
+  ],
+  "education": "Вища медична освіта",
+  "achievements": "Індивідуальне планування складних локалізацій",
+  "color": "from-slate-600 to-slate-700",
+  "order": 9,
+  "isVisible": true
+}

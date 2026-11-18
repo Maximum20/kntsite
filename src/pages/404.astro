@@ -1,0 +1,38 @@
+---
+export const prerender = true;
+
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout title="Сторінку не знайдено (404)" hideSubNav={true}>
+  <main class="min-h-[70vh] flex items-center justify-center px-5 py-20 font-sans">
+    <div class="max-w-xl w-full bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-[2.5rem] p-8 sm:p-12 text-center shadow-xl">
+      <div class="w-20 h-20 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-6 text-4xl font-black">
+        404
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
+        Сторінку не знайдено
+      </h1>
+      <p class="text-slate-500 text-base leading-relaxed mb-8">
+        Можливо, посилання застаріло або сторінка була переміщена. Скористайтеся швидкими переходами нижче або розумним пошуком у шапці сайту.
+      </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a
+          href="/"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-lg shadow-blue-600/20"
+        >
+          <Icon name="bx:home-alt" class="w-5 h-5" />
+          <span>На головну</span>
+        </a>
+        <a
+          href="/#contacts"
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-all"
+        >
+          <Icon name="bx:phone-call" class="w-5 h-5" />
+          <span>Контакти реєстратури</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>

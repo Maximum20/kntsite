@@ -1,6 +1,13 @@
 ---
 title: Мрія здійснилась
 date: 2026-03-03
+category: Технології
+tags:
+  - Brainlab
+  - Elekta VersaHD
+  - Стереотаксис
+  - НСЗУ
+isPinned: true
 image: /src/assets/news/mriya-zdijsnilas/image.jpg
 description: >-
   Вдосконалюємо якість і підвищуємо безпечність променевої терапії завдяки
