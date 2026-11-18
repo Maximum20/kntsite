@@ -6,11 +6,36 @@ import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 
+// Обгортка над @keystatic/astro для Astro 6:
+// Сторінка /keystatic/[...params] рендериться через src/pages/keystatic/[...params].astro (origin: "project", з <!DOCTYPE html>),
+// щоб Astro 6 гарантовано включав @astrojs/react у SSR-бандл функції Vercel (_render.func) і не дублював маршрут.
+function keystaticIntegration() {
+  const base = keystatic();
+  const originalSetup = base.hooks['astro:config:setup'];
+  return {
+    ...base,
+    hooks: {
+      ...base.hooks,
+      'astro:config:setup': (params) => {
+        return originalSetup({
+          ...params,
+          injectRoute: (route) => {
+            if (route.pattern === '/keystatic/[...params]') {
+              return;
+            }
+            params.injectRoute(route);
+          },
+        });
+      },
+    },
+  };
+}
+
 export default defineConfig({
   site: 'https://kntsite.vercel.app',
 
-  // Статична генерація (SSG) за замовчуванням для всіх публічних сторінок (0 навантаження на функції Vercel).
-  // Маршрути адмінки Keystatic мають власний prerender = false і працюють динамічно через адаптер Vercel.
+  // Гібридний режим Astro 6: всі публічні сторінки генеруються статично (SSG),
+  // а маршрути з prerender = false (/keystatic/[...params] та /api/keystatic/[...params]) працюють через SSR-функцію Vercel.
   output: 'static',
 
   adapter: vercel({
@@ -20,7 +45,7 @@ export default defineConfig({
   integrations: [
     icon(),
     react(),
-    keystatic(),
+    keystaticIntegration(),
     mdx(),
   ],
 

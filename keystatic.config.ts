@@ -1,6 +1,6 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
 
-const isLocal = process.env.NODE_ENV === 'development';
+const isLocal = import.meta.env.DEV;
 
 export default config({
   storage: isLocal
