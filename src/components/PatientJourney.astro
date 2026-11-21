@@ -1,17 +1,69 @@
 ---
 import { Icon } from "astro-icon/components";
+import { getCollection } from "astro:content";
 import { patientRouteData, equipmentData } from "../data";
 
 interface Props {
   title?: string;
+  showJourney?: boolean;
+  showEquipment?: boolean;
+  showFaq?: boolean;
 }
-const { title = patientRouteData.title || "Шлях пацієнта" } = Astro.props;
+const {
+  title = patientRouteData.title || "Шлях пацієнта",
+  showJourney = true,
+  showEquipment = true,
+  showFaq = true,
+} = Astro.props;
+
+const allServices = (await getCollection("services")) || [];
+const visibleServices = allServices
+  .filter((s) => s.data?.isVisible !== false)
+  .sort((a, b) => (a.data?.order ?? 99) - (b.data?.order ?? 99));
+const visibleServiceIds = new Set(visibleServices.map((s) => s.id));
+
+const treatmentDescriptions: Record<string, { label: string; summary: string }> = {
+  linac: {
+    label: "Мегавольтна терапія (Versa HD + BrainLAB)",
+    summary:
+      "3 лінійні прискорювачі Elekta та система навігації BrainLAB. Дистанційне високоточне опромінення (IMRT, VMAT, IGRT, SBRT).",
+  },
+  gamma: {
+    label: "Гамма-терапія",
+    summary:
+      "Апарати Theratron Elite 80 та АГАТ-Р1. Надійна класична дистанційна променева терапія.",
+  },
+  brachy: {
+    label: "Брахітерапія",
+    summary:
+      "Система MultiSource HDR. Контактне лікування з підведенням джерела безпосередньо в зону пухлини.",
+  },
+  nearfocus: {
+    label: "Близькофокусна рентгенотерапія",
+    summary:
+      "Безопераційне лікування новоутворень шкіри та поверхневих патологій.",
+  },
+};
+
+const step3Services = visibleServices
+  .filter((s) => s.id !== "ct" && s.id !== "mlt")
+  .map((s) => ({
+    id: s.id,
+    label: treatmentDescriptions[s.id]?.label || s.data.title,
+    summary: treatmentDescriptions[s.id]?.summary || s.data.description || s.data.heroText || "",
+  }));
+
 const checklistItems = patientRouteData.checklistItems || [];
 const methods = equipmentData.methods || [];
+const accelerators = equipmentData.accelerators || [];
 const faqItems = equipmentData.faq || [];
+const hasAnySection = showJourney || showEquipment || showFaq;
 ---
 
+{hasAnySection && (
 <section class="pj" id="patient-journey">
+  {showJourney && (
+    <>
   <header class="pj__head">
     <h2 class="pj__title">
       Шлях <span class="pj__title-accent">пацієнта</span>
@@ -72,12 +124,14 @@ const faqItems = equipmentData.faq || [];
         <p class="pj__card-text">
           Підготовка до опромінення на томографі <strong>Toshiba Aquilion</strong>. Виготовляються індивідуальні фіксуючі маски/матраци, а лікарі та медичні фізики у системі <strong>Monaco</strong> формують прецизійний 3D-план із захистом здорових органів.
         </p>
-        <div class="mt-4">
-          <a href="/services/ct" class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 underline underline-offset-4">
-            <span>Детальніше про КТ-розмітку</span>
-            <Icon name="bx:right-arrow-alt" class="w-4 h-4" />
-          </a>
-        </div>
+        {visibleServiceIds.has("ct") && (
+          <div class="mt-4">
+            <a href="/services/ct" class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 underline underline-offset-4">
+              <span>Детальніше про КТ-розмітку</span>
+              <Icon name="bx:right-arrow-alt" class="w-4 h-4" />
+            </a>
+          </div>
+        )}
       </div>
     </article>
 
@@ -104,96 +158,35 @@ const faqItems = equipmentData.faq || [];
         <p class="pj__card-text">
           Залежно від локалізації та рішення консиліуму, пацієнт проходить курс в одному з підрозділів:
         </p>
-        <div class="pj__methods">
-          <div class="pj__method">
-            <input type="radio" id="m1" name="method" class="pj__radio" checked />
-            <label for="m1" class="pj__method-label">
-              <div class="pj__method-row">
-                <div class="pj__method-check">
-                  <svg viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
-                    <circle class="pj__check-fill" cx="8" cy="8" r="3.5" fill="currentColor"></circle>
-                  </svg>
-                </div>
-                <span class="pj__method-name">Мегавольтна терапія (Versa HD + BrainLAB)</span>
-                <svg class="pj__method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18l6-6-6-6"></path>
-                </svg>
+        {step3Services.length > 0 && (
+          <div class="pj__methods">
+            {step3Services.map((svc, idx) => (
+              <div class="pj__method">
+                <input type="radio" id={`m-${svc.id}`} name="method" class="pj__radio" checked={idx === 0} />
+                <label for={`m-${svc.id}`} class="pj__method-label">
+                  <div class="pj__method-row">
+                    <div class="pj__method-check">
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
+                        <circle class="pj__check-fill" cx="8" cy="8" r="3.5" fill="currentColor"></circle>
+                      </svg>
+                    </div>
+                    <span class="pj__method-name">{svc.label}</span>
+                    <svg class="pj__method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M9 18l6-6-6-6"></path>
+                    </svg>
+                  </div>
+                  <div class="pj__method-detail">
+                    <p>
+                      {svc.summary}{" "}
+                      <a href={`/services/${svc.id}`} class="text-teal-700 font-bold underline">Перейти →</a>
+                    </p>
+                  </div>
+                </label>
               </div>
-              <div class="pj__method-detail">
-                <p>
-                  3 лінійні прискорювачі <strong>Elekta</strong> та система навігації <strong>BrainLAB</strong>. Дистанційне високоточне опромінення (IMRT, VMAT, IGRT, SBRT). <a href="/services/linac" class="text-teal-700 font-bold underline">Перейти →</a>
-                </p>
-              </div>
-            </label>
+            ))}
           </div>
-          <div class="pj__method">
-            <input type="radio" id="m2" name="method" class="pj__radio" />
-            <label for="m2" class="pj__method-label">
-              <div class="pj__method-row">
-                <div class="pj__method-check">
-                  <svg viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
-                    <circle class="pj__check-fill" cx="8" cy="8" r="3.5" fill="currentColor"></circle>
-                  </svg>
-                </div>
-                <span class="pj__method-name">Гамма-терапія</span>
-                <svg class="pj__method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18l6-6-6-6"></path>
-                </svg>
-              </div>
-              <div class="pj__method-detail">
-                <p>
-                  Апарати <strong>Theratron Elite 80</strong> та <strong>АГАТ-Р1</strong>. Надійна класична дистанційна променева терапія. <a href="/services/gamma" class="text-teal-700 font-bold underline">Перейти →</a>
-                </p>
-              </div>
-            </label>
-          </div>
-          <div class="pj__method">
-            <input type="radio" id="m3" name="method" class="pj__radio" />
-            <label for="m3" class="pj__method-label">
-              <div class="pj__method-row">
-                <div class="pj__method-check">
-                  <svg viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
-                    <circle class="pj__check-fill" cx="8" cy="8" r="3.5" fill="currentColor"></circle>
-                  </svg>
-                </div>
-                <span class="pj__method-name">Брахітерапія</span>
-                <svg class="pj__method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18l6-6-6-6"></path>
-                </svg>
-              </div>
-              <div class="pj__method-detail">
-                <p>
-                  Система <strong>MultiSource HDR</strong>. Контактне лікування з підведенням джерела безпосередньо в зону пухлини. <a href="/services/brachy" class="text-teal-700 font-bold underline">Перейти →</a>
-                </p>
-              </div>
-            </label>
-          </div>
-          <div class="pj__method">
-            <input type="radio" id="m4" name="method" class="pj__radio" />
-            <label for="m4" class="pj__method-label">
-              <div class="pj__method-row">
-                <div class="pj__method-check">
-                  <svg viewBox="0 0 16 16" fill="none">
-                    <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.5"></circle>
-                    <circle class="pj__check-fill" cx="8" cy="8" r="3.5" fill="currentColor"></circle>
-                  </svg>
-                </div>
-                <span class="pj__method-name">Близькофокусна рентгенотерапія</span>
-                <svg class="pj__method-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M9 18l6-6-6-6"></path>
-                </svg>
-              </div>
-              <div class="pj__method-detail">
-                <p>
-                  Безопераційне лікування новоутворень шкіри та поверхневих патологій. <a href="/services/nearfocus" class="text-teal-700 font-bold underline">Перейти →</a>
-                </p>
-              </div>
-            </label>
-          </div>
-        </div>
+        )}
       </div>
     </article>
 
@@ -221,12 +214,14 @@ const faqItems = equipmentData.faq || [];
         <p class="pj__card-text">
           Індивідуальний курс відновлення, спрямований на мінімізацію побічних ефектів та швидке повернення до звичного життя. Використовуємо <strong>магнітотерапію</strong> для прискореної регенерації тканин.
         </p>
-        <div class="mt-4">
-          <a href="/services/mlt" class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 underline underline-offset-4">
-            <span>Детальніше про реабілітацію</span>
-            <Icon name="bx:right-arrow-alt" class="w-4 h-4" />
-          </a>
-        </div>
+        {visibleServiceIds.has("mlt") && (
+          <div class="mt-4">
+            <a href="/services/mlt" class="inline-flex items-center gap-1.5 text-xs font-bold text-teal-700 hover:text-teal-900 underline underline-offset-4">
+              <span>Детальніше про реабілітацію</span>
+              <Icon name="bx:right-arrow-alt" class="w-4 h-4" />
+            </a>
+          </div>
+        )}
       </div>
     </article>
   </div>
@@ -334,50 +329,94 @@ const faqItems = equipmentData.faq || [];
       </div>
     </div>
   )}
+    </>
+  )}
 
-  {/* ── БЛОК МЕТОДИК ЛІКУВАННЯ (IMRT, VMAT, IGRT, SBRT) З KEYSTATIC ── */}
-  {methods.length > 0 && (
+  {/* ── БЛОК ОБЛАДНАННЯ ТА МЕТОДИК ЛІКУВАННЯ (IMRT, VMAT, IGRT, SBRT) З KEYSTATIC ── */}
+  {showEquipment && (methods.length > 0 || accelerators.length > 0) && (
     <div id="methods-section" class="mt-20 scroll-mt-32">
       <div class="mb-10">
         <span class="inline-block text-blue-600 font-black uppercase tracking-[0.2em] text-xs mb-2">
-          Високоточні технології
+          Високоточні технології та обладнання
         </span>
         <h3 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Сучасні методики <span class="text-blue-600">опромінення</span>
         </h3>
+        {equipmentData.sectionSubtitle && (
+          <p class="text-sm sm:text-base text-slate-600 mt-2 max-w-3xl leading-relaxed">
+            {equipmentData.sectionSubtitle}
+          </p>
+        )}
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {methods.map((m) => (
-          <div class="bg-white/85 backdrop-blur-md border border-slate-200/80 rounded-3xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-4">
-                <span class="px-3 py-1 rounded-xl bg-blue-600 text-white font-black text-sm tracking-wider">
-                  {m.code}
-                </span>
-                {m.badge && (
-                  <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg">
-                    {m.badge}
+      {methods.length > 0 && (
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {methods.map((m) => (
+            <div class="bg-white/85 backdrop-blur-md border border-slate-200/80 rounded-3xl p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between gap-2 mb-4">
+                  <span class="px-3 py-1 rounded-xl bg-blue-600 text-white font-black text-sm tracking-wider">
+                    {m.code}
                   </span>
-                )}
+                  {m.badge && (
+                    <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-lg">
+                      {m.badge}
+                    </span>
+                  )}
+                </div>
+                <h4 class="font-bold text-slate-900 text-base mb-2 leading-snug">{m.title}</h4>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">{m.description}</p>
               </div>
-              <h4 class="font-bold text-slate-900 text-base mb-2 leading-snug">{m.title}</h4>
-              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">{m.description}</p>
+              {visibleServiceIds.has("linac") && (
+                <div class="mt-5 pt-3 border-t border-slate-100">
+                  <a href="/services/linac" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800">
+                    <span>Докладніше про обладнання</span>
+                    <Icon name="bx:chevron-right" class="w-4 h-4" />
+                  </a>
+                </div>
+              )}
             </div>
-            <div class="mt-5 pt-3 border-t border-slate-100">
-              <a href="/services/linac" class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-800">
-                <span>Докладніше про обладнання</span>
-                <Icon name="bx:chevron-right" class="w-4 h-4" />
-              </a>
+          ))}
+        </div>
+      )}
+
+      {accelerators.length > 0 && (
+        <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+          {accelerators.map((acc) => (
+            <div class="bg-white/90 border border-slate-200/80 rounded-3xl overflow-hidden shadow-md flex flex-col">
+              <div class="aspect-[16/10] bg-slate-100 overflow-hidden">
+                <img
+                  src={acc.image || "/hero/versahd.jpg"}
+                  alt={acc.name}
+                  width="600"
+                  height="375"
+                  loading="lazy"
+                  class="w-full h-full object-cover"
+                />
+              </div>
+              <div class="p-5 flex flex-col flex-1">
+                <h4 class="font-extrabold text-slate-900 text-lg mb-2">{acc.name}</h4>
+                {acc.imaging && (
+                  <p class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl mb-2">
+                    Візуалізація: {acc.imaging}
+                  </p>
+                )}
+                {acc.controlSystem && (
+                  <p class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-xl mb-2">
+                    Контроль: {acc.controlSystem}
+                  </p>
+                )}
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">{acc.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )}
 
   {/* ── ПОШИРЕНІ ЗАПИТАННЯ ПАЦІЄНТІВ (FAQ З KEYSTATIC) ── */}
-  {faqItems.length > 0 && (
+  {showFaq && faqItems.length > 0 && (
     <div id="faq-section" class="mt-20 scroll-mt-32">
       <div class="mb-10">
         <span class="inline-block text-teal-600 font-black uppercase tracking-[0.2em] text-xs mb-2">
@@ -416,6 +455,7 @@ const faqItems = equipmentData.faq || [];
     </div>
   )}
 </section>
+)}
 
 <style>
   *,

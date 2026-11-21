@@ -1,1 +1,926 @@
 @import "tailwindcss";
+
+/* ==========================================================================
+   BASE VARIABLES & THEME TRANSITIONS
+   ========================================================================== */
+:root {
+  color-scheme: light;
+  --site-bg: #f8fafc;
+  --site-surface: #ffffff;
+  --site-surface-soft: #f1f5f9;
+  --site-border: #e2e8f0;
+  --site-text: #0f172a;
+  --site-text-muted: #475569;
+  --site-accent: #2563eb;
+}
+
+/* ==========================================================================
+   GOOGLE TRANSLATE CLEAN HIDING (NO TOP BANNER / NO LAYOUT SHIFT)
+   ========================================================================== */
+.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate,
+iframe.goog-te-banner-frame,
+iframe.skiptranslate,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-aZ2wEe-wOHMyf,
+.VIpgJd-ZVi9od-l4eHX-hSRGPd,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-te-spinner-pos {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  pointer-events: none !important;
+}
+
+.goog-text-highlight {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+html,
+body {
+  top: 0 !important;
+  margin-top: 0 !important;
+}
+
+#google_translate_element {
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY FONT SCALING (100% / 115% / 130%) & REDUCED MOTION
+   ========================================================================== */
+html[data-a11y-font="large"] {
+  font-size: 115% !important;
+}
+
+html[data-a11y-font="xlarge"] {
+  font-size: 130% !important;
+}
+
+html[data-a11y-motion="reduce"] *,
+html[data-a11y-motion="reduce"] *::before,
+html[data-a11y-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ==========================================================================
+   SMOOTH SUN / MOON THEME TOGGLE ICON ANIMATION
+   ========================================================================== */
+.theme-toggle-btn svg {
+  overflow: visible;
+}
+
+.theme-icon-sun-core,
+.theme-icon-sun-rays,
+.theme-icon-moon {
+  transform-origin: center;
+  transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.28s ease;
+}
+
+.theme-icon-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+}
+
+.theme-icon-sun-core {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-icon-sun-rays {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+html[data-theme="dark"] .theme-icon-sun-core {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.35);
+}
+
+html[data-theme="dark"] .theme-icon-sun-rays {
+  opacity: 0;
+  transform: rotate(120deg) scale(0.25);
+}
+
+html[data-theme="dark"] .theme-icon-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* ==========================================================================
+   DARK THEME (html[data-theme="dark"] when high-contrast is NOT overriding)
+   WCAG AA / AAA contrast across all surfaces, cards, badges, forms & footer
+   ========================================================================== */
+html[data-theme="dark"]:not([data-a11y-contrast]) {
+  color-scheme: dark;
+  --site-bg: #0b1120;
+  --site-surface: #111b2e;
+  --site-surface-soft: #1a263d;
+  --site-border: #2c3c57;
+  --site-text: #f1f5f9;
+  --site-text-muted: #cbd5e1;
+  --site-accent: #60a5fa;
+
+  /* PatientJourney component variables */
+  --ink: #f8fafc;
+  --slate: #e2e8f0;
+  --muted: #cbd5e1;
+  --line: #334155;
+  --white: #131e33;
+  --teal: #2dd4bf;
+  --teal-dark: #5eead4;
+  --teal-lt: #0f2d32;
+  --teal-glow: rgba(45, 212, 191, 0.16);
+  --teal-ring: rgba(45, 212, 191, 0.15);
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) body {
+  background-color: #0b1120 !important;
+  color: #f1f5f9 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) #bg-blobs {
+  opacity: 0.35;
+}
+
+/* Scrollbar in dark theme */
+html[data-theme="dark"]:not([data-a11y-contrast]) ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Header, subnav, mobile menu & dropdown panels */
+html[data-theme="dark"]:not([data-a11y-contrast]) header > div:first-child {
+  background-color: rgba(11, 17, 32, 0.88) !important;
+  border-color: rgba(51, 65, 85, 0.75) !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) #dept-panel > div,
+html[data-theme="dark"]:not([data-a11y-contrast]) #mobile-menu-panel,
+html[data-theme="dark"]:not([data-a11y-contrast]) #a11y-panel,
+html[data-theme="dark"]:not([data-a11y-contrast]) #search-modal > div,
+html[data-theme="dark"]:not([data-a11y-contrast]) #searchDropdown,
+html[data-theme="dark"]:not([data-a11y-contrast]) #vacancyDropdown,
+html[data-theme="dark"]:not([data-a11y-contrast]) #burger-wrapper {
+  background-color: #111b2e !important;
+  border-color: #334155 !important;
+  color: #f1f5f9 !important;
+}
+
+/* White & light slate surfaces */
+html[data-theme="dark"]:not([data-a11y-contrast]) main.bg-slate-50\/50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-50\/50 {
+  background-color: transparent !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/95,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/90,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/85,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/80,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/75,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/70,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/60,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-white\/50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .glass-card,
+html[data-theme="dark"]:not([data-a11y-contrast]) .feature-card,
+html[data-theme="dark"]:not([data-a11y-contrast]) .accelerator-card,
+html[data-theme="dark"]:not([data-a11y-contrast]) .card-expanded,
+html[data-theme="dark"]:not([data-a11y-contrast]) .dept-card {
+  background-color: #131e33 !important;
+  border-color: #2c3c57 !important;
+  color: #f1f5f9 !important;
+}
+
+/* Keep NSZU icon tile white so dark/color logo remains legible */
+html[data-theme="dark"]:not([data-a11y-contrast]) .feature-card .icon-wrapper.bg-white {
+  background-color: #ffffff !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-50\/80,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-50\/70,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-100\/90,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-200,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-\[\#f8fafc\],
+html[data-theme="dark"]:not([data-a11y-contrast]) .detail-item,
+html[data-theme="dark"]:not([data-a11y-contrast]) .article-box article > * {
+  background-color: #1a263d !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+/* Semantic tinted surfaces in dark mode */
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-50\/50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-50\/40,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-50\/90,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-cyan-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-cyan-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-blue-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-blue-50\/50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .phone-item,
+html[data-theme="dark"]:not([data-a11y-contrast]) .detail-item.highlight,
+html[data-theme="dark"]:not([data-a11y-contrast]) .announcement-banner--info {
+  background: #132540 !important;
+  border-color: #2563eb !important;
+  color: #e0f2fe !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-teal-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-emerald-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-emerald-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-green-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-emerald-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-green-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .email-item,
+html[data-theme="dark"]:not([data-a11y-contrast]) .address-card,
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj-check-row.is-checked {
+  background: #0f2c2b !important;
+  border-color: #14b8a6 !important;
+  color: #ccfbf1 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-amber-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-amber-50\/95,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-amber-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-yellow-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-orange-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-amber-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .announcement-banner--warning {
+  background: #2f230e !important;
+  border-color: #d97706 !important;
+  color: #fef3c7 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-red-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-red-50\/95,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-red-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-red-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .announcement-banner--urgent {
+  background: #33141c !important;
+  border-color: #ef4444 !important;
+  color: #ffe4e6 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-violet-50\/70,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-purple-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .from-purple-50,
+html[data-theme="dark"]:not([data-a11y-contrast]) .social-btn {
+  background: #1d1a3a !important;
+  border-color: #6366f1 !important;
+  color: #e0e7ff !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .copy-btn {
+  background-color: #1e293b !important;
+  border-color: #475569 !important;
+  color: #38bdf8 !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) .copy-btn:hover {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj__card {
+  background: linear-gradient(155deg, #131e33 0%, #0f1b2e 100%) !important;
+  border: 1px solid #2c3c57 !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35) !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj__method-label,
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj__pill {
+  background-color: #1a263d !important;
+  border-color: #334155 !important;
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj__pill--accent {
+  background-color: #0f2d32 !important;
+  border-color: #14b8a6 !important;
+  color: #5eead4 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .pj__method-detail p {
+  color: #cbd5e1 !important;
+}
+
+/* Text colors in dark theme (WCAG AA/AAA) */
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-800,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-gray-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-\[\#1a365d\],
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-\[\#1a2b3b\],
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-blue-950,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-amber-950,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-red-950,
+html[data-theme="dark"]:not([data-a11y-contrast]) .section-title,
+html[data-theme="dark"]:not([data-a11y-contrast]) .card-title,
+html[data-theme="dark"]:not([data-a11y-contrast]) .detail-item strong {
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-gray-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .article-box article p,
+html[data-theme="dark"]:not([data-a11y-contrast]) .article-box article strong {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .article-box article strong {
+  background: linear-gradient(180deg, transparent 70%, rgba(59, 130, 246, 0.35) 0) !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-500,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-slate-400,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-gray-500,
+html[data-theme="dark"]:not([data-a11y-contrast]) .section-subtitle,
+html[data-theme="dark"]:not([data-a11y-contrast]) .card-description {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-blue-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-blue-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-sky-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .detail-item.highlight,
+html[data-theme="dark"]:not([data-a11y-contrast]) .detail-item.highlight strong {
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-teal-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-teal-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-cyan-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-cyan-600 {
+  color: #2dd4bf !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-emerald-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-emerald-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-green-800 {
+  color: #6ee7b7 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-amber-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-amber-700,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-amber-900 {
+  color: #fcd34d !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-red-800,
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-red-900 {
+  color: #fca5a5 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .text-violet-600 {
+  color: #a78bfa !important;
+}
+
+/* Preserve white text on solid primary/accent buttons & hero badges */
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-teal-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-emerald-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-amber-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-red-600,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-\[\#1a365d\],
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-\[\#1a2b3b\],
+html[data-theme="dark"]:not([data-a11y-contrast]) .filter-chip.active {
+  color: #ffffff !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-blue-600 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-teal-600 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-emerald-600 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-amber-600 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-red-600 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-slate-900 *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-\[\#1a365d\] *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-\[\#1a2b3b\] *,
+html[data-theme="dark"]:not([data-a11y-contrast]) .doctor-card .card-closed h3,
+html[data-theme="dark"]:not([data-a11y-contrast]) .doctor-card .card-closed span {
+  color: #ffffff !important;
+}
+
+/* Fix dark-on-dark gradient clipped text (e.g., Hero "Центр", HeroAbout "Ваше", Location pill) */
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-clip-text.text-transparent.from-gray-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .bg-clip-text.text-transparent.from-slate-700 {
+  background-image: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%) !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .feature-card > .text-8xl {
+  -webkit-text-stroke: 2px rgba(226, 232, 240, 0.22) !important;
+}
+
+/* Borders, dividers, prose, forms & footer in dark theme */
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-slate-100,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-slate-200,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-slate-200\/80,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-slate-200\/70,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-white,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-white\/80,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-white\/60,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-black\/5,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-black\/8,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-slate-900,
+html[data-theme="dark"]:not([data-a11y-contrast]) .border-\[\#1a365d\] {
+  border-color: #334155 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) input[type="text"],
+html[data-theme="dark"]:not([data-a11y-contrast]) input[type="search"],
+html[data-theme="dark"]:not([data-a11y-contrast]) select,
+html[data-theme="dark"]:not([data-a11y-contrast]) textarea {
+  background-color: #0f172a !important;
+  border-color: #475569 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) input::placeholder,
+html[data-theme="dark"]:not([data-a11y-contrast]) textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose p,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose li,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose strong,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose h1,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose h2,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose h3,
+html[data-theme="dark"]:not([data-a11y-contrast]) .prose h4 {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme="dark"]:not([data-a11y-contrast]) footer#footer-section {
+  background-color: #090f1d !important;
+  border-color: #1e293b !important;
+}
+
+/* Active hover states in dark theme */
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-slate-50:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-slate-50\/50:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-slate-50\/70:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-white\/60:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-blue-50:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-blue-50\/80:hover,
+html[data-theme="dark"]:not([data-a11y-contrast]) .hover\:bg-blue-50\/70:hover {
+  background-color: #1e293b !important;
+}
+
+/* Keep the a11y contrast preview swatches visually clear in dark theme */
+html[data-theme="dark"]:not([data-a11y-contrast]) [data-a11y-contrast-btn="high"] {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-color: #ffffff !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) [data-a11y-contrast-btn="dark"] {
+  background-color: #000000 !important;
+  color: #fde047 !important;
+  border-color: #fde047 !important;
+}
+
+/* ==========================================================================
+   HIGH CONTRAST LIGHT (html[data-a11y-contrast="high"])
+   WCAG AAA 21:1 — Pure Black (#000) on Pure White (#fff), Inverted Buttons
+   ========================================================================== */
+html[data-a11y-contrast="high"] {
+  color-scheme: light;
+  --ink: #000000;
+  --slate: #000000;
+  --muted: #000000;
+  --line: #000000;
+  --white: #ffffff;
+  --teal: #000000;
+  --teal-dark: #000000;
+  --teal-lt: #ffffff;
+}
+
+html[data-a11y-contrast="high"] body,
+html[data-a11y-contrast="high"] main,
+html[data-a11y-contrast="high"] section,
+html[data-a11y-contrast="high"] footer,
+html[data-a11y-contrast="high"] header > div,
+html[data-a11y-contrast="high"] #dept-panel > div,
+html[data-a11y-contrast="high"] #mobile-menu-panel,
+html[data-a11y-contrast="high"] #a11y-panel,
+html[data-a11y-contrast="high"] #search-modal > div,
+html[data-a11y-contrast="high"] #searchDropdown,
+html[data-a11y-contrast="high"] #vacancyDropdown,
+html[data-a11y-contrast="high"] article,
+html[data-a11y-contrast="high"] details,
+html[data-a11y-contrast="high"] summary,
+html[data-a11y-contrast="high"] .glass-card,
+html[data-a11y-contrast="high"] .feature-card,
+html[data-a11y-contrast="high"] .dept-card,
+html[data-a11y-contrast="high"] .pj__card,
+html[data-a11y-contrast="high"] .pj__method-label,
+html[data-a11y-contrast="high"] .pj__pill,
+html[data-a11y-contrast="high"] .pj-check-row,
+html[data-a11y-contrast="high"] .accelerator-card,
+html[data-a11y-contrast="high"] .detail-item,
+html[data-a11y-contrast="high"] .brainlab-section,
+html[data-a11y-contrast="high"] .brainlab-section .feature,
+html[data-a11y-contrast="high"] .phone-item,
+html[data-a11y-contrast="high"] .email-item,
+html[data-a11y-contrast="high"] .address-card,
+html[data-a11y-contrast="high"] .social-btn,
+html[data-a11y-contrast="high"] .copy-btn,
+html[data-a11y-contrast="high"] .card-expanded,
+html[data-a11y-contrast="high"] .article-box article > *,
+html[data-a11y-contrast="high"] .announcement-banner,
+html[data-a11y-contrast="high"] [class*="bg-white"],
+html[data-a11y-contrast="high"] [class*="bg-slate-"],
+html[data-a11y-contrast="high"] [class*="bg-blue-50"],
+html[data-a11y-contrast="high"] [class*="bg-blue-100"],
+html[data-a11y-contrast="high"] [class*="bg-cyan-"],
+html[data-a11y-contrast="high"] [class*="bg-teal-50"],
+html[data-a11y-contrast="high"] [class*="bg-emerald-50"],
+html[data-a11y-contrast="high"] [class*="bg-green-50"],
+html[data-a11y-contrast="high"] [class*="bg-amber-50"],
+html[data-a11y-contrast="high"] [class*="bg-yellow-50"],
+html[data-a11y-contrast="high"] [class*="bg-orange-50"],
+html[data-a11y-contrast="high"] [class*="bg-red-50"],
+html[data-a11y-contrast="high"] [class*="bg-purple-50"],
+html[data-a11y-contrast="high"] [class*="bg-violet-50"],
+html[data-a11y-contrast="high"] [class*="bg-pink-50"],
+html[data-a11y-contrast="high"] [class*="from-blue-50"],
+html[data-a11y-contrast="high"] [class*="from-amber-50"],
+html[data-a11y-contrast="high"] [class*="from-emerald-50"],
+html[data-a11y-contrast="high"] [class*="from-green-50"],
+html[data-a11y-contrast="high"] [class*="from-red-50"],
+html[data-a11y-contrast="high"] input,
+html[data-a11y-contrast="high"] select,
+html[data-a11y-contrast="high"] textarea {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+  box-shadow: none !important;
+}
+
+html[data-a11y-contrast="high"] #bg-blobs {
+  display: none !important;
+}
+
+/* Disable ALL transparent gradient text in High Contrast Light */
+html[data-a11y-contrast="high"] .bg-clip-text,
+html[data-a11y-contrast="high"] .text-transparent,
+html[data-a11y-contrast="high"] .gradient-text,
+html[data-a11y-contrast="high"] .pj__title-accent,
+html[data-a11y-contrast="high"] h1,
+html[data-a11y-contrast="high"] h2,
+html[data-a11y-contrast="high"] h3,
+html[data-a11y-contrast="high"] h4,
+html[data-a11y-contrast="high"] h5,
+html[data-a11y-contrast="high"] p,
+html[data-a11y-contrast="high"] li,
+html[data-a11y-contrast="high"] span,
+html[data-a11y-contrast="high"] label,
+html[data-a11y-contrast="high"] strong,
+html[data-a11y-contrast="high"] em,
+html[data-a11y-contrast="high"] small,
+html[data-a11y-contrast="high"] time,
+html[data-a11y-contrast="high"] cite,
+html[data-a11y-contrast="high"] blockquote,
+html[data-a11y-contrast="high"] a {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+html[data-a11y-contrast="high"] a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+/* Solid cards & panels get crisp 2px black outlines */
+html[data-a11y-contrast="high"] .glass-card,
+html[data-a11y-contrast="high"] .feature-card,
+html[data-a11y-contrast="high"] .dept-card,
+html[data-a11y-contrast="high"] .pj__card,
+html[data-a11y-contrast="high"] .accelerator-card,
+html[data-a11y-contrast="high"] .brainlab-section,
+html[data-a11y-contrast="high"] .announcement-banner,
+html[data-a11y-contrast="high"] article,
+html[data-a11y-contrast="high"] details,
+html[data-a11y-contrast="high"] input,
+html[data-a11y-contrast="high"] select,
+html[data-a11y-contrast="high"] button {
+  border: 2px solid #000000 !important;
+}
+
+/* Inverted High-Contrast Primary Buttons, Active Controls & Photo Overlays (White on Black) */
+html[data-a11y-contrast="high"] #search-trigger,
+html[data-a11y-contrast="high"] #scroll-to-top,
+html[data-a11y-contrast="high"] #global-toast,
+html[data-a11y-contrast="high"] .pj__icon-wrap,
+html[data-a11y-contrast="high"] .icon-wrapper,
+html[data-a11y-contrast="high"] .filter-chip.active,
+html[data-a11y-contrast="high"] .lang-btn.is-active,
+html[data-a11y-contrast="high"] a.bg-blue-600,
+html[data-a11y-contrast="high"] button.bg-blue-600,
+html[data-a11y-contrast="high"] a.bg-teal-600,
+html[data-a11y-contrast="high"] button.bg-teal-600,
+html[data-a11y-contrast="high"] button.bg-slate-900,
+html[data-a11y-contrast="high"] button.bg-\[\#1a365d\],
+html[data-a11y-contrast="high"] a.bg-amber-600,
+html[data-a11y-contrast="high"] a.bg-red-600,
+html[data-a11y-contrast="high"] .announcement-banner span.rounded-full,
+html[data-a11y-contrast="high"] [data-a11y-contrast-btn="dark"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 2px solid #000000 !important;
+}
+
+html[data-a11y-contrast="high"] #search-trigger *,
+html[data-a11y-contrast="high"] #scroll-to-top *,
+html[data-a11y-contrast="high"] #global-toast *,
+html[data-a11y-contrast="high"] .pj__icon-wrap *,
+html[data-a11y-contrast="high"] .icon-wrapper *,
+html[data-a11y-contrast="high"] .filter-chip.active *,
+html[data-a11y-contrast="high"] .lang-btn.is-active *,
+html[data-a11y-contrast="high"] a.bg-blue-600 *,
+html[data-a11y-contrast="high"] button.bg-blue-600 *,
+html[data-a11y-contrast="high"] a.bg-teal-600 *,
+html[data-a11y-contrast="high"] button.bg-teal-600 *,
+html[data-a11y-contrast="high"] button.bg-slate-900 *,
+html[data-a11y-contrast="high"] button.bg-\[\#1a365d\] *,
+html[data-a11y-contrast="high"] a.bg-amber-600 *,
+html[data-a11y-contrast="high"] a.bg-red-600 *,
+html[data-a11y-contrast="high"] [data-a11y-contrast-btn="dark"] * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Text over doctor cards & team photos gets solid black plate + crisp white text */
+html[data-a11y-contrast="high"] .doctor-card .card-closed {
+  background: linear-gradient(to top, #000000 45%, rgba(0, 0, 0, 0.72) 100%) !important;
+}
+html[data-a11y-contrast="high"] .doctor-card .card-closed h3,
+html[data-a11y-contrast="high"] .doctor-card .card-closed span,
+html[data-a11y-contrast="high"] .doctor-card .card-closed svg {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+html[data-a11y-contrast="high"] .doctor-card .card-closed .inline-block {
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+html[data-a11y-contrast="high"] *:focus-visible {
+  outline: 3px solid #000000 !important;
+  outline-offset: 2px !important;
+}
+
+/* ==========================================================================
+   HIGH CONTRAST DARK (html[data-a11y-contrast="dark"])
+   WCAG AAA 19:1+ — Pure Black (#000/#0a0a0a), White Text (#fff), Yellow (#fde047)
+   ========================================================================== */
+html[data-a11y-contrast="dark"] {
+  color-scheme: dark;
+  --ink: #fde047;
+  --slate: #ffffff;
+  --muted: #ffffff;
+  --line: #fde047;
+  --white: #0a0a0a;
+  --teal: #fde047;
+  --teal-dark: #fde047;
+  --teal-lt: #000000;
+}
+
+html[data-a11y-contrast="dark"] body,
+html[data-a11y-contrast="dark"] main,
+html[data-a11y-contrast="dark"] section,
+html[data-a11y-contrast="dark"] footer {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+html[data-a11y-contrast="dark"] #bg-blobs {
+  display: none !important;
+}
+
+html[data-a11y-contrast="dark"] header > div,
+html[data-a11y-contrast="dark"] #dept-panel > div,
+html[data-a11y-contrast="dark"] #mobile-menu-panel,
+html[data-a11y-contrast="dark"] #a11y-panel,
+html[data-a11y-contrast="dark"] #search-modal > div,
+html[data-a11y-contrast="dark"] #searchDropdown,
+html[data-a11y-contrast="dark"] #vacancyDropdown,
+html[data-a11y-contrast="dark"] #burger-wrapper,
+html[data-a11y-contrast="dark"] article,
+html[data-a11y-contrast="dark"] details,
+html[data-a11y-contrast="dark"] summary,
+html[data-a11y-contrast="dark"] .glass-card,
+html[data-a11y-contrast="dark"] .feature-card,
+html[data-a11y-contrast="dark"] .dept-card,
+html[data-a11y-contrast="dark"] .pj__card,
+html[data-a11y-contrast="dark"] .pj__method-label,
+html[data-a11y-contrast="dark"] .pj__pill,
+html[data-a11y-contrast="dark"] .pj-check-row,
+html[data-a11y-contrast="dark"] .accelerator-card,
+html[data-a11y-contrast="dark"] .detail-item,
+html[data-a11y-contrast="dark"] .brainlab-section,
+html[data-a11y-contrast="dark"] .brainlab-section .feature,
+html[data-a11y-contrast="dark"] .phone-item,
+html[data-a11y-contrast="dark"] .email-item,
+html[data-a11y-contrast="dark"] .address-card,
+html[data-a11y-contrast="dark"] .social-btn,
+html[data-a11y-contrast="dark"] .copy-btn,
+html[data-a11y-contrast="dark"] .card-expanded,
+html[data-a11y-contrast="dark"] .article-box article > *,
+html[data-a11y-contrast="dark"] .announcement-banner,
+html[data-a11y-contrast="dark"] [class*="bg-white"],
+html[data-a11y-contrast="dark"] [class*="bg-slate-"],
+html[data-a11y-contrast="dark"] [class*="bg-blue-50"],
+html[data-a11y-contrast="dark"] [class*="bg-blue-100"],
+html[data-a11y-contrast="dark"] [class*="bg-cyan-"],
+html[data-a11y-contrast="dark"] [class*="bg-teal-50"],
+html[data-a11y-contrast="dark"] [class*="bg-emerald-50"],
+html[data-a11y-contrast="dark"] [class*="bg-green-50"],
+html[data-a11y-contrast="dark"] [class*="bg-amber-50"],
+html[data-a11y-contrast="dark"] [class*="bg-yellow-50"],
+html[data-a11y-contrast="dark"] [class*="bg-orange-50"],
+html[data-a11y-contrast="dark"] [class*="bg-red-50"],
+html[data-a11y-contrast="dark"] [class*="bg-purple-50"],
+html[data-a11y-contrast="dark"] [class*="bg-violet-50"],
+html[data-a11y-contrast="dark"] [class*="bg-pink-50"],
+html[data-a11y-contrast="dark"] [class*="from-blue-50"],
+html[data-a11y-contrast="dark"] [class*="from-amber-50"],
+html[data-a11y-contrast="dark"] [class*="from-emerald-50"],
+html[data-a11y-contrast="dark"] [class*="from-green-50"],
+html[data-a11y-contrast="dark"] [class*="from-red-50"],
+html[data-a11y-contrast="dark"] input,
+html[data-a11y-contrast="dark"] select,
+html[data-a11y-contrast="dark"] textarea {
+  background: #0a0a0a !important;
+  background-color: #0a0a0a !important;
+  background-image: none !important;
+  color: #ffffff !important;
+  border-color: #fde047 !important;
+  box-shadow: none !important;
+}
+
+/* Keep NSZU icon background white */
+html[data-a11y-contrast="dark"] .feature-card .icon-wrapper.bg-white {
+  background-color: #ffffff !important;
+}
+
+/* Headings & gradient text -> crisp bright yellow (#fde047) with NO transparent clip */
+html[data-a11y-contrast="dark"] h1,
+html[data-a11y-contrast="dark"] h2,
+html[data-a11y-contrast="dark"] h3,
+html[data-a11y-contrast="dark"] h4,
+html[data-a11y-contrast="dark"] h5,
+html[data-a11y-contrast="dark"] .bg-clip-text,
+html[data-a11y-contrast="dark"] .text-transparent,
+html[data-a11y-contrast="dark"] .gradient-text,
+html[data-a11y-contrast="dark"] .pj__title-accent {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #fde047 !important;
+  -webkit-text-fill-color: #fde047 !important;
+  -webkit-text-stroke: 0 !important;
+}
+
+html[data-a11y-contrast="dark"] p,
+html[data-a11y-contrast="dark"] li,
+html[data-a11y-contrast="dark"] span,
+html[data-a11y-contrast="dark"] label,
+html[data-a11y-contrast="dark"] strong,
+html[data-a11y-contrast="dark"] em,
+html[data-a11y-contrast="dark"] small,
+html[data-a11y-contrast="dark"] time,
+html[data-a11y-contrast="dark"] cite,
+html[data-a11y-contrast="dark"] blockquote {
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html[data-a11y-contrast="dark"] a {
+  color: #7dd3fc !important;
+  -webkit-text-fill-color: #7dd3fc !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+html[data-a11y-contrast="dark"] a span {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
+/* Solid cards & interactive controls get high-visibility yellow borders */
+html[data-a11y-contrast="dark"] .glass-card,
+html[data-a11y-contrast="dark"] .feature-card,
+html[data-a11y-contrast="dark"] .dept-card,
+html[data-a11y-contrast="dark"] .pj__card,
+html[data-a11y-contrast="dark"] .accelerator-card,
+html[data-a11y-contrast="dark"] .brainlab-section,
+html[data-a11y-contrast="dark"] .announcement-banner,
+html[data-a11y-contrast="dark"] article,
+html[data-a11y-contrast="dark"] details,
+html[data-a11y-contrast="dark"] input,
+html[data-a11y-contrast="dark"] select,
+html[data-a11y-contrast="dark"] button {
+  border: 2px solid #fde047 !important;
+}
+
+/* Primary Buttons & Active Controls -> Black text on Bright Yellow (#fde047) */
+html[data-a11y-contrast="dark"] #search-trigger,
+html[data-a11y-contrast="dark"] #scroll-to-top,
+html[data-a11y-contrast="dark"] #global-toast,
+html[data-a11y-contrast="dark"] .pj__icon-wrap,
+html[data-a11y-contrast="dark"] .icon-wrapper,
+html[data-a11y-contrast="dark"] .filter-chip.active,
+html[data-a11y-contrast="dark"] .lang-btn.is-active,
+html[data-a11y-contrast="dark"] a.bg-blue-600,
+html[data-a11y-contrast="dark"] button.bg-blue-600,
+html[data-a11y-contrast="dark"] a.bg-teal-600,
+html[data-a11y-contrast="dark"] button.bg-teal-600,
+html[data-a11y-contrast="dark"] button.bg-slate-900,
+html[data-a11y-contrast="dark"] button.bg-\[\#1a365d\],
+html[data-a11y-contrast="dark"] a.bg-amber-600,
+html[data-a11y-contrast="dark"] a.bg-red-600,
+html[data-a11y-contrast="dark"] .announcement-banner span.rounded-full {
+  background: #fde047 !important;
+  background-color: #fde047 !important;
+  background-image: none !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  border: 2px solid #fde047 !important;
+  text-decoration: none !important;
+}
+
+html[data-a11y-contrast="dark"] #search-trigger *,
+html[data-a11y-contrast="dark"] #scroll-to-top *,
+html[data-a11y-contrast="dark"] #global-toast *,
+html[data-a11y-contrast="dark"] .pj__icon-wrap *,
+html[data-a11y-contrast="dark"] .icon-wrapper *,
+html[data-a11y-contrast="dark"] .filter-chip.active *,
+html[data-a11y-contrast="dark"] .lang-btn.is-active *,
+html[data-a11y-contrast="dark"] a.bg-blue-600 *,
+html[data-a11y-contrast="dark"] button.bg-blue-600 *,
+html[data-a11y-contrast="dark"] a.bg-teal-600 *,
+html[data-a11y-contrast="dark"] button.bg-teal-600 *,
+html[data-a11y-contrast="dark"] button.bg-slate-900 *,
+html[data-a11y-contrast="dark"] button.bg-\[\#1a365d\] *,
+html[data-a11y-contrast="dark"] a.bg-amber-600 *,
+html[data-a11y-contrast="dark"] a.bg-red-600 * {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  stroke: #000000 !important;
+}
+
+/* Keep the "Чорно-біла" swatch clear inside the panel */
+html[data-a11y-contrast="dark"] [data-a11y-contrast-btn="high"] {
+  background: #ffffff !important;
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+  border-color: #ffffff !important;
+}
+
+/* Doctor card photo overlay in high contrast dark */
+html[data-a11y-contrast="dark"] .doctor-card .card-closed {
+  background: linear-gradient(to top, #000000 50%, rgba(0, 0, 0, 0.78) 100%) !important;
+}
+
+html[data-a11y-contrast="dark"] *:focus-visible {
+  outline: 3px solid #fde047 !important;
+  outline-offset: 2px !important;
+}

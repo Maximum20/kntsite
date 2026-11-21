@@ -27,14 +27,25 @@ const makeDesc =
     <title>{makeTitle}</title>
     <SEO title={makeTitle} description={makeDesc} />
 
-    {/* Миттєве відновлення налаштувань доступності до рендеру сторінки (без миготіння) */}
+    {/* Миттєве відновлення теми та налаштувань доступності до рендеру сторінки (без миготіння) */}
     <script is:inline>
       (function () {
+        var root = document.documentElement;
+        try {
+          var savedTheme = localStorage.getItem("knt_theme_v1");
+          if (savedTheme === "dark") {
+            root.setAttribute("data-theme", "dark");
+            root.classList.add("dark");
+          } else {
+            root.removeAttribute("data-theme");
+            root.classList.remove("dark");
+          }
+        } catch (e) {}
+
         try {
           var raw = localStorage.getItem("dokod_a11y_v1");
           if (raw) {
             var cfg = JSON.parse(raw);
-            var root = document.documentElement;
             if (cfg.font && cfg.font !== "normal") {
               root.setAttribute("data-a11y-font", cfg.font);
             }
@@ -51,6 +62,9 @@ const makeDesc =
   </head>
 
   <body class="bg-slate-50 text-slate-900 antialiased min-h-screen relative overflow-x-hidden flex flex-col">
+    {/* Прихований контейнер для Google Translate Website Element */}
+    <div id="google_translate_element" class="notranslate" translate="no" aria-hidden="true"></div>
+
     {/* ДЕКОРАТИВНІ ЕЛЕМЕНТИ ФОНУ */}
     <div id="bg-blobs" class="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
       <div class="absolute top-[-15%] left-[-10%] w-[800px] h-[800px] bg-blue-400/20 rounded-full blur-[120px] animate-blob"></div>
@@ -102,7 +116,6 @@ const makeDesc =
       .animation-delay-2000 { animation-delay: 2s; }
       .animation-delay-4000 { animation-delay: 4s; }
 
-      /* Усунено img { content-visibility: auto; }, що спричиняло стрибки CLS та миготіння зображень */
       img {
         max-width: 100%;
       }
@@ -112,88 +125,6 @@ const makeDesc =
       ::-webkit-scrollbar-track { background: transparent; }
       ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
       ::-webkit-scrollbar-thumb:hover { background: #94a1b4; }
-
-      /* --- РЕЖИМ ДОСТУПНОСТІ ДЛЯ ЛЮДЕЙ ІЗ ПОРУШЕННЯМ ЗОРУ --- */
-      html[data-a11y-font="large"] {
-        font-size: 112.5% !important;
-      }
-      html[data-a11y-font="xlarge"] {
-        font-size: 125% !important;
-      }
-
-      /* Високий контраст (світлий: чорним по білому) */
-      html[data-a11y-contrast="high"] body {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-      }
-      html[data-a11y-contrast="high"] #bg-blobs {
-        display: none !important;
-      }
-      html[data-a11y-contrast="high"] p,
-      html[data-a11y-contrast="high"] span,
-      html[data-a11y-contrast="high"] li,
-      html[data-a11y-contrast="high"] h1,
-      html[data-a11y-contrast="high"] h2,
-      html[data-a11y-contrast="high"] h3,
-      html[data-a11y-contrast="high"] h4 {
-        color: #000000 !important;
-        -webkit-text-fill-color: currentColor !important;
-      }
-      html[data-a11y-contrast="high"] a {
-        text-decoration: underline;
-      }
-      html[data-a11y-contrast="high"] .glass-card,
-      html[data-a11y-contrast="high"] .feature-card,
-      html[data-a11y-contrast="high"] .pj__card,
-      html[data-a11y-contrast="high"] article {
-        background: #ffffff !important;
-        border: 2px solid #000000 !important;
-        box-shadow: none !important;
-      }
-
-      /* Високий контраст (темний: білим/жовтим по чорному) */
-      html[data-a11y-contrast="dark"] body {
-        background-color: #090d16 !important;
-        color: #f8fafc !important;
-      }
-      html[data-a11y-contrast="dark"] #bg-blobs {
-        display: none !important;
-      }
-      html[data-a11y-contrast="dark"] header > div,
-      html[data-a11y-contrast="dark"] .glass-card,
-      html[data-a11y-contrast="dark"] .feature-card,
-      html[data-a11y-contrast="dark"] .pj__card,
-      html[data-a11y-contrast="dark"] article,
-      html[data-a11y-contrast="dark"] details,
-      html[data-a11y-contrast="dark"] .bg-white,
-      html[data-a11y-contrast="dark"] .bg-white\/70,
-      html[data-a11y-contrast="dark"] .bg-white\/80 {
-        background: #111827 !important;
-        color: #f8fafc !important;
-        border-color: #475569 !important;
-      }
-      html[data-a11y-contrast="dark"] h1,
-      html[data-a11y-contrast="dark"] h2,
-      html[data-a11y-contrast="dark"] h3,
-      html[data-a11y-contrast="dark"] h4 {
-        color: #fde047 !important;
-        -webkit-text-fill-color: #fde047 !important;
-      }
-      html[data-a11y-contrast="dark"] p,
-      html[data-a11y-contrast="dark"] li,
-      html[data-a11y-contrast="dark"] span {
-        color: #f1f5f9 !important;
-      }
-
-      /* Вимкнення анімацій */
-      html[data-a11y-motion="reduce"] *,
-      html[data-a11y-motion="reduce"] *::before,
-      html[data-a11y-motion="reduce"] *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
     </style>
 
     <script is:inline>
@@ -212,6 +143,190 @@ const makeDesc =
         }, 2800);
       };
 
+      // --- КЛІЄНТСЬКИЙ ПЕРЕКЛАД UA <-> EN (GOOGLE TRANSLATE WEBSITE ELEMENT) ---
+      (function setupGoogleTranslateController() {
+        var LANG_STORAGE_KEY = "knt_lang_v1";
+
+        function getGoogTransCookie() {
+          var match = document.cookie.match(/(?:^|;\s*)googtrans=([^;]+)/);
+          return match ? decodeURIComponent(match[1]) : "";
+        }
+
+        function setGoogTransCookie(value) {
+          var hostname = window.location.hostname;
+          var isLocalOrIp =
+            hostname === "localhost" ||
+            hostname === "127.0.0.1" ||
+            /^\d+\.\d+\.\d+\.\d+$/.test(hostname);
+
+          if (!value) {
+            document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax";
+            if (!isLocalOrIp && hostname.includes(".")) {
+              var parts = hostname.split(".");
+              var rootDomain = "." + parts.slice(-2).join(".");
+              document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=" + hostname + "; SameSite=Lax";
+              document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=" + rootDomain + "; SameSite=Lax";
+            }
+            return;
+          }
+
+          document.cookie = "googtrans=" + value + "; path=/; SameSite=Lax";
+          if (!isLocalOrIp && hostname.includes(".")) {
+            var parts2 = hostname.split(".");
+            var rootDomain2 = "." + parts2.slice(-2).join(".");
+            document.cookie = "googtrans=" + value + "; path=/; domain=" + hostname + "; SameSite=Lax";
+            document.cookie = "googtrans=" + value + "; path=/; domain=" + rootDomain2 + "; SameSite=Lax";
+          }
+        }
+
+        function getCurrentLang() {
+          var cookieVal = getGoogTransCookie();
+          if (cookieVal.indexOf("/en") !== -1) return "en";
+          try {
+            if (localStorage.getItem(LANG_STORAGE_KEY) === "en") return "en";
+          } catch (e) {}
+          return "uk";
+        }
+
+        function updateLangButtonsUI(lang) {
+          document.querySelectorAll("[data-lang-btn]").forEach(function (btn) {
+            var btnLang = btn.getAttribute("data-lang-btn");
+            var isActive = btnLang === lang;
+            btn.classList.toggle("is-active", isActive);
+            btn.classList.toggle("bg-blue-600", isActive);
+            btn.classList.toggle("text-white", isActive);
+            btn.classList.toggle("shadow-xs", isActive);
+            btn.classList.toggle("text-slate-600", !isActive);
+            btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+          });
+        }
+
+        function triggerGoogleCombo(targetLang, attemptsLeft) {
+          var combo = document.querySelector(".goog-te-combo");
+          if (combo) {
+            if (combo.value !== targetLang) {
+              combo.value = targetLang;
+              combo.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+            return;
+          }
+          if (attemptsLeft > 0) {
+            setTimeout(function () {
+              triggerGoogleCombo(targetLang, attemptsLeft - 1);
+            }, 180);
+          }
+        }
+
+        function ensureGoogleTranslateScript(targetLang) {
+          window.__kntPendingLang = targetLang;
+
+          if (window.google && window.google.translate && window.google.translate.TranslateElement) {
+            if (!document.querySelector(".goog-te-combo")) {
+              window.googleTranslateElementInit();
+            }
+            triggerGoogleCombo(targetLang, 20);
+            return;
+          }
+
+          if (document.getElementById("google-translate-script")) {
+            triggerGoogleCombo(targetLang, 30);
+            return;
+          }
+
+          var script = document.createElement("script");
+          script.id = "google-translate-script";
+          script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+          script.async = true;
+          document.head.appendChild(script);
+        }
+
+        window.googleTranslateElementInit = function () {
+          var host = document.getElementById("google_translate_element");
+          if (!host || !window.google || !window.google.translate) return;
+          if (!host.querySelector(".goog-te-combo")) {
+            new window.google.translate.TranslateElement(
+              {
+                pageLanguage: "uk",
+                includedLanguages: "uk,en",
+                autoDisplay: false,
+              },
+              "google_translate_element"
+            );
+          }
+          var pending = window.__kntPendingLang || getCurrentLang();
+          if (pending === "en") {
+            triggerGoogleCombo("en", 25);
+          }
+        };
+
+        window.__kntGetLang = getCurrentLang;
+        window.__kntSyncLangUI = function () {
+          updateLangButtonsUI(getCurrentLang());
+        };
+
+        window.__kntSetLang = function (lang) {
+          var normalized = lang === "en" ? "en" : "uk";
+          try {
+            localStorage.setItem(LANG_STORAGE_KEY, normalized);
+          } catch (e) {}
+          updateLangButtonsUI(normalized);
+
+          if (normalized === "en") {
+            setGoogTransCookie("/uk/en");
+            ensureGoogleTranslateScript("en");
+          } else {
+            setGoogTransCookie("");
+            var wasTranslated =
+              document.documentElement.classList.contains("translated-ltr") ||
+              document.documentElement.classList.contains("translated-rtl") ||
+              Boolean(document.querySelector(".goog-te-combo"));
+
+            var combo = document.querySelector(".goog-te-combo");
+            if (combo) {
+              combo.value = "uk";
+              combo.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+
+            if (wasTranslated) {
+              // Чисте повернення оригінального українського DOM без залишкових тегів Google Translate
+              window.location.reload();
+            }
+          }
+        };
+
+        // Захист від зміщення body (top: 40px), яке додає банер Google Translate
+        function lockBodyTop() {
+          if (document.body && document.body.style.top && document.body.style.top !== "0px") {
+            document.body.style.top = "0px";
+          }
+        }
+
+        function initLangOnLoad() {
+          var current = getCurrentLang();
+          updateLangButtonsUI(current);
+          if (current === "en") {
+            setGoogTransCookie("/uk/en");
+            ensureGoogleTranslateScript("en");
+          }
+
+          if (document.body && !window.__kntBodyTopObserver) {
+            lockBodyTop();
+            window.__kntBodyTopObserver = new MutationObserver(lockBodyTop);
+            window.__kntBodyTopObserver.observe(document.body, {
+              attributes: true,
+              attributeFilter: ["style"],
+            });
+          }
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", initLangOnLoad);
+        } else {
+          initLangOnLoad();
+        }
+        document.addEventListener("astro:after-swap", initLangOnLoad);
+      })();
+
       function initGlobalLayoutControls() {
         const toTopBtn = document.getElementById("scroll-to-top");
 
@@ -227,12 +342,15 @@ const makeDesc =
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll();
 
-        toTopBtn?.addEventListener("click", () => {
-          window.scrollTo({
-            top: 0,
-            behavior: "smooth",
+        if (toTopBtn && !toTopBtn.hasAttribute("data-top-bound")) {
+          toTopBtn.setAttribute("data-top-bound", "true");
+          toTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
           });
-        });
+        }
 
         // Глобальна підтримка кнопок копіювання [data-copy] на будь-якій сторінці
         document.querySelectorAll("[data-copy]").forEach((btn) => {
@@ -249,7 +367,6 @@ const makeDesc =
               setTimeout(() => btn.classList.remove("copied"), 2000);
               window.showGlobalToast(`Скопійовано: ${val}`);
             } catch (err) {
-              // Fallback для старих браузерів
               const ta = document.createElement("textarea");
               ta.value = val;
               document.body.appendChild(ta);

@@ -1,0 +1,105 @@
+---
+import { Icon } from "astro-icon/components";
+import { siteSettings } from "../data";
+import { formatRichText, sanitizeUrl } from "../utils/formatText";
+
+const announcement = siteSettings.announcement;
+const shouldShow =
+  Boolean(announcement?.isActive) &&
+  Boolean((announcement?.title || "").trim() || (announcement?.text || "").trim());
+
+const type = announcement?.type || "info";
+const safeBtnUrl = sanitizeUrl(announcement?.buttonUrl || "");
+const isExternal = /^https?:\/\//i.test(safeBtnUrl);
+
+const styleMap = {
+  info: {
+    wrapper: "announcement-banner announcement-banner--info bg-blue-50/90 border-blue-200/90 text-slate-900",
+    badge: "bg-blue-600 text-white",
+    badgeLabel: "Інформація",
+    iconName: "bx:info-circle",
+    iconBox: "bg-blue-600 text-white",
+    title: "text-blue-950",
+    btn: "bg-blue-600 hover:bg-blue-700 text-white shadow-blue-600/20",
+  },
+  warning: {
+    wrapper: "announcement-banner announcement-banner--warning bg-amber-50/95 border-amber-300 text-slate-900",
+    badge: "bg-amber-600 text-white",
+    badgeLabel: "Важливо",
+    iconName: "bx:error",
+    iconBox: "bg-amber-500 text-white",
+    title: "text-amber-950",
+    btn: "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/20",
+  },
+  urgent: {
+    wrapper: "announcement-banner announcement-banner--urgent bg-red-50/95 border-red-300 text-slate-900",
+    badge: "bg-red-600 text-white",
+    badgeLabel: "Терміново",
+    iconName: "bx:bxs-bell-ring",
+    iconBox: "bg-red-600 text-white",
+    title: "text-red-950",
+    btn: "bg-red-600 hover:bg-red-700 text-white shadow-red-600/20",
+  },
+} as const;
+
+const currentStyle = styleMap[type] || styleMap.info;
+---
+
+{shouldShow && (
+  <section
+    aria-label="Важливе оголошення"
+    role={type === "urgent" ? "alert" : "region"}
+    class="max-w-[1850px] mx-auto px-4 sm:px-8 lg:px-20 pt-4 pb-2 font-sans"
+  >
+    <div
+      class={`relative rounded-3xl border-2 backdrop-blur-xl px-5 py-4 sm:px-7 sm:py-5 shadow-lg transition-all ${currentStyle.wrapper}`}
+    >
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-start gap-3.5 sm:gap-4 min-w-0">
+          <div
+            class={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 shadow-md ${currentStyle.iconBox}`}
+            aria-hidden="true"
+          >
+            <Icon name={currentStyle.iconName} class="w-6 h-6" />
+          </div>
+
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span
+                class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${currentStyle.badge}`}
+              >
+                {currentStyle.badgeLabel}
+              </span>
+              {announcement.title && (
+                <h2 class={`text-base sm:text-lg font-extrabold leading-snug ${currentStyle.title}`}>
+                  {announcement.title}
+                </h2>
+              )}
+            </div>
+
+            {announcement.text && (
+              <div
+                class="text-sm sm:text-[15px] text-slate-700 leading-relaxed announcement-rich-text"
+                set:html={formatRichText(announcement.text)}
+              />
+            )}
+          </div>
+        </div>
+
+        {announcement.buttonText && safeBtnUrl && (
+          <div class="shrink-0 pl-14 md:pl-0">
+            <a
+              href={safeBtnUrl}
+              target={isExternal ? "_blank" : undefined}
+              rel={isExternal ? "noopener noreferrer" : undefined}
+              class={`inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl font-bold text-xs sm:text-sm shadow-md transition-all active:scale-95 whitespace-nowrap ${currentStyle.btn}`}
+            >
+              <span>{announcement.buttonText}</span>
+              <Icon name={isExternal ? "bx:link-external" : "bx:right-arrow-alt"} class="w-4 h-4" />
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  </section>
+)}

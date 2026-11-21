@@ -11,19 +11,19 @@ export default config({
       },
 
   singletons: {
-    // 1. СІНГЛТОН: КОНТАКТИ, ГРАФІК РОБОТИ ТА ГОЛОВНА СТОРІНКА
+    // 1. СІНГЛТОН: КОНТАКТИ, ГРАФІК РОБОТИ, ГОЛОВНА СТОРІНКА ТА ОГОЛОШЕННЯ
     siteSettings: singleton({
-      label: 'Налаштування сайту та Контакти',
+      label: 'Налаштування сайту, Головна та Контакти',
       path: 'src/content/singletons/settings',
       format: { data: 'json' },
       schema: {
         clinicShortName: fields.text({
           label: 'Коротка назва закладу',
-          defaultValue: 'КНП "ДОКОД" ДОР',
+          defaultValue: 'КНТ "ДОКОД" ДОР',
         }),
         clinicFullName: fields.text({
           label: 'Повна назва закладу',
-          defaultValue: 'КНП «Дніпровський обласний клінічний онкологічний диспансер» ДОР',
+          defaultValue: 'КНТ «Дніпровський обласний клінічний онкологічний диспансер» ДОР',
         }),
         departmentName: fields.text({
           label: 'Назва відділення',
@@ -55,6 +55,85 @@ export default config({
           label: 'Статистика: пацієнтів щорічно',
           defaultValue: '1500+',
         }),
+
+        // Керування видимістю основних секцій головної сторінки
+        homeSections: fields.object(
+          {
+            showDepartments: fields.checkbox({
+              label: 'Секція «Напрямки / Відділення»',
+              defaultValue: true,
+            }),
+            showAdvantages: fields.checkbox({
+              label: 'Секція «Наші переваги»',
+              defaultValue: true,
+            }),
+            showPatientJourney: fields.checkbox({
+              label: 'Секція «Шлях пацієнта та Чекліст»',
+              defaultValue: true,
+            }),
+            showEquipment: fields.checkbox({
+              label: 'Секція «Обладнання та Методики»',
+              defaultValue: true,
+            }),
+            showFaq: fields.checkbox({
+              label: 'Секція «Поширені запитання (FAQ)»',
+              defaultValue: true,
+            }),
+            showTeam: fields.checkbox({
+              label: 'Секція «Команда / Лікарі»',
+              defaultValue: true,
+            }),
+            showContacts: fields.checkbox({
+              label: 'Секція «Контакти»',
+              defaultValue: true,
+            }),
+            showNews: fields.checkbox({
+              label: 'Секція «Новини»',
+              defaultValue: true,
+            }),
+          },
+          {
+            label: 'Видимість блоків головної сторінки',
+            description: 'Вмикайте або тимчасово приховуйте секції головної сторінки без втрати контенту.',
+          }
+        ),
+
+        // Кастомний блок тимчасового / важливого оголошення
+        announcement: fields.object(
+          {
+            isActive: fields.checkbox({
+              label: 'Показувати оголошення на головній сторінці',
+              description: 'Вимкніть, щоб приховати оголошення без видалення тексту.',
+              defaultValue: false,
+            }),
+            type: fields.select({
+              label: 'Стиль / тип оголошення',
+              options: [
+                { label: 'Інформаційне (info)', value: 'info' },
+                { label: 'Важливе попередження (warning)', value: 'warning' },
+                { label: 'Термінове (urgent)', value: 'urgent' },
+              ],
+              defaultValue: 'info',
+            }),
+            title: fields.text({
+              label: 'Заголовок оголошення',
+            }),
+            text: fields.text({
+              label: 'Текст оголошення (підтримує **жирний**, *курсив* та [посилання](https://...))',
+              multiline: true,
+            }),
+            buttonText: fields.text({
+              label: 'Текст кнопки-посилання (необовʼязково)',
+            }),
+            buttonUrl: fields.text({
+              label: 'URL кнопки-посилання (необовʼязково, напр. /#contacts або https://...)',
+            }),
+          },
+          {
+            label: 'Важливе оголошення (банер у верхній частині головної)',
+          }
+        ),
+
         schedule: fields.text({
           label: 'Графік роботи реєстратури та відділення',
           defaultValue: 'Пн–Пт: 08:00 – 16:00 • Сб–Нд: вихідний',
@@ -80,7 +159,7 @@ export default config({
         addresses: fields.array(
           fields.object({
             address: fields.text({ label: 'Адреса (напр., м. Дніпро, вул. Космічна, 21)' }),
-            subtitle: fields.text({ label: 'Підпис корпусу (напр., Корпус променевої терапії • КНП "ДОКОД" ДОР)' }),
+            subtitle: fields.text({ label: 'Підпис корпусу (напр., Корпус променевої терапії • КНТ "ДОКОД" ДОР)' }),
             mapUrl: fields.text({ label: 'Посилання на маршрут у Google Maps' }),
           }),
           {
@@ -308,7 +387,7 @@ export default config({
       },
     }),
 
-    // 3. КОЛЕКЦІЯ ВІДДІЛЕНЬ / НАПРЯМКІВ ЛІКУВАННЯ
+    // 3. КОЛЕКЦІЯ ВІДДІЛЕНЬ / НАПРЯМКІВ ЛІКУВАННЯ (Структуровані блоки + MDX без сирих import)
     services: collection({
       label: 'Відділення та Послуги',
       slugField: 'title',
@@ -316,11 +395,456 @@ export default config({
       format: { contentField: 'content' },
       schema: {
         title: fields.slug({ name: { label: 'Назва відділення / послуги' } }),
-        subtitle: fields.text({ label: 'Підзаголовок' }),
-        description: fields.text({ label: 'Короткий опис для пошуку та мета-тегів', multiline: true }),
-        image: fields.text({ label: 'Шлях до фото (напр., /hero/main_page2.jpg)' }),
+        navTitle: fields.text({
+          label: 'Коротка назва для меню навігації (необовʼязково)',
+          description: 'Якщо порожньо, у меню показується основна назва відділення.',
+        }),
+        subtitle: fields.text({
+          label: 'Підзаголовок / бейдж',
+          defaultValue: 'Напрямок лікування',
+        }),
+        heroTitle: fields.text({
+          label: 'Заголовок у верхньому блоці (необовʼязково, якщо відрізняється від назви)',
+        }),
+        description: fields.text({
+          label: 'Короткий опис для карток, пошуку та SEO',
+          multiline: true,
+        }),
+        heroText: fields.text({
+          label: 'Розгорнутий вступний текст на сторінці відділення',
+          multiline: true,
+        }),
+        image: fields.text({
+          label: 'Шлях до фото (напр., /hero/main_page2.jpg)',
+          defaultValue: '/hero/main_page2.jpg',
+        }),
+        icon: fields.text({
+          label: 'Іконка напрямку (емодзі для карток і пошуку)',
+          defaultValue: '🏥',
+        }),
+        searchKeywords: fields.array(fields.text({ label: 'Ключове слово' }), {
+          label: 'Ключові слова для розумного пошуку',
+          itemLabel: (props) => props.value || 'Ключове слово',
+        }),
+        order: fields.integer({
+          label: 'Порядок відображення (1 — перший)',
+          defaultValue: 10,
+        }),
+        isVisible: fields.checkbox({
+          label: 'Відображати відділення на сайті (головна, меню, пошук)',
+          defaultValue: true,
+        }),
+        showScrollProgress: fields.checkbox({
+          label: 'Показувати смугу прогресу читання',
+          defaultValue: true,
+        }),
+        sections: fields.blocks(
+          {
+            accelerators: {
+              label: 'Блок лінійних прискорювачів та BrainLAB',
+              itemLabel: () => '⚡ Обладнання: Лінійні прискорювачі та BrainLAB',
+              schema: fields.object({
+                enabled: fields.checkbox({
+                  label: 'Показувати блок обладнання',
+                  defaultValue: true,
+                }),
+              }),
+            },
+            staff: {
+              label: 'Персонал відділення (з колекції Персонал)',
+              itemLabel: (props) =>
+                `👨‍⚕️ ${props.fields.title.value || 'Персонал відділення'} (${props.fields.departmentFilter.value})`,
+              schema: fields.object({
+                title: fields.text({
+                  label: 'Заголовок блоку',
+                  defaultValue: 'Персонал відділення',
+                }),
+                icon: fields.text({ label: 'Іконка', defaultValue: '👨‍⚕️' }),
+                introText: fields.text({
+                  label: 'Вступний текст про команду (необовʼязково)',
+                  multiline: true,
+                }),
+                departmentFilter: fields.select({
+                  label: 'Автоматичний підбір за підрозділом',
+                  options: [
+                    { label: 'Мегавольтна терапія', value: 'Мегавольтна терапія' },
+                    { label: 'Гамма-терапія', value: 'Гамма-терапія' },
+                    { label: 'Брахітерапія', value: 'Брахітерапія' },
+                    { label: 'Близький фокус', value: 'Близький фокус' },
+                    { label: 'КТ-розмітка', value: 'КТ-розмітка' },
+                    { label: 'Реабілітація', value: 'Реабілітація' },
+                    { label: 'Інженерно-фізична група', value: 'Інженерно-фізична група' },
+                    { label: 'Усі відділення', value: 'Усі' },
+                    { label: 'Тільки обрані вручну нижче', value: 'manual' },
+                  ],
+                  defaultValue: 'Мегавольтна терапія',
+                }),
+                roleFilter: fields.text({
+                  label: 'Фільтр за посадою (необовʼязково, напр. Лікар з радіаційної онкології)',
+                }),
+                selectedStaff: fields.multiRelationship({
+                  label: 'Обрати конкретних працівників вручну (додатково або замість фільтра)',
+                  collection: 'staff',
+                }),
+                displayMode: fields.select({
+                  label: 'Відображення',
+                  options: [
+                    { label: 'У розкривному акордеоні', value: 'accordion' },
+                    { label: 'Відкритою секцією', value: 'section' },
+                  ],
+                  defaultValue: 'accordion',
+                }),
+              }),
+            },
+            highlight: {
+              label: 'Виділений банер / Попередження / Протипоказання',
+              itemLabel: (props) =>
+                `${props.fields.icon.value || '💡'} ${props.fields.title.value || 'Виділений банер'}`,
+              schema: fields.object({
+                variant: fields.select({
+                  label: 'Стиль блоку',
+                  options: [
+                    { label: 'Інформаційний (синій)', value: 'info' },
+                    { label: 'Успіх / безпека (зелений)', value: 'success' },
+                    { label: 'Попередження (жовто-помаранчевий)', value: 'warning' },
+                    { label: 'Критичне застереження (червоний)', value: 'danger' },
+                  ],
+                  defaultValue: 'info',
+                }),
+                icon: fields.text({ label: 'Іконка (емодзі)', defaultValue: '💡' }),
+                title: fields.text({ label: 'Заголовок' }),
+                text: fields.text({
+                  label: 'Текст (підтримує **жирний**, підзаголовки ### та списки з «- »)',
+                  multiline: true,
+                }),
+                infoBoxes: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка' }),
+                    title: fields.text({ label: 'Заголовок' }),
+                    text: fields.text({ label: 'Опис', multiline: true }),
+                  }),
+                  {
+                    label: 'Картки всередині блоку (необовʼязково)',
+                    itemLabel: (p) => p.fields.title.value || 'Картка',
+                  }
+                ),
+                checklistTitle: fields.text({ label: 'Заголовок чекліста всередині (необовʼязково)' }),
+                checklistItems: fields.array(fields.text({ label: 'Пункт чекліста' }), {
+                  label: 'Пункти чекліста (необовʼязково)',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+                warningNote: fields.text({
+                  label: 'Нижня акцентна примітка (необовʼязково)',
+                  multiline: true,
+                }),
+              }),
+            },
+            comparison: {
+              label: 'Порівняння (2 колонки)',
+              itemLabel: (props) =>
+                `⚖️ ${props.fields.leftTitle.value || 'Ліва'} vs ${props.fields.rightTitle.value || 'Права'}`,
+              schema: fields.object({
+                leftIcon: fields.text({ label: 'Іконка лівої колонки', defaultValue: '⚡' }),
+                leftTitle: fields.text({ label: 'Заголовок лівої колонки' }),
+                leftText: fields.text({ label: 'Опис лівої колонки', multiline: true }),
+                leftItems: fields.array(fields.text({ label: 'Пункт' }), {
+                  label: 'Перелік лівої колонки',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+                rightIcon: fields.text({ label: 'Іконка правої колонки', defaultValue: '🌱' }),
+                rightTitle: fields.text({ label: 'Заголовок правої колонки' }),
+                rightText: fields.text({ label: 'Опис правої колонки', multiline: true }),
+                rightItems: fields.array(fields.text({ label: 'Пункт' }), {
+                  label: 'Перелік правої колонки',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+              }),
+            },
+            timeline: {
+              label: 'Таймлайн / Етапи процедури',
+              itemLabel: (props) =>
+                `🕒 ${props.fields.title.value || 'Етапи'} (${props.fields.items.elements.length})`,
+              schema: fields.object({
+                title: fields.text({ label: 'Заголовок (необовʼязково)' }),
+                items: fields.array(
+                  fields.object({
+                    title: fields.text({ label: 'Назва етапу' }),
+                    text: fields.text({ label: 'Опис етапу', multiline: true }),
+                  }),
+                  {
+                    label: 'Етапи',
+                    itemLabel: (p) => p.fields.title.value || 'Етап',
+                  }
+                ),
+              }),
+            },
+            featureGrid: {
+              label: 'Сітка переваг / ефектів',
+              itemLabel: (props) =>
+                `✨ ${props.fields.title.value || 'Переваги'} (${props.fields.items.elements.length})`,
+              schema: fields.object({
+                title: fields.text({ label: 'Заголовок (необовʼязково)' }),
+                items: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка (емодзі)' }),
+                    title: fields.text({ label: 'Заголовок картки' }),
+                    text: fields.text({ label: 'Опис', multiline: true }),
+                  }),
+                  {
+                    label: 'Картки',
+                    itemLabel: (p) => p.fields.title.value || 'Картка',
+                  }
+                ),
+              }),
+            },
+            checklist: {
+              label: 'Інтерактивний чекліст',
+              itemLabel: (props) => `☑️ ${props.fields.title.value || 'Чекліст'}`,
+              schema: fields.object({
+                title: fields.text({ label: 'Заголовок чекліста' }),
+                items: fields.array(fields.text({ label: 'Пункт' }), {
+                  label: 'Пункти чекліста',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+              }),
+            },
+            accordion: {
+              label: 'Секція-акордеон (Опис, Показання, Методики, Побічні ефекти)',
+              itemLabel: (props) =>
+                `${props.fields.icon.value || '📋'} ${props.fields.title.value || 'Секція'}`,
+              schema: fields.object({
+                title: fields.text({ label: 'Заголовок акордеону' }),
+                icon: fields.text({ label: 'Іконка (емодзі)', defaultValue: '📋' }),
+                variant: fields.select({
+                  label: 'Стиль рамки',
+                  options: [
+                    { label: 'Звичайний', value: 'default' },
+                    { label: 'Акцентний (синій)', value: 'highlight' },
+                  ],
+                  defaultValue: 'default',
+                }),
+                openByDefault: fields.checkbox({
+                  label: 'Відкрито за замовчуванням',
+                  defaultValue: false,
+                }),
+                introText: fields.text({
+                  label: 'Вступний текст (підтримує **жирний** та переноси рядків)',
+                  multiline: true,
+                }),
+                highlights: fields.array(
+                  fields.object({
+                    variant: fields.select({
+                      label: 'Стиль',
+                      options: [
+                        { label: 'Інформаційний (синій)', value: 'info' },
+                        { label: 'Безпека / успіх (зелений)', value: 'success' },
+                        { label: 'Попередження (жовтий)', value: 'warning' },
+                        { label: 'Застереження (червоний)', value: 'danger' },
+                      ],
+                      defaultValue: 'info',
+                    }),
+                    icon: fields.text({ label: 'Іконка' }),
+                    title: fields.text({ label: 'Заголовок' }),
+                    text: fields.text({ label: 'Текст', multiline: true }),
+                  }),
+                  {
+                    label: 'Виділені блоки (Highlight)',
+                    itemLabel: (p) => p.fields.title.value || 'Виділений блок',
+                  }
+                ),
+                cardsStyle: fields.select({
+                  label: 'Стиль карток',
+                  options: [
+                    { label: 'Сітка карток (2 колонки)', value: 'card-grid' },
+                    { label: 'Компактні емодзі-картки', value: 'emoji-cards' },
+                    { label: 'Інформаційні плашки', value: 'info-boxes' },
+                  ],
+                  defaultValue: 'card-grid',
+                }),
+                cardsTitle: fields.text({ label: 'Підзаголовок над картками (необовʼязково)' }),
+                cards: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка (емодзі)' }),
+                    title: fields.text({ label: 'Заголовок' }),
+                    text: fields.text({ label: 'Опис', multiline: true }),
+                  }),
+                  {
+                    label: 'Картки (показання, технології, переваги)',
+                    itemLabel: (p) => p.fields.title.value || 'Картка',
+                  }
+                ),
+                listStyle: fields.select({
+                  label: 'Стиль списку',
+                  options: [
+                    { label: 'Список із галочками', value: 'icon-list' },
+                    { label: 'Нумерований список', value: 'numbered-list' },
+                  ],
+                  defaultValue: 'icon-list',
+                }),
+                listTitle: fields.text({ label: 'Підзаголовок над списком (необовʼязково)' }),
+                listItems: fields.array(fields.text({ label: 'Пункт' }), {
+                  label: 'Пункти списку',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+                steps: fields.array(
+                  fields.object({
+                    title: fields.text({ label: 'Заголовок кроку' }),
+                    text: fields.text({ label: 'Опис кроку', multiline: true }),
+                  }),
+                  {
+                    label: 'Покрокова інструкція',
+                    itemLabel: (p) => p.fields.title.value || 'Крок',
+                  }
+                ),
+                tabsTitle: fields.text({ label: 'Підзаголовок над вкладками (необовʼязково)' }),
+                tabs: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка вкладки' }),
+                    title: fields.text({ label: 'Назва вкладки' }),
+                    sections: fields.array(
+                      fields.object({
+                        heading: fields.text({ label: 'Підзаголовок (необовʼязково)' }),
+                        text: fields.text({ label: 'Текст (необовʼязково)', multiline: true }),
+                        bullets: fields.array(fields.text({ label: 'Пункт' }), {
+                          label: 'Список пунктів',
+                          itemLabel: (p) => p.value || 'Пункт',
+                        }),
+                        note: fields.text({ label: 'Примітка / порада (необовʼязково)', multiline: true }),
+                      }),
+                      {
+                        label: 'Блоки всередині вкладки',
+                        itemLabel: (p) => p.fields.heading.value || 'Блок',
+                      }
+                    ),
+                  }),
+                  {
+                    label: 'Вкладки (локалізації / побічні ефекти / відчуття)',
+                    itemLabel: (p) => p.fields.title.value || 'Вкладка',
+                  }
+                ),
+                expandables: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка (необовʼязково)' }),
+                    title: fields.text({ label: 'Заголовок підпункту' }),
+                    text: fields.text({ label: 'Текст', multiline: true }),
+                    bullets: fields.array(fields.text({ label: 'Пункт' }), {
+                      label: 'Пункти списку (необовʼязково)',
+                      itemLabel: (p) => p.value || 'Пункт',
+                    }),
+                    note: fields.text({ label: 'Примітка (необовʼязково)', multiline: true }),
+                  }),
+                  {
+                    label: 'Вкладені розкривні пункти',
+                    itemLabel: (p) => p.fields.title.value || 'Пункт',
+                  }
+                ),
+                prosCons: fields.object(
+                  {
+                    enabled: fields.checkbox({ label: 'Показувати блок «Плюси / Обмеження»', defaultValue: false }),
+                    prosTitle: fields.text({ label: 'Заголовок плюсів', defaultValue: 'Що покращує' }),
+                    prosItems: fields.array(fields.text({ label: 'Пункт' }), {
+                      label: 'Пункти плюсів',
+                      itemLabel: (p) => p.value || 'Пункт',
+                    }),
+                    consTitle: fields.text({ label: 'Заголовок обмежень', defaultValue: 'Що НЕ лікує' }),
+                    consItems: fields.array(fields.text({ label: 'Пункт' }), {
+                      label: 'Пункти обмежень',
+                      itemLabel: (p) => p.value || 'Пункт',
+                    }),
+                  },
+                  { label: 'Блок «Що покращує / Обмеження»' }
+                ),
+                warningBoxes: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка' }),
+                    title: fields.text({ label: 'Заголовок' }),
+                    text: fields.text({ label: 'Опис', multiline: true }),
+                  }),
+                  {
+                    label: 'Картки-застереження',
+                    itemLabel: (p) => p.fields.title.value || 'Застереження',
+                  }
+                ),
+                checklistTitle: fields.text({ label: 'Заголовок чекліста всередині (необовʼязково)' }),
+                checklistItems: fields.array(fields.text({ label: 'Пункт' }), {
+                  label: 'Пункти чекліста (необовʼязково)',
+                  itemLabel: (p) => p.value || 'Пункт',
+                }),
+                bottomHighlight: fields.object(
+                  {
+                    enabled: fields.checkbox({ label: 'Показати підсумковий акцент внизу секції', defaultValue: false }),
+                    variant: fields.select({
+                      label: 'Стиль',
+                      options: [
+                        { label: 'Інформаційний (синій)', value: 'info' },
+                        { label: 'Успіх / безпека (зелений)', value: 'success' },
+                        { label: 'Попередження (жовтий)', value: 'warning' },
+                        { label: 'Небезпека / ризик (червоний)', value: 'danger' },
+                      ],
+                      defaultValue: 'info',
+                    }),
+                    icon: fields.text({ label: 'Іконка' }),
+                    title: fields.text({ label: 'Заголовок' }),
+                    text: fields.text({ label: 'Текст', multiline: true }),
+                  },
+                  { label: 'Підсумковий акцентний блок' }
+                ),
+              }),
+            },
+            faq: {
+              label: 'Поширені запитання (FAQ)',
+              itemLabel: (props) =>
+                `❓ ${props.fields.title.value || 'Поширені запитання'} (${props.fields.items.elements.length})`,
+              schema: fields.object({
+                title: fields.text({ label: 'Заголовок блоку FAQ', defaultValue: 'Поширені запитання' }),
+                icon: fields.text({ label: 'Іконка', defaultValue: '❓' }),
+                variant: fields.select({
+                  label: 'Стиль рамки',
+                  options: [
+                    { label: 'Звичайний', value: 'default' },
+                    { label: 'Акцентний (синій)', value: 'highlight' },
+                  ],
+                  defaultValue: 'default',
+                }),
+                items: fields.array(
+                  fields.object({
+                    icon: fields.text({ label: 'Іконка (емодзі)', defaultValue: '❓' }),
+                    question: fields.text({ label: 'Запитання' }),
+                    answer: fields.text({ label: 'Відповідь', multiline: true }),
+                    bullets: fields.array(fields.text({ label: 'Пункт' }), {
+                      label: 'Пункти списку у відповіді (необовʼязково)',
+                      itemLabel: (p) => p.value || 'Пункт',
+                    }),
+                    alertVariant: fields.select({
+                      label: 'Акцентна плашка у відповіді',
+                      options: [
+                        { label: 'Немає', value: 'none' },
+                        { label: 'Інформаційна (синя)', value: 'info' },
+                        { label: 'Успіх / можна (зелена)', value: 'success' },
+                        { label: 'Попередження (жовта)', value: 'warning' },
+                        { label: 'Заборона / важливо (червона)', value: 'danger' },
+                      ],
+                      defaultValue: 'none',
+                    }),
+                    alertTitle: fields.text({ label: 'Заголовок плашки (необовʼязково)' }),
+                    alertText: fields.text({ label: 'Текст плашки (необовʼязково)', multiline: true }),
+                  }),
+                  {
+                    label: 'Список запитань та відповідей',
+                    itemLabel: (p) => p.fields.question.value || 'Запитання',
+                  }
+                ),
+              }),
+            },
+          },
+          {
+            label: 'Структуровані блоки сторінки відділення',
+            description: 'Гнучко додавайте, редагуйте та впорядковуйте секції сторінки прямо з адмінки.',
+          }
+        ),
         content: fields.mdx({
-          label: 'Контент сторінки напрямку (MDX)',
+          label: 'Додатковий текст сторінки (MDX / Markdown)',
+          description: 'Необовʼязковий вільний текст у форматі Markdown, що відображається наприкінці сторінки.',
         }),
       },
     }),

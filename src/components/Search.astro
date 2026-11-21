@@ -3,101 +3,65 @@ import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
 import { doctors, siteSettings, equipmentData, patientRouteData } from "../data";
 
+const allServices = (await getCollection("services")) || [];
+const visibleServices = allServices
+  .filter((s) => s.data?.isVisible !== false)
+  .sort((a, b) => (a.data?.order ?? 99) - (b.data?.order ?? 99));
+const visibleServiceIds = new Set(visibleServices.map((s) => s.id));
+
 const allNews = (await getCollection("news")) || [];
 const allVacancies = (await getCollection("vacancies")) || [];
 
+// Динамічні сторінки видимих відділень із Keystatic
+const serviceSearchItems = visibleServices.map((svc) => ({
+  title: svc.data.heroTitle || svc.data.title,
+  subtitle: svc.data.description || svc.data.heroText || "",
+  url: `/services/${svc.id}`,
+  category: "Сторінка",
+  icon: svc.data.icon || "🏥",
+  tags: [
+    svc.id.toLowerCase(),
+    (svc.data.title || "").toLowerCase(),
+    (svc.data.navTitle || "").toLowerCase(),
+    (svc.data.subtitle || "").toLowerCase(),
+    (svc.data.description || "").toLowerCase(),
+    ...(Array.isArray(svc.data.searchKeywords)
+      ? svc.data.searchKeywords.map((k: string) => String(k).toLowerCase())
+      : []),
+    "відділення",
+    "послуга",
+    "лікування",
+  ].filter(Boolean),
+}));
+
 // Формуємо комплексний клієнтський пошуковий індекс під час збірки (SSG)
 const staticPagesAndEquipment = [
-  {
-    title: "Мегавольтна терапія (Лінійні прискорювачі Elekta)",
-    subtitle: "Золотий стандарт радіаційної онкології: IMRT, VMAT, IGRT, SBRT та система BrainLAB",
-    url: "/services/linac",
-    category: "Сторінка",
-    icon: "⚡",
-    tags: [
-      "мегавольтна", "лінійний прискорювач", "прискорювач", "лінійник", "linac", "опромінення",
-      "електа", "elekta", "versa hd", "synergy", "imrt", "vmat", "igrt", "sbrt", "радіотерапія",
-      "променева терапія", "фотони", "електрони", "лікування раку", "пухлина"
-    ]
-  },
-  {
-    title: "Лінійний прискорювач Elekta Versa HD + BrainLAB ExacTrac Dynamic",
-    subtitle: "Стереотаксична радіохірургія, 4D-контроль дихання та субміліметрова точність",
-    url: "/services/linac#accelerators",
-    category: "Обладнання",
-    icon: "🎯",
-    tags: [
-      "versa", "versahd", "brainlab", "брейнлаб", "exactrac", "стереотаксис", "радіохірургія",
-      "прискорювач", "опромінення", "контроль дихання", "теплова камера", "апарат", "обладнання", "elekta"
-    ]
-  },
-  {
-    title: "Лінійні прискорювачі Elekta Synergy та Synergy Platform",
-    subtitle: "3D-візуалізація XVI / iViewGT та високоточне ротаційне опромінення VMAT / IMRT",
-    url: "/services/linac#accelerators",
-    category: "Обладнання",
-    icon: "🔬",
-    tags: [
-      "synergy", "сінерджі", "platform", "elekta", "електа", "xvi", "iview", "прискорювач",
-      "опромінення", "апарат", "обладнання", "vmat", "imrt"
-    ]
-  },
-  {
-    title: "КТ-розмітка та топометрична симуляція (Toshiba Aquilion)",
-    subtitle: "3D-планування у системі Monaco, індивідуальні термопластичні маски та вакуумні матраци",
-    url: "/services/ct",
-    category: "Сторінка",
-    icon: "🖥️",
-    tags: [
-      "кт", "комп'ютерна томографія", "розмітка", "топометрія", "симуляція", "маска",
-      "термопластична маска", "вакуумний матрац", "планування", "monaco", "контурування",
-      "toshiba", "aquilion", "татуювання", "мітки", "підготовка"
-    ]
-  },
-  {
-    title: "Дистанційна гамма-терапія (Theratron Elite 80, АГАТ-Р1)",
-    subtitle: "Надійне дистанційне опромінення джерелами Кобальт-60",
-    url: "/services/gamma",
-    category: "Сторінка",
-    icon: "☢️",
-    tags: [
-      "гамма", "гамма-терапія", "кобальт", "theratron", "тератрон", "агат", "опромінення",
-      "дистанційна терапія"
-    ]
-  },
-  {
-    title: "Брахітерапія (Контактна променева терапія MultiSource HDR)",
-    subtitle: "Внутрішньопорожнинне високоточне опромінення (гінекологія, простата, молочна залоза)",
-    url: "/services/brachy",
-    category: "Сторінка",
-    icon: "🎯",
-    tags: [
-      "брахітерапія", "контактна", "внутрішньопорожнинна", "multisource", "hdr", "ldr",
-      "іридій", "кобальт", "шийка матки", "простата", "гінекологія", "аплікатор", "зерна"
-    ]
-  },
-  {
-    title: "Близькофокусна рентгенотерапія",
-    subtitle: "Безопераційне лікування новоутворень шкіри (базаліома), келоїдних рубців та п'яткової шпори",
-    url: "/services/nearfocus",
-    category: "Сторінка",
-    icon: "📡",
-    tags: [
-      "рентген", "рентгенотерапія", "близькофокусна", "близький фокус", "шкіра", "рак шкіри",
-      "базаліома", "меланома", "рубець", "келоїд", "п'яткова шпора", "шпора", "поверхнева"
-    ]
-  },
-  {
-    title: "Реабілітація та магнітотерапія",
-    subtitle: "Фізіотерапевтичне відновлення після опромінення, лікування фіброзів, лімфостазу та суглобів",
-    url: "/services/mlt",
-    category: "Сторінка",
-    icon: "🧲",
-    tags: [
-      "реабілітація", "магнітотерапія", "магніт", "відновлення", "фізіотерапія", "фіброз",
-      "лімфостаз", "набряк", "артроз", "суглоби", "дерматит", "mlt"
-    ]
-  },
+  ...(visibleServiceIds.has("linac")
+    ? [
+        {
+          title: "Лінійний прискорювач Elekta Versa HD + BrainLAB ExacTrac Dynamic",
+          subtitle: "Стереотаксична радіохірургія, 4D-контроль дихання та субміліметрова точність",
+          url: "/services/linac#accelerators",
+          category: "Обладнання",
+          icon: "🎯",
+          tags: [
+            "versa", "versahd", "brainlab", "брейнлаб", "exactrac", "стереотаксис", "радіохірургія",
+            "прискорювач", "опромінення", "контроль дихання", "теплова камера", "апарат", "обладнання", "elekta"
+          ]
+        },
+        {
+          title: "Лінійні прискорювачі Elekta Synergy та Synergy Platform",
+          subtitle: "3D-візуалізація XVI / iViewGT та високоточне ротаційне опромінення VMAT / IMRT",
+          url: "/services/linac#accelerators",
+          category: "Обладнання",
+          icon: "🔬",
+          tags: [
+            "synergy", "сінерджі", "platform", "elekta", "електа", "xvi", "iview", "прискорювач",
+            "опромінення", "апарат", "обладнання", "vmat", "imrt"
+          ]
+        },
+      ]
+    : []),
   {
     title: "Підготовка до променевої терапії та Маршрут пацієнта (Чекліст)",
     subtitle: "Інтерактивний чекліст документів, аналізів, дисків КТ/МРТ та кроків перед першим візитом",
@@ -154,7 +118,7 @@ const staticPagesAndEquipment = [
   },
   {
     title: "Актуальні вакансії відділення",
-    subtitle: "Приєднуйтесь до команди радіологічного центру КНП «ДОКОД» ДОР",
+    subtitle: "Приєднуйтесь до команди радіологічного центру КНТ «ДОКОД» ДОР",
     url: "/vacancies",
     category: "Сторінка",
     icon: "💼",
@@ -227,6 +191,7 @@ const methodItems = (equipmentData.methods || []).map((m) => ({
 }));
 
 const searchIndex = [
+  ...serviceSearchItems,
   ...staticPagesAndEquipment,
   ...doctorItems,
   ...methodItems,
@@ -234,7 +199,7 @@ const searchIndex = [
   ...vacancyItems
 ];
 
-// Швидкі пресети для блоку "Часто шукають / Може бути корисним"
+// Швидкі пресети для блоку "Часто шукають / Може бути корисним" (тільки видимі відділення)
 const quickPresets = [
   {
     label: "Підготовка до променевої терапії",
@@ -243,13 +208,17 @@ const quickPresets = [
     icon: "📋",
     badge: "Чекліст"
   },
-  {
-    label: "Лінійні прискорювачі Elekta",
-    query: "Elekta",
-    href: "/services/linac",
-    icon: "⚡",
-    badge: "Обладнання"
-  },
+  ...(visibleServiceIds.has("linac")
+    ? [
+        {
+          label: "Лінійні прискорювачі Elekta",
+          query: "Elekta",
+          href: "/services/linac",
+          icon: "⚡",
+          badge: "Обладнання"
+        },
+      ]
+    : []),
   {
     label: "Персонал відділення",
     query: "Лікар",
@@ -271,13 +240,28 @@ const quickPresets = [
     icon: "📞",
     badge: "Контакти"
   },
-  {
-    label: "КТ-розмітка та симуляція",
-    query: "КТ-розмітка",
-    href: "/services/ct",
-    icon: "🖥️",
-    badge: "Планування"
-  }
+  ...(visibleServiceIds.has("ct")
+    ? [
+        {
+          label: "КТ-розмітка та симуляція",
+          query: "КТ-розмітка",
+          href: "/services/ct",
+          icon: "🖥️",
+          badge: "Планування"
+        },
+      ]
+    : []),
+];
+
+const quickChips = [
+  ...(visibleServiceIds.has("linac") ? [{ label: "Лінійні прискорювачі Elekta", q: "прискорювач" }] : []),
+  { label: "Підготовка та аналізи", q: "аналізи" },
+  { label: "Направлення НСЗУ", q: "направлення" },
+  ...(visibleServiceIds.has("linac") ? [{ label: "Система BrainLAB", q: "brainlab" }] : []),
+  { label: "Лікарі-радіологи", q: "лікар" },
+  ...(visibleServiceIds.has("ct") ? [{ label: "КТ-розмітка (маска)", q: "кт" }] : []),
+  ...(visibleServiceIds.has("brachy") ? [{ label: "Брахітерапія", q: "брахітерапія" }] : []),
+  { label: "Телефони та графік", q: "контакти" },
 ];
 ---
 
@@ -346,7 +330,7 @@ const quickPresets = [
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
           <span class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-            Інтелектуальний пошук • КНП «ДОКОД» ДОР
+            Інтелектуальний пошук • КНТ «ДОКОД» ДОР
           </span>
         </div>
         <div class="flex items-center gap-2">
@@ -409,16 +393,7 @@ const quickPresets = [
 
           {/* Швидкі теги-фільтри (заповнюють пошук або переходять) */}
           <div class="flex flex-wrap gap-2 mb-5">
-            {[
-              { label: "Лінійні прискорювачі Elekta", q: "прискорювач" },
-              { label: "Підготовка та аналізи", q: "аналізи" },
-              { label: "Направлення НСЗУ", q: "направлення" },
-              { label: "Система BrainLAB", q: "brainlab" },
-              { label: "Лікарі-радіологи", q: "лікар" },
-              { label: "КТ-розмітка (маска)", q: "кт" },
-              { label: "Брахітерапія", q: "брахітерапія" },
-              { label: "Телефони та графік", q: "контакти" }
-            ].map((chip) => (
+            {quickChips.map((chip) => (
               <button
                 type="button"
                 class="tag-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100/90 hover:bg-blue-600 text-slate-700 hover:text-white text-xs font-bold transition-all active:scale-95 cursor-pointer border border-slate-200/60 hover:border-blue-600"
@@ -488,7 +463,7 @@ const quickPresets = [
   <div id="search-close" class="fixed inset-0 -z-10 cursor-pointer"></div>
 </div>
 
-<script is:inline define:vars={{ searchIndex, quickPresets }}>
+<script is:inline define:vars={{ searchIndex, quickPresets, isLinacVisible: visibleServiceIds.has("linac") }}>
   (function initSmartSearch() {
     // Словник медичних синонімів та семантичних асоціацій
     const SYNONYM_MAP = [
@@ -724,7 +699,7 @@ const quickPresets = [
               <p class="text-sm font-bold text-slate-700 mb-1">За запитом «${escapeHtml(rawQuery)}» прямих збігів не знайдено</p>
               <p class="text-xs text-slate-500 mb-4">Спробуйте інше формулювання або перейдіть до популярних розділів:</p>
               <div class="flex flex-wrap justify-center gap-2">
-                <a href="/services/linac" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">⚡ Лінійні прискорювачі</a>
+                ${isLinacVisible ? '<a href="/services/linac" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">⚡ Лінійні прискорювачі</a>' : ''}
                 <a href="/doctors" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">👨‍⚕️ Лікарі відділення</a>
                 <a href="/#patient-checklist" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">📋 Маршрут пацієнта</a>
                 <a href="/#contacts" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-xs font-bold text-blue-600 hover:bg-blue-50">📞 Контакти</a>

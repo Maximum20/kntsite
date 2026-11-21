@@ -191,9 +191,17 @@ const { type = "", items = [], title = "", icon = "", text = "", variant = "defa
 {type === 'info-boxes' && (
   <div class="grid gap-3 my-6 not-prose">
     {items.map((item: any, idx: number) => (
-      <div class="flex gap-3 p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl hover:shadow-lg transition-all group" style={`animation-delay: ${idx * 100}ms`}>
+      <div class={`flex gap-3 p-4 rounded-xl hover:shadow-lg transition-all group border-2 ${
+        variant === 'danger'
+          ? 'bg-gradient-to-br from-red-50 to-rose-50 border-red-200'
+          : variant === 'warning'
+          ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200'
+          : 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200'
+      }`} style={`animation-delay: ${idx * 100}ms`}>
         {item.icon && (
-          <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600 flex items-center justify-center text-xl sm:text-2xl shadow-md group-hover:scale-110 group-hover:rotate-12 transition-all">
+          <div class={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl shadow-md group-hover:scale-110 group-hover:rotate-12 transition-all ${
+            variant === 'danger' ? 'bg-red-600' : variant === 'warning' ? 'bg-amber-600' : 'bg-blue-600'
+          }`}>
             <span class="grayscale brightness-[3]">{item.icon}</span>
           </div>
         )}

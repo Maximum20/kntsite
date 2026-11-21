@@ -1,0 +1,63 @@
+---
+import { doctors } from "../data";
+import DoctorCard from "./DoctorCard.astro";
+import { Icon } from "astro-icon/components";
+
+const head = doctors.find((d) => d.isHead) || doctors[0];
+const previewDoctors = head
+  ? [head, ...doctors.filter((d) => d !== head).slice(0, 2)]
+  : doctors.slice(0, 3);
+---
+
+{previewDoctors.length > 0 && (
+  <section id="team-preview" class="max-w-7xl mx-auto px-5 sm:px-6 py-16 md:py-24 scroll-mt-28 font-sans">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+      <div>
+        <span class="inline-block text-blue-600 font-black uppercase tracking-[0.25em] text-xs mb-3">
+          Команда відділення
+        </span>
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          Лікарі та <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">медичні фізики</span>
+        </h2>
+        <p class="text-slate-600 text-base md:text-lg mt-3 max-w-2xl">
+          Мультидисциплінарна команда радіаційних онкологів, рентгенологів та медичних фізиків, яка супроводжує пацієнта на кожному етапі лікування.
+        </p>
+      </div>
+
+      <a
+        href="/doctors"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white border-2 border-slate-900 text-slate-900 font-bold text-sm hover:bg-slate-900 hover:text-white transition-all self-start md:self-auto shrink-0"
+      >
+        <span>Усі спеціалісти ({doctors.length})</span>
+        <Icon name="bx:right-arrow-alt" class="w-5 h-5" />
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {previewDoctors.map((doctor) => (
+        <DoctorCard doctor={doctor} />
+      ))}
+    </div>
+  </section>
+)}
+
+<script>
+  function initHomeTeamCards() {
+    const cards = document.querySelectorAll("#team-preview .doctor-card");
+    cards.forEach((card) => {
+      if (card.hasAttribute("data-card-bound")) return;
+      card.setAttribute("data-card-bound", "true");
+      card.addEventListener("click", () => {
+        if (card.classList.contains("is-expanded")) {
+          card.classList.remove("is-expanded");
+        } else {
+          cards.forEach((c) => c.classList.remove("is-expanded"));
+          card.classList.add("is-expanded");
+        }
+      });
+    });
+  }
+
+  initHomeTeamCards();
+  document.addEventListener("astro:after-swap", initHomeTeamCards);
+</script>

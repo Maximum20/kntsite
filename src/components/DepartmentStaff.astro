@@ -1,0 +1,109 @@
+---
+import { doctors } from "../data";
+import DoctorCard from "./DoctorCard.astro";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  title?: string;
+  introText?: string;
+  departmentFilter?: string;
+  roleFilter?: string;
+  selectedStaff?: string[];
+  compact?: boolean;
+}
+
+const {
+  title = "Персонал відділення",
+  introText = "",
+  departmentFilter = "Усі",
+  roleFilter = "",
+  selectedStaff = [],
+  compact = false,
+} = Astro.props;
+
+const selectedIds = Array.isArray(selectedStaff) ? selectedStaff.filter(Boolean) : [];
+const roleNeedle = (roleFilter || "").trim().toLowerCase();
+
+let matchedDoctors = doctors.filter((doc) => {
+  if (departmentFilter === "manual") {
+    return doc.id ? selectedIds.includes(doc.id) : false;
+  }
+  const inManual = doc.id ? selectedIds.includes(doc.id) : false;
+  if (inManual) return true;
+
+  const deptMatch =
+    !departmentFilter || departmentFilter === "Усі" || doc.department === departmentFilter;
+  const roleMatch = !roleNeedle || (doc.role || "").toLowerCase().includes(roleNeedle);
+  return deptMatch && roleMatch;
+});
+
+// Якщо за вузьким фільтром нікого не знайдено, спробуємо показати всіх фахівців підрозділу без фільтра посади
+if (matchedDoctors.length === 0 && departmentFilter && departmentFilter !== "manual" && departmentFilter !== "Усі") {
+  matchedDoctors = doctors.filter((doc) => doc.department === departmentFilter);
+}
+---
+
+<section class={`not-prose ${compact ? "my-6" : "my-12"}`}>
+  <div class="text-center mb-12 relative">
+    <span class="inline-block text-blue-600 font-black tracking-[0.25em] uppercase text-xs mb-3 px-4 py-1.5 bg-blue-50 rounded-full">
+      Експертна група
+    </span>
+
+    <h2 class="text-3xl md:text-4xl font-serif font-bold text-[#1a365d] leading-tight">
+      {title}
+    </h2>
+    {introText && (
+      <p class="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto mt-3 leading-relaxed">
+        {introText}
+      </p>
+    )}
+    <div class="w-20 h-1.5 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-5 rounded-full"></div>
+  </div>
+
+  {matchedDoctors.length > 0 ? (
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      {matchedDoctors.map((doctor) => (
+        <div class="dept-doctor-wrapper">
+          <DoctorCard doctor={doctor} />
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="max-w-2xl mx-auto text-center p-8 rounded-3xl bg-slate-50 border border-slate-200">
+      <p class="text-slate-600 text-sm sm:text-base">
+        {introText || "Наші фахівці забезпечують повний супровід і високу точність лікування на кожному етапі."}
+      </p>
+    </div>
+  )}
+
+  <div class="text-center mt-14">
+    <a
+      href="/doctors"
+      class="inline-flex items-center gap-3 px-8 py-4 bg-white border-2 border-[#1a365d] text-[#1a365d] font-bold rounded-2xl hover:bg-[#1a365d] hover:text-white transition-all duration-300 shadow-lg group active:scale-95"
+    >
+      <span>Переглянути усіх фахівців відділення</span>
+      <Icon name="bx:right-arrow-alt" class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+    </a>
+  </div>
+</section>
+
+<script>
+  function initDepartmentStaffCards() {
+    const cards = document.querySelectorAll(".doctor-card");
+    cards.forEach((card) => {
+      if (card.hasAttribute("data-card-bound")) return;
+      card.setAttribute("data-card-bound", "true");
+      card.addEventListener("click", () => {
+        if (card.classList.contains("is-expanded")) {
+          card.classList.remove("is-expanded");
+        } else {
+          cards.forEach((c) => c.classList.remove("is-expanded"));
+          card.classList.add("is-expanded");
+        }
+      });
+    });
+  }
+
+  initDepartmentStaffCards();
+  document.addEventListener("astro:after-swap", initDepartmentStaffCards);
+</script>

@@ -30,12 +30,13 @@ function buildStaffList(): Doctor[] {
       role: raw.role || 'Лікар з радіаційної онкології',
       department: raw.department || 'Мегавольтна терапія',
       initials,
-      bio: raw.bio || 'Висококваліфікований фахівець радіологічного відділення КНП «ДОКОД» ДОР.',
+      bio: raw.bio || 'Висококваліфікований фахівець радіологічного відділення КНТ «ДОКОД» ДОР.',
       image: raw.image || '/hero/raddepartment.jpg',
       experience: raw.experience || '10 років',
-      specializations: Array.isArray(raw.specializations) && raw.specializations.length > 0
-        ? raw.specializations.filter(Boolean)
-        : ['Променева терапія'],
+      specializations:
+        Array.isArray(raw.specializations) && raw.specializations.length > 0
+          ? raw.specializations.filter(Boolean)
+          : ['Променева терапія'],
       education: raw.education || '-',
       achievements: raw.achievements || '',
       color: raw.color || 'from-slate-600 to-slate-700',
@@ -49,12 +50,15 @@ function buildStaffList(): Doctor[] {
 
 export const doctors: Doctor[] = buildStaffList();
 
-// Безпечні налаштування сайту та контактів із дефолтними значеннями
+const rawHomeSections = (rawSettings as any)?.homeSections || {};
+const rawAnnouncement = (rawSettings as any)?.announcement || {};
+
+// Безпечні налаштування сайту, головної сторінки, оголошень та контактів із дефолтними значеннями
 export const siteSettings = {
-  clinicShortName: rawSettings?.clinicShortName || 'КНП "ДОКОД" ДОР',
+  clinicShortName: rawSettings?.clinicShortName || 'КНТ "ДОКОД" ДОР',
   clinicFullName:
     rawSettings?.clinicFullName ||
-    'КНП «Дніпровський обласний клінічний онкологічний диспансер» ДОР',
+    'КНТ «Дніпровський обласний клінічний онкологічний диспансер» ДОР',
   departmentName:
     rawSettings?.departmentName ||
     'Відділення променевої терапії №1 з блоком реабілітації',
@@ -66,6 +70,26 @@ export const siteSettings = {
     'Ми створили цей простір, щоб зробити складні технології зрозумілими. Тут ви знайдете повну інформацію про наше обладнання, методи лікування та кожен крок вашого шляху до одужання.',
   statsYears: rawSettings?.statsYears || '15+',
   statsPatients: rawSettings?.statsPatients || '1500+',
+  homeSections: {
+    showDepartments: rawHomeSections.showDepartments !== false,
+    showAdvantages: rawHomeSections.showAdvantages !== false,
+    showPatientJourney: rawHomeSections.showPatientJourney !== false,
+    showEquipment: rawHomeSections.showEquipment !== false,
+    showFaq: rawHomeSections.showFaq !== false,
+    showTeam: rawHomeSections.showTeam !== false,
+    showContacts: rawHomeSections.showContacts !== false,
+    showNews: rawHomeSections.showNews !== false,
+  },
+  announcement: {
+    isActive: Boolean(rawAnnouncement.isActive),
+    type: (rawAnnouncement.type === 'warning' || rawAnnouncement.type === 'urgent'
+      ? rawAnnouncement.type
+      : 'info') as 'info' | 'warning' | 'urgent',
+    title: rawAnnouncement.title || '',
+    text: rawAnnouncement.text || '',
+    buttonText: rawAnnouncement.buttonText || '',
+    buttonUrl: rawAnnouncement.buttonUrl || '',
+  },
   schedule: rawSettings?.schedule || 'Пн–Пт: 08:00 – 16:00 • Сб–Нд: вихідний',
   scheduleNote:
     rawSettings?.scheduleNote ||
@@ -86,12 +110,12 @@ export const siteSettings = {
       : [
           {
             address: 'м. Дніпро, вул. Космічна, 21',
-            subtitle: 'Корпус променевої терапії • КНП "ДОКОД" ДОР',
+            subtitle: 'Корпус променевої терапії • КНТ "ДОКОД" ДОР',
             mapUrl: 'https://maps.google.com/?q=Дніпро,+вул.+Космічна,+21',
           },
           {
             address: 'м. Дніпро, вул. Гавриленка (Ребініна), 1',
-            subtitle: 'Консультативна поліклініка • КНП "ДОКОД" ДОР',
+            subtitle: 'Консультативна поліклініка • КНТ "ДОКОД" ДОР',
             mapUrl: 'https://maps.google.com/?q=Дніпро,+вул.+Гавриленка,+1',
           },
         ],

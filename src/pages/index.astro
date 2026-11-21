@@ -2,16 +2,23 @@
 export const prerender = true;
 
 import Layout from "../layouts/Layout.astro";
+import AnnouncementBanner from "../components/AnnouncementBanner.astro";
 import Hero from "../components/hero.astro";
-import News from "../components/news.astro";
-import Contacts from "../components/contacts.astro";
-import PatientJourney from "../components/PatientJourney.astro";
+import HomeDepartments from "../components/HomeDepartments.astro";
 import HeroAbout from "../components/HeroAbout.astro";
+import PatientJourney from "../components/PatientJourney.astro";
+import HomeTeam from "../components/HomeTeam.astro";
+import Contacts from "../components/contacts.astro";
+import News from "../components/news.astro";
 import { siteSettings } from "../data";
+
+const sections = siteSettings.homeSections;
 ---
 
 <Layout title="Відділення променевої терапії">
   <main class="font-sans relative">
+    <AnnouncementBanner />
+
     <div id="dynamic-zone" class="transition-opacity duration-500 pt-4 md:pt-6">
       <Hero
         title={siteSettings.heroTitle}
@@ -20,12 +27,22 @@ import { siteSettings } from "../data";
       />
     </div>
 
-    <HeroAbout />
+    {sections.showDepartments && <HomeDepartments />}
 
-    <PatientJourney />
+    {sections.showAdvantages && <HeroAbout />}
 
-    <Contacts />
+    {(sections.showPatientJourney || sections.showEquipment || sections.showFaq) && (
+      <PatientJourney
+        showJourney={sections.showPatientJourney}
+        showEquipment={sections.showEquipment}
+        showFaq={sections.showFaq}
+      />
+    )}
 
-    <News />
+    {sections.showTeam && <HomeTeam />}
+
+    {sections.showContacts && <Contacts />}
+
+    {sections.showNews && <News />}
   </main>
 </Layout>

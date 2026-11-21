@@ -1,7 +1,11 @@
 ---
 import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
 import fullLogo from "../assets/full-logo.png";
 import { siteSettings } from "../data";
+
+const allServices = (await getCollection("services")) || [];
+const isLinacVisible = allServices.some((s) => s.id === "linac" && s.data?.isVisible !== false);
 ---
 
 <footer id="footer-section" class="mt-20 border-t border-slate-200 py-16 px-5 relative overflow-hidden">
@@ -12,7 +16,7 @@ import { siteSettings } from "../data";
         <a href="/" class="logo-wrapper block">
           <Image
             src={fullLogo}
-            alt="Логотип КНП ДОКОД ДОР"
+            alt="Логотип КНТ ДОКОД ДОР"
             class="h-16 md:h-20 w-auto object-contain drop-shadow-lg"
           />
         </a>
@@ -39,7 +43,9 @@ import { siteSettings } from "../data";
       <div class="mt-8 flex flex-wrap justify-center gap-6 text-xs font-bold text-slate-500 uppercase tracking-wider">
         <a href="/" class="hover:text-blue-600 transition-colors">Головна</a>
         <a href="/doctors" class="hover:text-blue-600 transition-colors">Персонал</a>
-        <a href="/services/linac" class="hover:text-blue-600 transition-colors">Лінійні прискорювачі</a>
+        {isLinacVisible && (
+          <a href="/services/linac" class="hover:text-blue-600 transition-colors">Лінійні прискорювачі</a>
+        )}
         <a href="/all-news" class="hover:text-blue-600 transition-colors">Новини</a>
         <a href="/vacancies" class="hover:text-blue-600 transition-colors">Вакансії</a>
         <a href="/#contacts" class="hover:text-blue-600 transition-colors">Контакти</a>
