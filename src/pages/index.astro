@@ -27,9 +27,8 @@ const sections = siteSettings.homeSections;
       />
     </div>
 
-    {sections.showDepartments && <HomeDepartments />}
-
     {sections.showAdvantages && <HeroAbout />}
+    {sections.showDepartments && <HomeDepartments />}
 
     {(sections.showPatientJourney || sections.showEquipment || sections.showFaq) && (
       <PatientJourney
