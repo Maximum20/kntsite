@@ -201,13 +201,6 @@ const searchIndex = [
 
 // Швидкі пресети для блоку "Часто шукають / Може бути корисним" (тільки видимі відділення)
 const quickPresets = [
-  {
-    label: "Підготовка до променевої терапії",
-    query: "Підготовка до променевої терапії",
-    href: "/#patient-checklist",
-    icon: "📋",
-    badge: "Чекліст"
-  },
   ...(visibleServiceIds.has("linac")
     ? [
         {
@@ -308,7 +301,7 @@ const quickChips = [
         <Icon name="bx:bx-search" class="w-5 h-5" />
       </div>
       <span class="whitespace-nowrap opacity-100 xl:opacity-0 xl:group-hover:opacity-100 transition-opacity duration-300 xl:delay-100 font-bold text-[13px] tracking-tight pr-4">
-        Розумний пошук по сайту
+        Знайти інформацію на сайті
       </span>
     </button>
   </div>
@@ -330,7 +323,7 @@ const quickChips = [
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
           <span class="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
-            Інтелектуальний пошук • КНТ «ДОКОД» ДОР
+            Пошук інформації на сайті
           </span>
         </div>
         <div class="flex items-center gap-2">
