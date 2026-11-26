@@ -1,0 +1,18 @@
+{
+  "surname": "Павленко",
+  "name": "Максим",
+  "fullNamePatronymic": "Павленко Максим Віталійович",
+  "badge": "",
+  "isHead": false,
+  "role": "medychnyi-fizyk",
+  "department": "Мегавольтна терапія",
+  "isActive": false,
+  "order": 100,
+  "showBackCard": "auto",
+  "experience": "5 років",
+  "specializations": [],
+  "bio": "Розрахунок планів в плануючій системі Monaco TPS. і всяко різне",
+  "education": "ДНУ ім. Олеся Гончара",
+  "achievements": "",
+  "color": "from-slate-600 to-slate-700"
+}
