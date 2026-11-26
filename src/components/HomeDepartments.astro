@@ -1,11 +1,31 @@
 ---
 import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
+import { siteSettings } from "../data";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+import PhotoCarousel from "./PhotoCarousel.astro";
+import { normalizeGallerySlides, resolvePhotoUrl } from "../utils/photos";
 
 const allServices = (await getCollection("services")) || [];
 const visibleServices = allServices
   .filter((s) => s.data?.isVisible !== false)
-  .sort((a, b) => (a.data?.order ?? 99) - (b.data?.order ?? 99));
+  .sort((a, b) => (a.data?.order ?? 99) - (b.data?.order ?? 99))
+  .map((service) => {
+    const gallerySlides = normalizeGallerySlides(
+      service.data.gallery,
+      service.data.title,
+      siteSettings.hideLegacyPhotos
+    );
+    const legacyPhoto =
+      gallerySlides.length === 0
+        ? resolvePhotoUrl(
+            null,
+            service.data.image || "/hero/main_page2.jpg",
+            siteSettings.hideLegacyPhotos
+          )
+        : null;
+    return { service, gallerySlides, legacyPhoto };
+  });
 ---
 
 {visibleServices.length > 0 && (
@@ -25,45 +45,89 @@ const visibleServices = allServices
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {visibleServices.map((service) => (
-        <a
-          href={`/services/${service.id}`}
-          class="dept-card group relative bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl hover:border-blue-300 hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
-        >
-          <div class="aspect-[16/10] w-full overflow-hidden bg-slate-100 relative">
-            <img
-              src={service.data.image || "/hero/main_page2.jpg"}
-              alt={service.data.title}
-              width="640"
-              height="400"
-              loading="lazy"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent"></div>
-            <div class="absolute top-4 left-4 flex items-center gap-2">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 text-slate-900 text-[10px] font-black uppercase tracking-wider shadow-sm">
-                <span>{service.data.icon || "🏥"}</span>
-                <span>{service.data.subtitle || "Напрямок"}</span>
-              </span>
-            </div>
-          </div>
+      {visibleServices.map(({ service, gallerySlides, legacyPhoto }) => {
+        const href = `/services/${service.id}`;
+        const displayName = service.data.navTitle || service.data.title;
+        return (
+          <article class="dept-card group relative bg-white/85 backdrop-blur-xl border border-slate-200/80 rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl hover:border-blue-300 hover:-translate-y-1.5 transition-all duration-300 flex flex-col">
+            <div class="aspect-[4/3] w-full overflow-hidden bg-sky-50 relative">
+              {gallerySlides.length >= 2 ? (
+                <>
+                  <PhotoCarousel
+                    slides={gallerySlides}
+                    aspectClass="aspect-[4/3]"
+                    autoplay={false}
+                    showCounter={false}
+                    showCaptions={false}
+                    compact={true}
+                    slideHref={href}
+                    ariaLabel={`Фото відділення ${displayName}`}
+                  />
+                  <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-transparent"></div>
+                </>
+              ) : gallerySlides.length === 1 ? (
+                <a href={href} class="block w-full h-full">
+                  <img
+                    src={gallerySlides[0].src}
+                    alt={gallerySlides[0].alt || service.data.title}
+                    width="640"
+                    height="480"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent"></div>
+                </a>
+              ) : legacyPhoto ? (
+                <a href={href} class="block w-full h-full">
+                  <img
+                    src={legacyPhoto}
+                    alt={service.data.title}
+                    width="640"
+                    height="480"
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/50 via-transparent to-transparent"></div>
+                </a>
+              ) : (
+                <a href={href} class="block w-full h-full">
+                  <ImagePlaceholder
+                    variant="department"
+                    title={displayName}
+                    subtitle={service.data.subtitle || "Напрямок лікування"}
+                    icon={service.data.icon}
+                    size="md"
+                  />
+                </a>
+              )}
 
-          <div class="p-6 flex flex-col flex-1">
-            <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
-              {service.data.navTitle || service.data.title}
-            </h3>
-            <p class="text-sm text-slate-600 leading-relaxed mb-5 line-clamp-3 flex-1">
-              {service.data.description || service.data.heroText}
-            </p>
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-blue-600 uppercase tracking-wider">
-              <span>Детальніше</span>
-              <span class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
-                <Icon name="bx:right-arrow-alt" class="w-5 h-5" />
-              </span>
+              <div class="pointer-events-none absolute top-4 left-4 flex items-center gap-2 z-10">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 text-slate-900 text-[10px] font-black uppercase tracking-wider shadow-sm border border-sky-100/80">
+                  <span>{service.data.icon || "🏥"}</span>
+                  <span>{service.data.subtitle || "Напрямок"}</span>
+                </span>
+              </div>
             </div>
-          </div>
-        </a>
-      ))}
+
+            <a href={href} class="p-6 flex flex-col flex-1">
+              <h3 class="text-xl font-extrabold text-slate-900 group-hover:text-blue-600 transition-colors mb-2 leading-snug">
+                {displayName}
+              </h3>
+              <p class="text-sm text-slate-600 leading-relaxed mb-5 line-clamp-3 flex-1">
+                {service.data.description || service.data.heroText}
+              </p>
+              <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-extrabold text-blue-600 uppercase tracking-wider">
+                <span>Детальніше</span>
+                <span class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-all">
+                  <Icon name="bx:right-arrow-alt" class="w-5 h-5" />
+                </span>
+              </div>
+            </a>
+          </article>
+        );
+      })}
     </div>
   </section>
 )}

@@ -422,6 +422,25 @@ html[data-theme="dark"]:not([data-a11y-contrast]) .doctor-card .card-closed span
   color: #ffffff !important;
 }
 
+/* ImagePlaceholder & PhotoCarousel dark theme refinements */
+html[data-theme="dark"]:not([data-a11y-contrast]) .img-placeholder {
+  background: linear-gradient(135deg, #10203a 0%, #152b4a 55%, #0f2538 100%) !important;
+  color: #e0f2fe !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) .img-placeholder__badge {
+  background-color: #162944 !important;
+  border-color: #2b476e !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) .doctor-card--placeholder .card-closed {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.96) 30%, rgba(15, 23, 42, 0.72) 70%, transparent 100%) !important;
+}
+html[data-theme="dark"]:not([data-a11y-contrast]) .photo-carousel__btn,
+html[data-theme="dark"]:not([data-a11y-contrast]) .photo-carousel__dots {
+  background-color: rgba(17, 27, 46, 0.9) !important;
+  border-color: #334155 !important;
+  color: #7dd3fc !important;
+}
+
 /* Fix dark-on-dark gradient clipped text (e.g., Hero "Центр", HeroAbout "Ваше", Location pill) */
 html[data-theme="dark"]:not([data-a11y-contrast]) .bg-clip-text.text-transparent.from-gray-900,
 html[data-theme="dark"]:not([data-a11y-contrast]) .bg-clip-text.text-transparent.from-slate-700 {

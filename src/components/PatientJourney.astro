@@ -1,7 +1,9 @@
 ---
 import { Icon } from "astro-icon/components";
 import { getCollection } from "astro:content";
-import { patientRouteData, equipmentData } from "../data";
+import { patientRouteData, equipmentData, siteSettings } from "../data";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+import { resolvePhotoUrl } from "../utils/photos";
 
 interface Props {
   title?: string;
@@ -280,34 +282,47 @@ const hasAnySection = showJourney || showEquipment || showFaq;
 
       {accelerators.length > 0 && (
         <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-5">
-          {accelerators.map((acc) => (
-            <div class="bg-white/90 border border-slate-200/80 rounded-3xl overflow-hidden shadow-md flex flex-col">
-              <div class="aspect-[16/10] bg-slate-100 overflow-hidden">
-                <img
-                  src={acc.image || "/hero/versahd.jpg"}
-                  alt={acc.name}
-                  width="600"
-                  height="375"
-                  loading="lazy"
-                  class="w-full h-full object-cover"
-                />
+          {accelerators.map((acc) => {
+            const accImage = resolvePhotoUrl(acc.image, "/hero/versahd.jpg", siteSettings.hideLegacyPhotos);
+            return (
+              <div class="bg-white/90 border border-slate-200/80 rounded-3xl overflow-hidden shadow-md flex flex-col">
+                <div class="aspect-[16/10] bg-sky-50 overflow-hidden">
+                  {accImage ? (
+                    <img
+                      src={accImage}
+                      alt={acc.name}
+                      width="600"
+                      height="375"
+                      loading="lazy"
+                      class="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <ImagePlaceholder
+                      variant="department"
+                      title={acc.name}
+                      subtitle="Лінійний прискорювач"
+                      icon="⚡"
+                      size="md"
+                    />
+                  )}
+                </div>
+                <div class="p-5 flex flex-col flex-1">
+                  <h4 class="font-extrabold text-slate-900 text-lg mb-2">{acc.name}</h4>
+                  {acc.imaging && (
+                    <p class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl mb-2">
+                      Візуалізація: {acc.imaging}
+                    </p>
+                  )}
+                  {acc.controlSystem && (
+                    <p class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-xl mb-2">
+                      Контроль: {acc.controlSystem}
+                    </p>
+                  )}
+                  <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">{acc.description}</p>
+                </div>
               </div>
-              <div class="p-5 flex flex-col flex-1">
-                <h4 class="font-extrabold text-slate-900 text-lg mb-2">{acc.name}</h4>
-                {acc.imaging && (
-                  <p class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1.5 rounded-xl mb-2">
-                    Візуалізація: {acc.imaging}
-                  </p>
-                )}
-                {acc.controlSystem && (
-                  <p class="text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-xl mb-2">
-                    Контроль: {acc.controlSystem}
-                  </p>
-                )}
-                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-1">{acc.description}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -285,8 +285,12 @@ const activeChip =
           (doc) => `
         <div class="dropdown-item flex items-center gap-4 p-3 rounded-2xl hover:bg-slate-50 cursor-pointer transition-colors group" 
              data-fullname="${escapeHtml(doc.name)} ${escapeHtml(doc.surname)}">
-          <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-100">
-            <img src="${escapeHtml(doc.image)}" alt="${escapeHtml(doc.name)}" class="w-full h-full object-cover" loading="lazy">
+          <div class="w-10 h-10 rounded-full overflow-hidden border border-sky-100 flex-shrink-0 bg-gradient-to-br from-sky-100 via-blue-50 to-cyan-100 flex items-center justify-center">
+            ${
+              doc.image
+                ? `<img src="${escapeHtml(doc.image)}" alt="${escapeHtml(doc.name)}" class="w-full h-full object-cover" loading="lazy">`
+                : `<span class="text-xs font-black text-blue-800 tracking-tight">${escapeHtml(doc.initials || "")}</span>`
+            }
           </div>
           <div class="min-w-0">
             <div class="text-sm font-bold text-slate-900 leading-tight group-hover:text-[#1a365d]">${escapeHtml(doc.name)} ${escapeHtml(doc.surname)}</div>

@@ -1,8 +1,18 @@
 import { config, fields, collection, singleton } from '@keystatic/core';
+import {
+  optimizedImageField,
+  KeystaticBrandMark,
+} from './src/components/keystatic/optimizedImageField';
 
 const isLocal = import.meta.env.DEV;
 
 export default config({
+  ui: {
+    brand: {
+      name: 'КНТ «ДОКОД» ДОР',
+      mark: KeystaticBrandMark,
+    },
+  },
   storage: isLocal
     ? { kind: 'local' }
     : {
@@ -54,6 +64,36 @@ export default config({
         statsPatients: fields.text({
           label: 'Статистика: пацієнтів щорічно',
           defaultValue: '1500+',
+        }),
+
+        // Керування фотографіями головної сторінки та старим фотоархівом
+        heroGallery: fields.array(
+          fields.object({
+            image: optimizedImageField({
+              label: 'Фотографія',
+              description: 'Горизонтальне фото 16:9 для верхнього слайдера на головній сторінці.',
+              directory: 'public/images/hero',
+              publicPath: '/images/hero/',
+              defaultAspect: '16:9',
+              maxWidth: 1600,
+              quality: 0.82,
+            }),
+            alt: fields.text({
+              label: 'Короткий опис фото (необовʼязково)',
+            }),
+          }),
+          {
+            label: 'Фото на головній (карусель)',
+            description:
+              'Додайте одне або декілька фото для слайдера у верхній частині головної сторінки.',
+            itemLabel: (props) => props.fields.alt.value || 'Фото на головній',
+          }
+        ),
+        hideLegacyPhotos: fields.checkbox({
+          label: 'Сховати старі фото сайту',
+          description:
+            'Якщо увімкнути, на сайті залишаться лише фото, додані через адмінку, а замість старих зʼявляться акуратні заглушки. Самі файли не видаляються.',
+          defaultValue: false,
         }),
 
         // Керування видимістю основних секцій головної сторінки
@@ -301,10 +341,14 @@ export default config({
           label: 'Закріпити в топі (показувати першою)',
           defaultValue: false,
         }),
-        image: fields.image({
-          label: 'Головне фото',
-          directory: 'src/assets/news',
-          publicPath: '/src/assets/news/',
+        image: optimizedImageField({
+          label: 'Головне фото новини',
+          description: 'Рекомендовано горизонтальне фото 16:9. Можна обрізати та стиснути прямо тут.',
+          directory: 'public/images/news',
+          publicPath: '/images/news/',
+          defaultAspect: '16:9',
+          maxWidth: 1200,
+          quality: 0.8,
         }),
         description: fields.text({ label: 'Короткий опис', multiline: true }),
         content: fields.markdoc({
@@ -367,10 +411,14 @@ export default config({
         achievements: fields.text({
           label: 'Досягнення та стажування',
         }),
-        image: fields.image({
-          label: 'Фото фахівця',
-          directory: 'public/hero/doctors',
-          publicPath: '/hero/doctors/',
+        image: optimizedImageField({
+          label: 'Фото працівника',
+          description: 'Рекомендовано вертикальний портрет 3:4. Можна обрізати та стиснути прямо тут.',
+          directory: 'public/images/staff',
+          publicPath: '/images/staff/',
+          defaultAspect: '3:4',
+          maxWidth: 800,
+          quality: 0.8,
         }),
         color: fields.text({
           label: 'Кольоровий градієнт бейджа (Tailwind)',
@@ -414,8 +462,30 @@ export default config({
           label: 'Розгорнутий вступний текст на сторінці відділення',
           multiline: true,
         }),
+        gallery: fields.array(
+          fields.object({
+            image: optimizedImageField({
+              label: 'Фотографія',
+              description: 'Рекомендований формат 4:3 (підходить і для картки, і для сторінки відділення).',
+              directory: 'public/images/services',
+              publicPath: '/images/services/',
+              defaultAspect: '4:3',
+              maxWidth: 1200,
+              quality: 0.8,
+            }),
+            caption: fields.text({
+              label: 'Підпис до фото (необовʼязково)',
+            }),
+          }),
+          {
+            label: 'Фото відділення (1-ше фото — головне на картці)',
+            description:
+              'Перше фото показується головним на картці на головній сторінці. Якщо додати 2 і більше фото — зʼявляться стрілочки гортання прямо на картці та всередині сторінки відділення.',
+            itemLabel: (props) => props.fields.caption.value || 'Фото відділення',
+          }
+        ),
         image: fields.text({
-          label: 'Шлях до фото (напр., /hero/main_page2.jpg)',
+          label: 'Старе фото (резервний шлях, можна не змінювати)',
           defaultValue: '/hero/main_page2.jpg',
         }),
         icon: fields.text({

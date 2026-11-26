@@ -1,6 +1,10 @@
 ---
 // src/components/ServiceUI.astro
 import { Icon } from "astro-icon/components";
+import PhotoCarousel from "./PhotoCarousel.astro";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+import { siteSettings } from "../data";
+import { resolvePhotoUrl, type PhotoSlide } from "../utils/photos";
 
 const {
   type = "",
@@ -8,6 +12,7 @@ const {
   subtitle = "",
   text = "",
   src = "",
+  slides = [] as PhotoSlide[],
   icon = "",
   alt = "",
   variant = "default",
@@ -19,6 +24,9 @@ const {
   comparison = {},
   open = false
 } = Astro.props;
+
+const heroGallerySlides = Array.isArray(slides) ? slides.filter((s: PhotoSlide) => Boolean(s?.src)) : [];
+const resolvedSingleSrc = resolvePhotoUrl(src, null, siteSettings.hideLegacyPhotos);
 ---
 
 {type === 'hero' && (
@@ -34,15 +42,31 @@ const {
     {/* Змінюємо сітку: даємо фото більше простору (lg:grid-cols-[1.4fr_1fr]) */}
     <div class="grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-16 items-center">
       
-      {/* Контейнер з фото */}
+      {/* Контейнер з фото / каруселлю відділення */}
       <div class="relative order-2 lg:order-1 group/hero lg:-ml-20 xl:-ml-40"> 
         {/* lg:-ml-20 висуває фото вліво за межі контейнера */}
         
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/5 to-pink-600/10 rounded-2xl lg:rounded-[3.5rem] -rotate-1 lg:-rotate-2 scale-105 blur-2xl group-hover/hero:scale-110 transition-transform duration-700"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-sky-500/15 via-blue-500/10 to-cyan-400/15 rounded-2xl lg:rounded-[3.5rem] -rotate-1 lg:-rotate-2 scale-105 blur-2xl group-hover/hero:scale-110 transition-transform duration-700 pointer-events-none"></div>
         
-        {/* Змінюємо aspect-square на 16/10 або 16/9 для широкого вигляду */}
-        <div class="relative rounded-2xl lg:rounded-[3.5rem] overflow-hidden shadow-xl border-4 lg:border-[14px] border-white bg-slate-100 aspect-[4/3] lg:aspect-[16/10] transform group-hover/hero:scale-[1.01] transition-transform duration-500">
-          {src && <img src={src} alt={alt || title} class="w-full h-full object-cover" />}
+        <div class={`relative rounded-2xl lg:rounded-[3.5rem] overflow-hidden shadow-xl border-4 lg:border-[14px] border-white bg-sky-50 ${heroGallerySlides.length > 0 ? "aspect-[4/3] lg:aspect-[16/9]" : "aspect-[4/3] lg:aspect-[16/10]"} transition-transform duration-500`}>
+          {heroGallerySlides.length > 0 ? (
+            <PhotoCarousel
+              slides={heroGallerySlides}
+              aspectClass="aspect-[4/3] lg:aspect-[16/9]"
+              eager={true}
+              ariaLabel={`Фотогалерея відділення: ${title}`}
+            />
+          ) : resolvedSingleSrc ? (
+            <img src={resolvedSingleSrc} alt={alt || title} class="w-full h-full object-cover" loading="eager" />
+          ) : (
+            <ImagePlaceholder
+              variant="department"
+              title={title}
+              subtitle={subtitle || "Напрямок лікування"}
+              icon={icon}
+              size="lg"
+            />
+          )}
         </div>
       </div>
 
@@ -158,12 +182,16 @@ const {
   <div class="my-8 lg:my-16 not-prose px-1 lg:px-0">
     <div class="relative group/img">
       <div class="absolute inset-0 bg-blue-600/5 rounded-2xl lg:rounded-[3rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      {src && (
+      {resolvedSingleSrc ? (
         <img
-          src={src}
+          src={resolvedSingleSrc}
           alt={alt}
           class="relative w-full rounded-2xl lg:rounded-[3rem] shadow-lg border-2 lg:border-[8px] border-white object-cover"
         />
+      ) : (
+        <div class="relative w-full aspect-[16/9] rounded-2xl lg:rounded-[3rem] overflow-hidden shadow-lg border-2 lg:border-[8px] border-white">
+          <ImagePlaceholder variant="department" title={alt || title} icon={icon} size="lg" />
+        </div>
       )}
     </div>
     {alt && (

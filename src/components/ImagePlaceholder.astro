@@ -1,0 +1,255 @@
+---
+export interface Props {
+  variant: "staff" | "news" | "department";
+  title?: string;
+  subtitle?: string;
+  initials?: string;
+  icon?: string;
+  size?: "sm" | "md" | "lg" | "avatar";
+  class?: string;
+}
+
+const {
+  variant = "department",
+  title = "",
+  subtitle = "",
+  initials = "",
+  icon = "",
+  size = "md",
+  class: extraClass = "",
+} = Astro.props;
+
+const cleanInitials = initials.trim().slice(0, 3).toUpperCase();
+const cleanIcon = icon.trim();
+const cleanTitle = title.trim();
+const cleanSubtitle = subtitle.trim();
+const ariaLabel = cleanTitle || cleanSubtitle || (
+  variant === "staff"
+    ? "Фото спеціаліста буде додано найближчим часом"
+    : variant === "news"
+      ? "Ілюстрація публікації"
+      : "Зображення відділення"
+);
+---
+
+{size === "avatar" ? (
+  <div
+    class={`img-placeholder img-placeholder--avatar img-placeholder--${variant} w-full h-full flex items-center justify-center bg-gradient-to-br from-sky-100 via-blue-50 to-cyan-100 text-sky-700 select-none ${extraClass}`}
+    role="img"
+    aria-label={ariaLabel}
+  >
+    {cleanInitials ? (
+      <span class="font-serif font-bold text-lg md:text-2xl tracking-tight text-blue-800">
+        {cleanInitials}
+      </span>
+    ) : (
+      <svg
+        class="w-1/2 h-1/2 text-sky-600/80"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M5 20a7 7 0 0 1 14 0" />
+      </svg>
+    )}
+  </div>
+) : (
+  <div
+    class={`img-placeholder img-placeholder--${variant} relative w-full h-full overflow-hidden flex flex-col items-center justify-center text-center select-none ${
+      variant === "staff"
+        ? "bg-gradient-to-br from-sky-50 via-blue-50/95 to-cyan-50/90"
+        : variant === "news"
+          ? "bg-gradient-to-br from-sky-100/85 via-blue-50 to-cyan-100/75"
+          : "bg-gradient-to-br from-blue-50/95 via-sky-50 to-cyan-50/85"
+    } ${extraClass}`}
+    role="img"
+    aria-label={ariaLabel}
+  >
+    {/* Декоративне фонове сяйво та делікатна сітка */}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-sky-300/25 blur-2xl"></div>
+      <div class="absolute -bottom-14 -left-10 w-48 h-48 rounded-full bg-blue-300/20 blur-2xl"></div>
+
+      {variant === "department" && (
+        <svg
+          class="absolute inset-0 w-full h-full opacity-35 text-sky-300"
+          viewBox="0 0 400 300"
+          fill="none"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <circle cx="200" cy="150" r="68" stroke="currentColor" stroke-width="1" stroke-dasharray="4 6" />
+          <circle cx="200" cy="150" r="112" stroke="currentColor" stroke-width="1" opacity="0.7" />
+          <circle cx="200" cy="150" r="158" stroke="currentColor" stroke-width="1" opacity="0.4" />
+          <path d="M0 245 Q100 220 200 245 T400 245" stroke="currentColor" stroke-width="1.2" opacity="0.6" />
+        </svg>
+      )}
+
+      {variant === "news" && (
+        <svg
+          class="absolute inset-0 w-full h-full opacity-40 text-sky-300"
+          viewBox="0 0 400 250"
+          fill="none"
+          preserveAspectRatio="xMidYMid slice"
+        >
+          <path d="M-20 190 C 90 130, 170 230, 290 165 C 350 135, 390 155, 430 140" stroke="currentColor" stroke-width="1.5" />
+          <path d="M-20 215 C 100 160, 190 250, 310 190 C 365 162, 400 180, 430 168" stroke="currentColor" stroke-width="1" opacity="0.6" />
+          <circle cx="66" cy="52" r="24" stroke="currentColor" stroke-width="1" opacity="0.5" />
+          <circle cx="342" cy="58" r="16" stroke="currentColor" stroke-width="1" opacity="0.5" />
+        </svg>
+      )}
+
+      {variant === "staff" && (
+        <div
+          class="absolute inset-0 opacity-30"
+          style="background-image: radial-gradient(rgba(56, 189, 248, 0.45) 1px, transparent 1px); background-size: 20px 20px;"
+        ></div>
+      )}
+    </div>
+
+    {/* Основна композиція заглушки */}
+    <div class="relative z-10 flex flex-col items-center justify-center px-5 py-4 max-w-full">
+      {variant === "staff" && (
+        <>
+          <div class="relative mb-3">
+            <div
+              class={`img-placeholder__badge rounded-full bg-white/90 backdrop-blur-md border border-sky-200/80 shadow-lg shadow-sky-900/5 flex items-center justify-center ${
+                size === "lg"
+                  ? "w-28 h-28 md:w-32 md:h-32"
+                  : size === "sm"
+                    ? "w-16 h-16"
+                    : "w-24 h-24 md:w-28 md:h-28"
+              }`}
+            >
+              {/* Акуратний медичний силует фахівця */}
+              <svg
+                class={`${size === "sm" ? "w-9 h-9" : "w-14 h-14 md:w-16 md:h-16"} text-sky-600`}
+                viewBox="0 0 64 64"
+                fill="none"
+                aria-hidden="true"
+              >
+                <circle cx="32" cy="21" r="10.5" fill="currentColor" fill-opacity="0.16" stroke="currentColor" stroke-width="2.2" />
+                <path
+                  d="M14 53C14 43.0589 22.0589 35 32 35C41.9411 35 50 43.0589 50 53"
+                  fill="currentColor"
+                  fill-opacity="0.12"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                />
+                {/* Делікатний контур медичного халата / стетоскопа */}
+                <path d="M25 36.5L32 45L39 36.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M32 45V52" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                <circle cx="40.5" cy="46.5" r="2.2" fill="currentColor" />
+              </svg>
+            </div>
+
+            {cleanInitials && (
+              <span
+                class={`img-placeholder__initials absolute -bottom-1 -right-1 rounded-full bg-gradient-to-br from-blue-600 to-sky-500 text-white font-black tracking-wider shadow-md border-2 border-white flex items-center justify-center ${
+                  size === "sm" ? "w-7 h-7 text-[10px]" : "w-10 h-10 text-xs"
+                }`}
+              >
+                {cleanInitials}
+              </span>
+            )}
+          </div>
+
+          {cleanSubtitle && size !== "sm" && (
+            <span class="px-3 py-1 rounded-full bg-white/80 border border-sky-200/70 text-[10px] font-bold uppercase tracking-[0.18em] text-sky-700 max-w-full truncate">
+              {cleanSubtitle}
+            </span>
+          )}
+        </>
+      )}
+
+      {variant === "news" && (
+        <>
+          <div
+            class={`img-placeholder__badge rounded-2xl bg-white/90 backdrop-blur-md border border-sky-200/80 shadow-lg shadow-sky-900/5 flex items-center justify-center mb-3 ${
+              size === "lg" ? "w-20 h-20" : size === "sm" ? "w-12 h-12" : "w-16 h-16"
+            }`}
+          >
+            {/* Делікатна іконка публікації */}
+            <svg
+              class={`${size === "lg" ? "w-10 h-10" : size === "sm" ? "w-6 h-6" : "w-8 h-8"} text-blue-600`}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h11A1.5 1.5 0 0 1 18 5.5V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5.5Z" fill="currentColor" fill-opacity="0.08" />
+              <path d="M18 8h1.5A1.5 1.5 0 0 1 21 9.5V18a3 3 0 0 1-3 3" />
+              <line x1="8" y1="8.5" x2="14" y2="8.5" />
+              <line x1="8" y1="12.5" x2="14" y2="12.5" />
+              <line x1="8" y1="16.5" x2="11.5" y2="16.5" />
+            </svg>
+          </div>
+          <span class="px-3 py-1 rounded-full bg-white/80 backdrop-blur-xs border border-sky-200/70 text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
+            {cleanSubtitle || "Публікація центру"}
+          </span>
+        </>
+      )}
+
+      {variant === "department" && (
+        <>
+          <div class="relative mb-3">
+            <div
+              class={`img-placeholder__badge rounded-[1.5rem] bg-white/92 backdrop-blur-md border border-sky-200/80 shadow-lg shadow-blue-900/5 flex items-center justify-center ${
+                size === "lg"
+                  ? "w-24 h-24 md:w-28 md:h-28 text-4xl md:text-5xl"
+                  : size === "sm"
+                    ? "w-14 h-14 text-2xl"
+                    : "w-20 h-20 text-3xl md:text-4xl"
+              }`}
+            >
+              {cleanIcon ? (
+                <span aria-hidden="true" class="leading-none">{cleanIcon}</span>
+              ) : (
+                <svg
+                  class={`${size === "lg" ? "w-12 h-12" : size === "sm" ? "w-7 h-7" : "w-10 h-10"} text-blue-600`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="5" fill="currentColor" fill-opacity="0.08" />
+                  <path d="M12 7.5v9" />
+                  <path d="M7.5 12h9" />
+                </svg>
+              )}
+            </div>
+
+            <span
+              class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center shadow-sm border-2 border-white"
+              aria-hidden="true"
+            >
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+                <path d="M12 6v12M6 12h12" />
+              </svg>
+            </span>
+          </div>
+
+          {cleanTitle && size !== "sm" && (
+            <p class="text-sm md:text-base font-extrabold text-slate-800 max-w-[260px] line-clamp-2 leading-snug mb-1">
+              {cleanTitle}
+            </p>
+          )}
+          <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-700/80">
+            {cleanSubtitle || "Центр променевої терапії"}
+          </span>
+        </>
+      )}
+    </div>
+  </div>
+)}

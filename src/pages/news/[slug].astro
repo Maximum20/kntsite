@@ -5,6 +5,9 @@ import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
+import ImagePlaceholder from "../../components/ImagePlaceholder.astro";
+import { siteSettings } from "../../data";
+import { resolvePhotoUrl } from "../../utils/photos";
 
 export async function getStaticPaths() {
   const newsEntries = await getCollection("news");
@@ -17,6 +20,13 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 if (!entry) return Astro.redirect("/all-news");
 const { Content } = await render(entry);
+
+const rawImg = entry.data.image;
+const isStringImg = typeof rawImg === "string";
+const resolvedStringImg = isStringImg
+  ? resolvePhotoUrl(rawImg, null, siteSettings.hideLegacyPhotos)
+  : null;
+const hasAssetImg = Boolean(rawImg && !isStringImg);
 
 const wordsPerMinute = 200;
 const words = entry.body ? entry.body.split(/\s+/g).length : 0;
@@ -46,15 +56,30 @@ const readingTime = Math.max(1, Math.ceil(words / wordsPerMinute));
     </div>
 
     <header class="grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-16 items-start mb-16">
-      {entry.data.image && (
-        <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-slate-50 relative group">
+      <div class="rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-sky-50 relative group">
+        {hasAssetImg ? (
           <Image
-            src={entry.data.image}
+            src={rawImg as any}
             alt={entry.data.title}
             class="w-full max-h-[500px] md:max-h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
           />
-        </div>
-      )}
+        ) : resolvedStringImg ? (
+          <img
+            src={resolvedStringImg}
+            alt={entry.data.title}
+            class="w-full max-h-[500px] md:max-h-[600px] object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div class="aspect-[16/10] w-full">
+            <ImagePlaceholder
+              variant="news"
+              title={entry.data.title}
+              subtitle={entry.data.category || "Новина"}
+              size="lg"
+            />
+          </div>
+        )}
+      </div>
 
       <div class="flex flex-col">
         <div class="flex flex-wrap items-center gap-3 mb-4">

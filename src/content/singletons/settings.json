@@ -8,6 +8,8 @@
   "heroDescription": "Ми створили цей простір, щоб зробити складні технології зрозумілими. Тут ви знайдете повну інформацію про наше обладнання, методи лікування та кожен крок вашого шляху до одужання.",
   "statsYears": "15+",
   "statsPatients": "2500+",
+  "heroGallery": [],
+  "hideLegacyPhotos": false,
   "homeSections": {
     "showDepartments": true,
     "showAdvantages": true,

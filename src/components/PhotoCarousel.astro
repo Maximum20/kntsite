@@ -1,0 +1,383 @@
+---
+import type { PhotoSlide } from "../utils/photos";
+
+export interface Props {
+  slides: PhotoSlide[];
+  aspectClass?: string;
+  autoplay?: boolean;
+  interval?: number;
+  showCounter?: boolean;
+  showCaptions?: boolean;
+  compact?: boolean;
+  slideHref?: string;
+  eager?: boolean;
+  ariaLabel?: string;
+  class?: string;
+}
+
+const {
+  slides = [],
+  aspectClass = "aspect-[16/9]",
+  autoplay = true,
+  interval = 5000,
+  showCounter = true,
+  showCaptions = true,
+  compact = false,
+  slideHref = "",
+  eager = false,
+  ariaLabel = "Фотогалерея",
+  class: extraClass = "",
+} = Astro.props;
+
+const safeSlides = Array.isArray(slides) ? slides.filter((s) => Boolean(s?.src)) : [];
+const hasMultiple = safeSlides.length > 1;
+---
+
+{safeSlides.length > 0 && (
+  <div
+    class={`photo-carousel relative w-full ${aspectClass} overflow-hidden bg-sky-50/80 select-none group/carousel ${extraClass}`}
+    data-photo-carousel
+    data-autoplay={autoplay && hasMultiple ? "true" : "false"}
+    data-interval={String(interval)}
+    role="region"
+    aria-roledescription={hasMultiple ? "carousel" : undefined}
+    aria-label={ariaLabel}
+    tabindex={hasMultiple ? "0" : undefined}
+  >
+    {/* Стрічка слайдів */}
+    <div
+      class="photo-carousel__track flex h-full w-full transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform"
+      data-carousel-track
+    >
+      {safeSlides.map((slide, idx) => (
+        <div
+          class="photo-carousel__slide relative w-full h-full shrink-0 overflow-hidden"
+          data-carousel-slide
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`${idx + 1} з ${safeSlides.length}`}
+        >
+          {slideHref ? (
+            <a
+              href={slideHref}
+              class="block w-full h-full"
+              aria-label={slide.alt || ariaLabel}
+            >
+              <img
+                src={slide.src}
+                alt={slide.alt}
+                loading={eager && idx === 0 ? "eager" : "lazy"}
+                decoding={eager && idx === 0 ? "sync" : "async"}
+                draggable="false"
+                class="w-full h-full object-cover pointer-events-none transition-transform duration-700 group-hover:scale-105"
+              />
+            </a>
+          ) : (
+            <img
+              src={slide.src}
+              alt={slide.alt}
+              loading={eager && idx === 0 ? "eager" : "lazy"}
+              decoding={eager && idx === 0 ? "sync" : "async"}
+              draggable="false"
+              class="w-full h-full object-cover pointer-events-none"
+            />
+          )}
+
+          {showCaptions && slide.caption && (
+            <>
+              <div class="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-slate-900/65 via-slate-900/20 to-transparent"></div>
+              <div class={`absolute left-3 right-3 sm:left-5 sm:right-5 ${hasMultiple ? "bottom-12 sm:bottom-14" : "bottom-4"} z-10 pointer-events-none`}>
+                <p class="inline-block max-w-full px-3.5 py-2 rounded-2xl bg-white/90 backdrop-blur-md border border-sky-100/90 text-slate-800 text-xs sm:text-sm font-semibold shadow-md leading-snug">
+                  {slide.caption}
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+      ))}
+    </div>
+
+    {hasMultiple && (
+      <>
+        {/* Лічильник слайдів у світло-блакитній стилістиці */}
+        {showCounter && (
+          <div class="pointer-events-none absolute top-3 right-3 sm:top-4 sm:right-4 z-20 px-3 py-1 rounded-full bg-white/88 backdrop-blur-md border border-sky-200/80 text-sky-800 text-[11px] font-black tracking-wider shadow-sm">
+            <span data-carousel-current>1</span>
+            <span class="text-sky-400 mx-0.5">/</span>
+            <span>{safeSlides.length}</span>
+          </div>
+        )}
+
+        {/* Стрілка "Назад" */}
+        <button
+          type="button"
+          data-carousel-prev
+          aria-label="Попереднє фото"
+          class={`photo-carousel__btn absolute top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/90 hover:bg-sky-50 active:scale-95 border border-sky-200/80 text-sky-700 hover:text-blue-600 shadow-lg shadow-sky-900/10 backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:opacity-100 ${
+            compact
+              ? "left-2.5 w-8 h-8 opacity-95"
+              : "left-2.5 sm:left-4 w-9 h-9 sm:w-11 sm:h-11 opacity-90 sm:opacity-80 sm:group-hover/carousel:opacity-100"
+          }`}
+        >
+          <svg class={compact ? "w-4 h-4" : "w-5 h-5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        {/* Стрілка "Вперед" */}
+        <button
+          type="button"
+          data-carousel-next
+          aria-label="Наступне фото"
+          class={`photo-carousel__btn absolute top-1/2 -translate-y-1/2 z-20 rounded-full bg-white/90 hover:bg-sky-50 active:scale-95 border border-sky-200/80 text-sky-700 hover:text-blue-600 shadow-lg shadow-sky-900/10 backdrop-blur-md flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:opacity-100 ${
+            compact
+              ? "right-2.5 w-8 h-8 opacity-95"
+              : "right-2.5 sm:right-4 w-9 h-9 sm:w-11 sm:h-11 opacity-90 sm:opacity-80 sm:group-hover/carousel:opacity-100"
+          }`}
+        >
+          <svg class={compact ? "w-4 h-4" : "w-5 h-5"} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+
+        {/* Індикатори-крапки */}
+        <div
+          class={`photo-carousel__dots absolute left-1/2 -translate-x-1/2 z-20 inline-flex items-center gap-1.5 rounded-full bg-white/88 backdrop-blur-md border border-sky-200/80 shadow-md shadow-sky-900/10 ${
+            compact ? "bottom-2.5 px-2.5 py-1" : "bottom-3 sm:bottom-4 px-3 py-1.5"
+          }`}
+          role="tablist"
+          aria-label="Навігація по слайдах"
+        >
+          {safeSlides.map((_, idx) => (
+            <button
+              type="button"
+              data-carousel-dot={idx}
+              aria-label={`Перейти до фото ${idx + 1}`}
+              aria-current={idx === 0 ? "true" : "false"}
+              class={`photo-carousel__dot ${compact ? "h-1.5" : "h-2"} rounded-full transition-all duration-300 cursor-pointer ${
+                idx === 0
+                  ? compact
+                    ? "w-5 bg-blue-600"
+                    : "w-6 bg-blue-600"
+                  : compact
+                    ? "w-1.5 bg-sky-300 hover:bg-sky-400"
+                    : "w-2 bg-sky-300 hover:bg-sky-400"
+              }`}
+            />
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+)}
+
+<style>
+  .photo-carousel {
+    touch-action: pan-y;
+  }
+  .photo-carousel:focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  function initPhotoCarousels() {
+    const carousels = document.querySelectorAll<HTMLElement>("[data-photo-carousel]");
+
+    carousels.forEach((root) => {
+      if (root.dataset.carouselBound === "true") return;
+      root.dataset.carouselBound = "true";
+
+      const track = root.querySelector<HTMLElement>("[data-carousel-track]");
+      const slides = root.querySelectorAll<HTMLElement>("[data-carousel-slide]");
+      const prevBtn = root.querySelector<HTMLButtonElement>("[data-carousel-prev]");
+      const nextBtn = root.querySelector<HTMLButtonElement>("[data-carousel-next]");
+      const dotsWrap = root.querySelector<HTMLElement>(".photo-carousel__dots");
+      const dots = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-carousel-dot]"));
+      const counterEl = root.querySelector<HTMLElement>("[data-carousel-current]");
+
+      const total = slides.length;
+      if (!track || total <= 1) return;
+
+      const autoplayEnabled = root.dataset.autoplay === "true";
+      const intervalMs = Math.max(2500, Number(root.dataset.interval) || 5000);
+      const isCompact = Boolean(dots[0]?.classList.contains("h-1.5"));
+
+      let currentIndex = 0;
+      let timerId: number | null = null;
+      let isPaused = false;
+
+      const isReducedMotion = () =>
+        document.documentElement.getAttribute("data-a11y-motion") === "reduce" ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      function render(index: number) {
+        currentIndex = ((index % total) + total) % total;
+        if (track) {
+          track.style.transform = `translate3d(-${currentIndex * 100}%, 0, 0)`;
+        }
+        if (counterEl) {
+          counterEl.textContent = String(currentIndex + 1);
+        }
+        const activeWidth = isCompact ? "w-5" : "w-6";
+        const idleWidth = isCompact ? "w-1.5" : "w-2";
+        dots.forEach((dot, idx) => {
+          const active = idx === currentIndex;
+          dot.setAttribute("aria-current", active ? "true" : "false");
+          dot.classList.toggle(activeWidth, active);
+          dot.classList.toggle("bg-blue-600", active);
+          dot.classList.toggle(idleWidth, !active);
+          dot.classList.toggle("bg-sky-300", !active);
+          dot.classList.toggle("hover:bg-sky-400", !active);
+        });
+      }
+
+      function stopTimer() {
+        if (timerId !== null) {
+          window.clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function startTimer() {
+        stopTimer();
+        if (!autoplayEnabled || isPaused || document.hidden || isReducedMotion()) return;
+        timerId = window.setInterval(() => {
+          if (!document.body.contains(root)) {
+            stopTimer();
+            return;
+          }
+          render(currentIndex + 1);
+        }, intervalMs);
+      }
+
+      const swallow = (e: Event) => {
+        e.preventDefault();
+        e.stopPropagation();
+      };
+
+      dotsWrap?.addEventListener("click", swallow);
+
+      prevBtn?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        render(currentIndex - 1);
+        startTimer();
+      });
+
+      nextBtn?.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        render(currentIndex + 1);
+        startTimer();
+      });
+
+      dots.forEach((dot, idx) => {
+        dot.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          render(idx);
+          startTimer();
+        });
+      });
+
+      // Пауза при наведенні курсора та фокусі
+      root.addEventListener("mouseenter", () => {
+        isPaused = true;
+        stopTimer();
+      });
+
+      root.addEventListener("mouseleave", () => {
+        isPaused = false;
+        startTimer();
+      });
+
+      root.addEventListener("focusin", () => {
+        isPaused = true;
+        stopTimer();
+      });
+
+      root.addEventListener("focusout", (e) => {
+        if (!root.contains(e.relatedTarget as Node | null)) {
+          isPaused = false;
+          startTimer();
+        }
+      });
+
+      // Клавіатурна навігація
+      root.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          render(currentIndex - 1);
+          startTimer();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          render(currentIndex + 1);
+          startTimer();
+        }
+      });
+
+      // Свайп на мобільних (тач-жести без блокування вертикального скролу)
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isHorizontalSwipe = false;
+
+      root.addEventListener(
+        "touchstart",
+        (e) => {
+          if (e.touches.length !== 1) return;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isHorizontalSwipe = false;
+          isPaused = true;
+          stopTimer();
+        },
+        { passive: true }
+      );
+
+      root.addEventListener(
+        "touchmove",
+        (e) => {
+          if (e.touches.length !== 1) return;
+          const dx = e.touches[0].clientX - touchStartX;
+          const dy = e.touches[0].clientY - touchStartY;
+          if (!isHorizontalSwipe && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) {
+            isHorizontalSwipe = true;
+          }
+        },
+        { passive: true }
+      );
+
+      root.addEventListener(
+        "touchend",
+        (e) => {
+          if (e.changedTouches.length > 0) {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if ((isHorizontalSwipe || Math.abs(dx) > Math.abs(dy)) && Math.abs(dx) > 40) {
+              render(dx < 0 ? currentIndex + 1 : currentIndex - 1);
+            }
+          }
+          isPaused = false;
+          startTimer();
+        },
+        { passive: true }
+      );
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+          stopTimer();
+        } else {
+          startTimer();
+        }
+      });
+
+      render(0);
+      startTimer();
+    });
+  }
+
+  initPhotoCarousels();
+  document.addEventListener("astro:after-swap", initPhotoCarousels);
+</script>

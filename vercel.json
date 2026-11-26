@@ -42,7 +42,16 @@
       ]
     },
     {
-      "source": "/(keystatic|api/keystatic)(.*)",
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=2592000"
+        }
+      ]
+    },
+    {
+      "source": "/(keystatic|api/keystatic|tools)(.*)",
       "headers": [
         {
           "key": "X-Robots-Tag",

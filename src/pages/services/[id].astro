@@ -9,6 +9,8 @@ import LinearAccelerators from "../../components/LinearAccelerators.astro";
 import DepartmentStaff from "../../components/DepartmentStaff.astro";
 import { getCollection, render } from "astro:content";
 import { formatRichText, formatInlineMarkdown } from "../../utils/formatText";
+import { siteSettings } from "../../data";
+import { normalizeGallerySlides, resolvePhotoUrl } from "../../utils/photos";
 
 export async function getStaticPaths() {
   const serviceEntries = await getCollection("services");
@@ -30,6 +32,16 @@ const { Content } = await render(entry);
 const data = entry.data;
 const sections = Array.isArray(data.sections) ? data.sections : [];
 const hasExtraMarkdownBody = Boolean((entry.body || "").trim());
+const gallerySlides = normalizeGallerySlides(
+  data.gallery,
+  data.heroTitle || data.title || "Відділення",
+  siteSettings.hideLegacyPhotos
+);
+const heroFallbackSrc = resolvePhotoUrl(
+  null,
+  data.image || "/hero/main_page2.jpg",
+  siteSettings.hideLegacyPhotos
+);
 
 function renderTabSectionsHtml(tabSections: any[]): string {
   if (!Array.isArray(tabSections)) return "";
@@ -67,12 +79,14 @@ function renderTabSectionsHtml(tabSections: any[]): string {
 
   <main class="w-full font-sans">
     <div class="max-w-[1600px] mx-auto px-4 sm:px-10 pt-10 sm:pt-20 pb-32">
-      {/* Головний Hero-блок відділення */}
+      {/* Головний Hero-блок відділення з каруселлю або заглушкою */}
       <ServiceUI
         type="hero"
         subtitle={data.subtitle || "Напрямок лікування"}
         title={data.heroTitle || data.title}
-        src={data.image || "/hero/main_page2.jpg"}
+        slides={gallerySlides}
+        src={heroFallbackSrc || ""}
+        icon={data.icon || ""}
         text={data.heroText || data.description}
       />
 

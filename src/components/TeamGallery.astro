@@ -3,8 +3,11 @@ import { Icon } from "astro-icon/components";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { siteSettings } from "../data";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+import { resolvePhotoUrl } from "../utils/photos";
 
-const teamPhotos = [
+const rawTeamPhotos = [
   {
     url: "/hero/doctors/physicsteam.jpg",
     title: "Інженерно-фізична група",
@@ -22,6 +25,13 @@ const teamPhotos = [
     title: "Команда фізиків та інженерів",
   },
 ];
+
+const teamPhotos = rawTeamPhotos
+  .map((photo) => ({
+    ...photo,
+    url: resolvePhotoUrl(photo.url, null, siteSettings.hideLegacyPhotos),
+  }))
+  .filter((photo): photo is { url: string; title: string } => Boolean(photo.url));
 ---
 
 <section class="relative z-10 max-w-[1400px] mx-auto px-6 py-20">
@@ -32,45 +42,57 @@ const teamPhotos = [
     <div class="w-20 h-1.5 bg-slate-800 mt-6 rounded-full hidden md:block"></div>
   </div>
 
-  <div class="relative group">
-    <div class="swiper team-swiper rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl border border-white/80 bg-white/50 backdrop-blur-md">
-      <div class="swiper-wrapper">
-        {teamPhotos.map((photo) => (
-          <div class="swiper-slide flex flex-col">
-            <div class="relative w-full aspect-[16/10] bg-slate-100">
-              <img
-                src={photo.url}
-                alt={photo.title}
-                width="1200"
-                height="750"
-                loading="lazy"
-                class="w-full h-full block object-cover"
-              />
+  {teamPhotos.length > 0 ? (
+    <div class="relative group">
+      <div class="swiper team-swiper rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-2xl border border-white/80 bg-white/50 backdrop-blur-md">
+        <div class="swiper-wrapper">
+          {teamPhotos.map((photo) => (
+            <div class="swiper-slide flex flex-col">
+              <div class="relative w-full aspect-[16/10] bg-slate-100">
+                <img
+                  src={photo.url}
+                  alt={photo.title}
+                  width="1200"
+                  height="750"
+                  loading="lazy"
+                  class="w-full h-full block object-cover"
+                />
 
-              <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
+                <div class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent pointer-events-none"></div>
 
-              <div class="absolute bottom-6 left-6 md:bottom-10 md:left-10">
-                <span class="px-4 py-2 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">
-                  {photo.title}
-                </span>
+                <div class="absolute bottom-6 left-6 md:bottom-10 md:left-10">
+                  <span class="px-4 py-2 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-xl">
+                    {photo.title}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <!-- Кнопки навігації -->
-      <div class="team-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
-        <Icon name="bx:left-arrow-alt" class="w-8 h-8" />
-      </div>
-      <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
-        <Icon name="bx:right-arrow-alt" class="w-8 h-8" />
-      </div>
+        <!-- Кнопки навігації -->
+        <div class="team-prev absolute left-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+          <Icon name="bx:left-arrow-alt" class="w-8 h-8" />
+        </div>
+        <div class="team-next absolute right-6 top-1/2 -translate-y-1/2 z-20 w-14 h-14 rounded-2xl backdrop-blur-xl bg-white/20 border border-white/30 flex items-center justify-center text-white cursor-pointer hover:bg-white/40 transition-all opacity-0 group-hover:opacity-100 shadow-2xl">
+          <Icon name="bx:right-arrow-alt" class="w-8 h-8" />
+        </div>
 
-      <!-- Пагінація -->
-      <div class="team-pagination !bottom-8"></div>
+        <!-- Пагінація -->
+        <div class="team-pagination !bottom-8"></div>
+      </div>
     </div>
-  </div>
+  ) : (
+    <div class="rounded-[2.5rem] md:rounded-[3.5rem] overflow-hidden shadow-xl border-4 border-white aspect-[16/10] max-h-[540px]">
+      <ImagePlaceholder
+        variant="staff"
+        initials="МФ"
+        title="Команда медичних фізиків"
+        subtitle="Інженерно-фізична група • КНТ «ДОКОД» ДОР"
+        size="lg"
+      />
+    </div>
+  )}
 </section>
 
 <style is:global>
@@ -98,6 +120,7 @@ const teamPhotos = [
   import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
   function initTeamSwiper() {
+    if (!document.querySelector(".team-swiper")) return;
     new Swiper(".team-swiper", {
       modules: [Navigation, Pagination, Autoplay],
       slidesPerView: 1,

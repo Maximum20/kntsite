@@ -1,7 +1,9 @@
 ---
-import { equipmentData } from "../data";
+import { equipmentData, siteSettings } from "../data";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
+import { resolvePhotoUrl } from "../utils/photos";
 
-const accelerators =
+const rawAccelerators =
   equipmentData.accelerators && equipmentData.accelerators.length > 0
     ? equipmentData.accelerators
     : [
@@ -30,6 +32,14 @@ const accelerators =
             "Найсучасніша система з контролем дихання і високоточним позиціонуванням BrainLAB для складних випадків",
         },
       ];
+
+const accelerators = rawAccelerators.map((acc) => ({
+  ...acc,
+  resolvedImage: resolvePhotoUrl(acc.image, "/hero/versahd.jpg", siteSettings.hideLegacyPhotos),
+}));
+
+const brainlabPhoto1 = resolvePhotoUrl("/hero/brain1.jpg", null, siteSettings.hideLegacyPhotos);
+const brainlabPhoto2 = resolvePhotoUrl("/hero/brain0.jpg", null, siteSettings.hideLegacyPhotos);
 ---
 
 <section id="accelerators" class="linear-accelerators scroll-mt-28">
@@ -43,13 +53,23 @@ const accelerators =
       {accelerators.map((acc) => (
         <div class="accelerator-card">
           <div class="card-image">
-            <img
-              src={acc.image || "/hero/versahd.jpg"}
-              alt={acc.name}
-              width="600"
-              height="400"
-              loading="lazy"
-            />
+            {acc.resolvedImage ? (
+              <img
+                src={acc.resolvedImage}
+                alt={acc.name}
+                width="600"
+                height="400"
+                loading="lazy"
+              />
+            ) : (
+              <ImagePlaceholder
+                variant="department"
+                title={acc.name}
+                subtitle="Лінійний прискорювач"
+                icon="⚡"
+                size="md"
+              />
+            )}
           </div>
           <div class="card-content">
             <h3 class="card-title">{acc.name}</h3>
@@ -87,22 +107,46 @@ const accelerators =
       </div>
       <div class="brainlab-gallery">
         <div class="brainlab-image">
-          <img
-            src="/hero/brain1.jpg"
-            alt="Система BrainLAB - контрольна панель"
-            width="700"
-            height="450"
-            loading="lazy"
-          />
+          {brainlabPhoto1 ? (
+            <img
+              src={brainlabPhoto1}
+              alt="Система BrainLAB - контрольна панель"
+              width="700"
+              height="450"
+              loading="lazy"
+            />
+          ) : (
+            <div class="h-[260px] md:h-[360px]">
+              <ImagePlaceholder
+                variant="department"
+                title="BrainLAB ExacTrac Dynamic"
+                subtitle="Контрольна панель"
+                icon="🎯"
+                size="md"
+              />
+            </div>
+          )}
         </div>
         <div class="brainlab-image">
-          <img
-            src="/hero/brain0.jpg"
-            alt="Система BrainLAB - робоче місце"
-            width="700"
-            height="450"
-            loading="lazy"
-          />
+          {brainlabPhoto2 ? (
+            <img
+              src={brainlabPhoto2}
+              alt="Система BrainLAB - робоче місце"
+              width="700"
+              height="450"
+              loading="lazy"
+            />
+          ) : (
+            <div class="h-[260px] md:h-[360px]">
+              <ImagePlaceholder
+                variant="department"
+                title="BrainLAB ExacTrac Dynamic"
+                subtitle="Система навігації"
+                icon="🔬"
+                size="md"
+              />
+            </div>
+          )}
         </div>
       </div>
       <div class="brainlab-features">

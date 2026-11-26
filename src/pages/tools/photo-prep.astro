@@ -1,0 +1,934 @@
+---
+export const prerender = true;
+
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout
+  title="Підготовка фото для сайту (WebP)"
+  description="Внутрішня утиліта для обрізки та оптимізації зображень у WebP перед завантаженням у Keystatic."
+  hideSubNav={true}
+  noindex={true}
+>
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 font-sans">
+    {/* Заголовок утиліти */}
+    <div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+      <div>
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-50 border border-sky-200 text-sky-700 text-[11px] font-black uppercase tracking-[0.18em] mb-3">
+          <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+          <span>Внутрішній інструмент • Локальна обробка в браузері</span>
+        </div>
+        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+          Підготовка фото <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">у WebP</span>
+        </h1>
+        <p class="text-slate-600 text-sm sm:text-base mt-2 max-w-2xl">
+          Обрізайте зображення під точні пропорції сайту, перевіряйте економію розміру в реальному часі та завантажуйте готовий <code>.webp</code> файл для Keystatic. Фото не надсилаються на сервер — усе працює прямо у вашому браузері.
+        </p>
+      </div>
+
+      <button
+        id="resetToolBtn"
+        type="button"
+        class="hidden self-start md:self-auto inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-slate-700 hover:text-blue-700 font-bold text-xs uppercase tracking-wider shadow-xs transition-all cursor-pointer"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+        </svg>
+        <span>Завантажити інше фото</span>
+      </button>
+    </div>
+
+    {/* Зона Drag & Drop (показується до вибору фото) */}
+    <section id="dropZoneSection" class="mb-8">
+      <div
+        id="dropZone"
+        role="button"
+        tabindex="0"
+        aria-label="Перетягніть фото сюди або натисніть для вибору файлу"
+        class="relative rounded-[2.2rem] border-2 border-dashed border-sky-300 bg-gradient-to-br from-white/90 via-sky-50/70 to-blue-50/70 hover:border-blue-500 hover:bg-sky-50/90 transition-all duration-300 p-10 sm:p-16 text-center cursor-pointer shadow-lg shadow-sky-900/5 group"
+      >
+        <input
+          id="fileInput"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/avif,image/*"
+          class="hidden"
+        />
+
+        <div class="w-20 h-20 mx-auto mb-5 rounded-3xl bg-white border border-sky-200/80 shadow-md shadow-sky-900/5 flex items-center justify-center text-blue-600 group-hover:scale-105 transition-transform">
+          <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 mb-2">
+          Перетягніть фото сюди або натисніть для вибору
+        </h2>
+        <p class="text-sm text-slate-500 max-w-lg mx-auto mb-6">
+          Підтримуються <strong>JPG, PNG, WebP</strong> (можна також вставити з буфера обміну через <kbd class="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-xs font-bold text-slate-700">Ctrl+V</kbd>).
+        </p>
+
+        <span class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-600 group-hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/20 transition-all">
+          Обрати файл на комп'ютері
+        </span>
+
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto text-left">
+          <div class="p-3.5 rounded-2xl bg-white/85 border border-sky-100">
+            <div class="text-xs font-black text-blue-600 uppercase tracking-wider">3:4 • Персонал</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Портретні картки лікарів (max 800px)</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/85 border border-sky-100">
+            <div class="text-xs font-black text-blue-600 uppercase tracking-wider">4:3 • Відділення</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Візитка відділення на головній (max 1200px)</div>
+          </div>
+          <div class="p-3.5 rounded-2xl bg-white/85 border border-sky-100">
+            <div class="text-xs font-black text-blue-600 uppercase tracking-wider">16:9 • Новини / Карусель</div>
+            <div class="text-[11px] text-slate-500 mt-0.5">Новини, галереї та Hero (max 1200–1600px)</div>
+          </div>
+        </div>
+      </div>
+
+      <p id="errorBanner" class="hidden mt-4 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm font-bold text-center"></p>
+    </section>
+
+    {/* Основна робоча область редактора (показується після завантаження фото) */}
+    <section id="workspaceSection" class="hidden space-y-6">
+      {/* Панель пресетів обрізки */}
+      <div class="bg-white/90 backdrop-blur-xl border border-sky-200/70 rounded-[2rem] p-4 sm:p-6 shadow-md">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <span class="block text-[10px] font-black uppercase tracking-[0.2em] text-sky-700 mb-2">
+              1. Оберіть формат обрізки
+            </span>
+            <div class="flex flex-wrap gap-2.5" role="radiogroup" aria-label="Формат обрізки">
+              <button
+                type="button"
+                data-preset="staff"
+                class="preset-btn px-4 py-2.5 rounded-2xl border-2 text-left transition-all cursor-pointer"
+              >
+                <div class="text-sm font-black leading-tight">3:4 — Персонал</div>
+                <div class="text-[11px] opacity-80">Портрет • max 800px</div>
+              </button>
+
+              <button
+                type="button"
+                data-preset="department"
+                class="preset-btn px-4 py-2.5 rounded-2xl border-2 text-left transition-all cursor-pointer"
+              >
+                <div class="text-sm font-black leading-tight">4:3 — Візитка відділення</div>
+                <div class="text-[11px] opacity-80">Головна • max 1200px</div>
+              </button>
+
+              <button
+                type="button"
+                data-preset="wide"
+                class="preset-btn px-4 py-2.5 rounded-2xl border-2 text-left transition-all cursor-pointer"
+              >
+                <div class="text-sm font-black leading-tight">16:9 — Новини / Карусель</div>
+                <div class="text-[11px] opacity-80">Галерея / Hero • max 1200–1600px</div>
+              </button>
+            </div>
+          </div>
+
+          {/* Швидкі дії з областю */}
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="btnFitMax"
+              type="button"
+              class="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-bold transition-colors cursor-pointer"
+            >
+              Макс. область
+            </button>
+            <button
+              id="btnCenterCrop"
+              type="button"
+              class="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-sky-800 text-xs font-bold transition-colors cursor-pointer"
+            >
+              По центру
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Дві колонки: Інтерактивний кроп + Статистика/Завантаження */}
+      <div class="grid lg:grid-cols-[1.35fr_1fr] gap-6 items-start">
+        {/* Ліва колонка: Область обрізки */}
+        <div class="bg-white/90 backdrop-blur-xl border border-sky-200/70 rounded-[2rem] p-4 sm:p-6 shadow-md">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
+              2. Виділіть потрібну область (перетягуйте рамку або кути)
+            </span>
+            <span id="origFileMeta" class="text-xs font-semibold text-slate-500"></span>
+          </div>
+
+          <div
+            id="cropViewport"
+            class="relative w-full min-h-[300px] max-h-[68vh] rounded-2xl bg-slate-900/95 flex items-center justify-center overflow-hidden p-3 sm:p-4"
+          >
+            <div id="cropStage" class="relative inline-block overflow-hidden select-none touch-none max-w-full">
+              <img
+                id="sourcePreviewImg"
+                alt="Оригінальне зображення для обрізки"
+                draggable="false"
+                class="block max-w-full max-h-[60vh] w-auto h-auto pointer-events-none select-none"
+              />
+
+              {/* Інтерактивна рамка обрізки */}
+              <div
+                id="cropBox"
+                class="crop-box absolute border-2 border-sky-400 cursor-move"
+                style="box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.58);"
+              >
+                {/* Сітка третин */}
+                <div class="pointer-events-none absolute inset-0 grid grid-cols-3 grid-rows-3">
+                  <div class="border-r border-b border-white/35"></div>
+                  <div class="border-r border-b border-white/35"></div>
+                  <div class="border-b border-white/35"></div>
+                  <div class="border-r border-b border-white/35"></div>
+                  <div class="border-r border-b border-white/35"></div>
+                  <div class="border-b border-white/35"></div>
+                  <div class="border-r border-white/35"></div>
+                  <div class="border-r border-white/35"></div>
+                  <div></div>
+                </div>
+
+                {/* Підпис розмірів усередині рамки */}
+                <div
+                  id="cropLiveBadge"
+                  class="pointer-events-none absolute top-2 left-2 px-2 py-0.5 rounded-md bg-slate-900/75 text-white text-[10px] font-bold tracking-wider"
+                >
+                  3:4
+                </div>
+
+                {/* 4 кутові маркери зміни розміру */}
+                <div data-handle="nw" class="crop-handle -top-2 -left-2 cursor-nwse-resize"></div>
+                <div data-handle="ne" class="crop-handle -top-2 -right-2 cursor-nesw-resize"></div>
+                <div data-handle="sw" class="crop-handle -bottom-2 -left-2 cursor-nesw-resize"></div>
+                <div data-handle="se" class="crop-handle -bottom-2 -right-2 cursor-nwse-resize"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Права колонка: Статистика, налаштування WebP та завантаження */}
+        <div class="bg-white/90 backdrop-blur-xl border border-sky-200/70 rounded-[2rem] p-5 sm:p-6 shadow-md space-y-5">
+          <span class="block text-[10px] font-black uppercase tracking-[0.2em] text-sky-700">
+            3. Статистика та результат WebP
+          </span>
+
+          {/* 4 картки точної статистики */}
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+              <div class="text-[10px] font-black uppercase tracking-wider text-slate-400">Вага оригіналу</div>
+              <div id="statOrigSize" class="text-lg sm:text-xl font-black text-slate-800 mt-1">—</div>
+              <div id="statOrigDims" class="text-[11px] font-semibold text-slate-500 mt-0.5">—</div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-sky-50/90 border border-sky-200/80">
+              <div class="text-[10px] font-black uppercase tracking-wider text-sky-700">Вага у WebP</div>
+              <div id="statWebpSize" class="text-lg sm:text-xl font-black text-blue-700 mt-1">—</div>
+              <div class="text-[11px] font-semibold text-sky-700/80 mt-0.5">Оптимізовано</div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-200/80">
+              <div class="text-[10px] font-black uppercase tracking-wider text-emerald-700">Економія</div>
+              <div id="statSavings" class="text-lg sm:text-xl font-black text-emerald-700 mt-1">—</div>
+              <div id="statSavedKb" class="text-[11px] font-semibold text-emerald-700/80 mt-0.5">—</div>
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200/70">
+              <div class="text-[10px] font-black uppercase tracking-wider text-blue-700">Роздільна здатність</div>
+              <div id="statOutDims" class="text-lg sm:text-xl font-black text-slate-900 mt-1">—</div>
+              <div id="statAspectLabel" class="text-[11px] font-semibold text-blue-700/80 mt-0.5">—</div>
+            </div>
+          </div>
+
+          {/* Візуальний індикатор економії */}
+          <div>
+            <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 mb-1.5">
+              <span>Стиснення відносно оригіналу</span>
+              <span id="statBarLabel" class="text-emerald-700 font-black">0%</span>
+            </div>
+            <div class="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+              <div
+                id="statSavingsBar"
+                class="h-full rounded-full bg-gradient-to-r from-sky-500 to-emerald-500 transition-all duration-300"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          {/* Параметри якості та максимальної ширини */}
+          <div class="grid sm:grid-cols-2 gap-3 pt-1">
+            <div class="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/80">
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
+                <label for="qualityRange">Якість WebP</label>
+                <span id="qualityValue" class="text-blue-600 font-black">80%</span>
+              </div>
+              <input
+                id="qualityRange"
+                type="range"
+                min="50"
+                max="95"
+                step="1"
+                value="80"
+                class="w-full accent-blue-600 cursor-pointer"
+              />
+            </div>
+
+            <div class="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/80">
+              <label for="maxWidthSelect" class="block text-xs font-bold text-slate-700 mb-1.5">
+                Макс. ширина (px)
+              </label>
+              <select
+                id="maxWidthSelect"
+                class="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500"
+              >
+                <option value="800">800 px (Персонал)</option>
+                <option value="1200">1200 px (Відділення / Новини)</option>
+                <option value="1600">1600 px (Hero-карусель)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Попередній перегляд готового WebP */}
+          <div>
+            <div class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-2">
+              Попередній перегляд результату
+            </div>
+            <div class="rounded-2xl overflow-hidden border border-sky-100 bg-sky-50/60 flex items-center justify-center p-2 max-h-56">
+              <img
+                id="webpPreviewImg"
+                alt="Попередній перегляд WebP"
+                class="max-h-52 w-auto rounded-xl shadow-xs object-contain"
+              />
+            </div>
+          </div>
+
+          {/* Назва файлу та кнопка завантаження */}
+          <div class="space-y-3 pt-1">
+            <div>
+              <label for="outputFilename" class="block text-[11px] font-bold text-slate-600 mb-1">
+                Назва файлу для збереження
+              </label>
+              <div class="flex items-center rounded-xl border border-slate-200 bg-white overflow-hidden focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/15">
+                <input
+                  id="outputFilename"
+                  type="text"
+                  value="photo-optimized"
+                  class="flex-1 px-3.5 py-2.5 text-sm font-semibold text-slate-800 outline-none bg-transparent"
+                />
+                <span class="px-3 py-2.5 bg-sky-50 text-sky-700 text-xs font-black border-l border-slate-200">
+                  .webp
+                </span>
+              </div>
+            </div>
+
+            <button
+              id="downloadBtn"
+              type="button"
+              disabled
+              class="w-full inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-extrabold text-sm shadow-lg shadow-blue-600/20 active:scale-[0.99] transition-all cursor-pointer"
+            >
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" />
+                <line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+              <span>Завантажити готовий .webp</span>
+            </button>
+
+            <p id="folderHint" class="text-[11px] text-center text-slate-500 font-medium">
+              Після завантаження додайте цей файл у відповідне поле в Keystatic.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .crop-handle {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 3px solid #2563eb;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.35);
+    touch-action: none;
+    z-index: 10;
+  }
+
+  .crop-handle:hover {
+    transform: scale(1.15);
+    background: #e0f2fe;
+  }
+
+  .preset-btn {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #334155;
+  }
+
+  .preset-btn:hover {
+    border-color: #38bdf8;
+    background: #f0f9ff;
+    color: #0369a1;
+  }
+
+  .preset-btn.is-active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.22);
+  }
+</style>
+
+<script>
+  type PresetKey = "staff" | "department" | "wide";
+
+  interface PresetConfig {
+    key: PresetKey;
+    label: string;
+    ratio: number;
+    ratioText: string;
+    maxWidth: number;
+    quality: number;
+    suffix: string;
+    hint: string;
+  }
+
+  const PRESETS: Record<PresetKey, PresetConfig> = {
+    staff: {
+      key: "staff",
+      label: "Персонал",
+      ratio: 3 / 4,
+      ratioText: "3:4",
+      maxWidth: 800,
+      quality: 80,
+      suffix: "3x4",
+      hint: "Готово для розділу Keystatic «Персонал відділення» (папка public/images/staff/).",
+    },
+    department: {
+      key: "department",
+      label: "Візитка відділення",
+      ratio: 4 / 3,
+      ratioText: "4:3",
+      maxWidth: 1200,
+      quality: 80,
+      suffix: "4x3",
+      hint: "Готово для поля «Фото візитки відділення (cardImage)» у Keystatic (public/images/services/).",
+    },
+    wide: {
+      key: "wide",
+      label: "Новини / Карусель",
+      ratio: 16 / 9,
+      ratioText: "16:9",
+      maxWidth: 1200,
+      quality: 80,
+      suffix: "16x9",
+      hint: "Готово для новин, галереї відділення (1200px) або Hero-каруселі головної (оберіть 1600px).",
+    },
+  };
+
+  function initPhotoPrepTool() {
+    const dropZone = document.getElementById("dropZone");
+    const dropZoneSection = document.getElementById("dropZoneSection");
+    const workspaceSection = document.getElementById("workspaceSection");
+    const fileInput = document.getElementById("fileInput") as HTMLInputElement | null;
+    const resetToolBtn = document.getElementById("resetToolBtn");
+    const errorBanner = document.getElementById("errorBanner");
+
+    const sourceImg = document.getElementById("sourcePreviewImg") as HTMLImageElement | null;
+    const cropStage = document.getElementById("cropStage");
+    const cropBox = document.getElementById("cropBox");
+    const cropLiveBadge = document.getElementById("cropLiveBadge");
+    const origFileMeta = document.getElementById("origFileMeta");
+
+    const presetButtons = Array.from(document.querySelectorAll<HTMLButtonElement>(".preset-btn"));
+    const btnFitMax = document.getElementById("btnFitMax");
+    const btnCenterCrop = document.getElementById("btnCenterCrop");
+    const qualityRange = document.getElementById("qualityRange") as HTMLInputElement | null;
+    const qualityValue = document.getElementById("qualityValue");
+    const maxWidthSelect = document.getElementById("maxWidthSelect") as HTMLSelectElement | null;
+
+    const statOrigSize = document.getElementById("statOrigSize");
+    const statOrigDims = document.getElementById("statOrigDims");
+    const statWebpSize = document.getElementById("statWebpSize");
+    const statSavings = document.getElementById("statSavings");
+    const statSavedKb = document.getElementById("statSavedKb");
+    const statOutDims = document.getElementById("statOutDims");
+    const statAspectLabel = document.getElementById("statAspectLabel");
+    const statBarLabel = document.getElementById("statBarLabel");
+    const statSavingsBar = document.getElementById("statSavingsBar");
+    const webpPreviewImg = document.getElementById("webpPreviewImg") as HTMLImageElement | null;
+    const outputFilename = document.getElementById("outputFilename") as HTMLInputElement | null;
+    const downloadBtn = document.getElementById("downloadBtn") as HTMLButtonElement | null;
+    const folderHint = document.getElementById("folderHint");
+
+    if (!dropZone || !fileInput || !sourceImg || !cropStage || !cropBox) return;
+    if (dropZone.dataset.bound === "true") return;
+    dropZone.dataset.bound = "true";
+
+    let currentFile: File | null = null;
+    let currentImageEl: HTMLImageElement | null = null;
+    let sourceObjectUrl: string | null = null;
+    let previewObjectUrl: string | null = null;
+    let currentWebpBlob: Blob | null = null;
+    let currentPreset: PresetConfig = PRESETS.department;
+    let baseFileName = "photo";
+    let encodeTimer: number | null = null;
+
+    // Координати кропу в реальних пікселях вихідного зображення
+    const crop = { x: 0, y: 0, w: 0, h: 0 };
+
+    function clamp(val: number, min: number, max: number) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    function formatKB(bytes: number) {
+      const kb = bytes / 1024;
+      return `${kb.toLocaleString("uk-UA", { minimumFractionDigits: 1, maximumFractionDigits: 1 })} КБ`;
+    }
+
+    function sanitizeBaseName(name: string) {
+      const withoutExt = name.replace(/\.[^.]+$/, "");
+      const cleaned = withoutExt
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9а-яіїєґ_-]+/gi, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      return cleaned || "photo";
+    }
+
+    function showError(msg: string) {
+      if (!errorBanner) return;
+      if (!msg) {
+        errorBanner.classList.add("hidden");
+        errorBanner.textContent = "";
+      } else {
+        errorBanner.textContent = msg;
+        errorBanner.classList.remove("hidden");
+      }
+    }
+
+    function setActivePresetUI(preset: PresetConfig) {
+      presetButtons.forEach((btn) => {
+        const isMatch = btn.dataset.preset === preset.key;
+        btn.classList.toggle("is-active", isMatch);
+        btn.setAttribute("aria-checked", isMatch ? "true" : "false");
+      });
+
+      if (qualityRange && qualityValue) {
+        qualityRange.value = String(preset.quality);
+        qualityValue.textContent = `${preset.quality}%`;
+      }
+      if (maxWidthSelect) {
+        maxWidthSelect.value = String(preset.maxWidth);
+      }
+      if (folderHint) {
+        folderHint.textContent = preset.hint;
+      }
+      if (outputFilename) {
+        outputFilename.value = `${baseFileName}-${preset.suffix}`;
+      }
+    }
+
+    function resetCropToMaxCentered() {
+      if (!currentImageEl) return;
+      const imgW = currentImageEl.naturalWidth;
+      const imgH = currentImageEl.naturalHeight;
+      const R = currentPreset.ratio;
+
+      let w = imgW;
+      let h = w / R;
+      if (h > imgH) {
+        h = imgH;
+        w = h * R;
+      }
+
+      crop.w = w;
+      crop.h = h;
+      crop.x = (imgW - w) / 2;
+      crop.y = (imgH - h) / 2;
+
+      syncCropOverlay();
+      scheduleEncode();
+    }
+
+    function centerCurrentCrop() {
+      if (!currentImageEl) return;
+      crop.x = (currentImageEl.naturalWidth - crop.w) / 2;
+      crop.y = (currentImageEl.naturalHeight - crop.h) / 2;
+      syncCropOverlay();
+      scheduleEncode();
+    }
+
+    function getDisplayScale(): number {
+      if (!currentImageEl || !sourceImg) return 1;
+      const rect = sourceImg.getBoundingClientRect();
+      if (!rect.width || !currentImageEl.naturalWidth) return 1;
+      return rect.width / currentImageEl.naturalWidth;
+    }
+
+    function syncCropOverlay() {
+      if (!cropBox || !currentImageEl) return;
+      const scale = getDisplayScale();
+      cropBox.style.left = `${crop.x * scale}px`;
+      cropBox.style.top = `${crop.y * scale}px`;
+      cropBox.style.width = `${crop.w * scale}px`;
+      cropBox.style.height = `${crop.h * scale}px`;
+
+      if (cropLiveBadge) {
+        cropLiveBadge.textContent = `${currentPreset.ratioText} • ${Math.round(crop.w)}×${Math.round(crop.h)}`;
+      }
+    }
+
+    function encodeWebP() {
+      if (!currentImageEl || !currentFile) return;
+
+      const targetMaxW = Number(maxWidthSelect?.value) || currentPreset.maxWidth;
+      const quality = clamp(Number(qualityRange?.value) || currentPreset.quality, 10, 100) / 100;
+
+      const scale = crop.w > targetMaxW ? targetMaxW / crop.w : 1;
+      const outW = Math.max(1, Math.round(crop.w * scale));
+      const outH = Math.max(1, Math.round(crop.h * scale));
+
+      const canvas = document.createElement("canvas");
+      canvas.width = outW;
+      canvas.height = outH;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(
+        currentImageEl,
+        Math.round(crop.x),
+        Math.round(crop.y),
+        Math.round(crop.w),
+        Math.round(crop.h),
+        0,
+        0,
+        outW,
+        outH
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob || !currentFile) return;
+          currentWebpBlob = blob;
+
+          if (previewObjectUrl) {
+            URL.revokeObjectURL(previewObjectUrl);
+          }
+          previewObjectUrl = URL.createObjectURL(blob);
+          if (webpPreviewImg) {
+            webpPreviewImg.src = previewObjectUrl;
+          }
+
+          const origBytes = currentFile.size;
+          const webpBytes = blob.size;
+          const savedBytes = origBytes - webpBytes;
+          const pct = origBytes > 0 ? (savedBytes / origBytes) * 100 : 0;
+
+          if (statOrigSize) statOrigSize.textContent = formatKB(origBytes);
+          if (statOrigDims && currentImageEl) {
+            statOrigDims.textContent = `${currentImageEl.naturalWidth} × ${currentImageEl.naturalHeight} px`;
+          }
+          if (statWebpSize) statWebpSize.textContent = formatKB(webpBytes);
+          if (statOutDims) statOutDims.textContent = `${outW} × ${outH} px`;
+          if (statAspectLabel) {
+            statAspectLabel.textContent = `Формат ${currentPreset.ratioText} • WebP ${Math.round(quality * 100)}%`;
+          }
+
+          const clampedBar = clamp(pct, 0, 100);
+          if (statSavings) {
+            statSavings.textContent =
+              pct >= 0
+                ? `-${pct.toFixed(1)}%`
+                : `+${Math.abs(pct).toFixed(1)}%`;
+          }
+          if (statSavedKb) {
+            statSavedKb.textContent =
+              savedBytes >= 0
+                ? `Зекономлено ${formatKB(savedBytes)}`
+                : `Більше на ${formatKB(Math.abs(savedBytes))}`;
+          }
+          if (statBarLabel) {
+            statBarLabel.textContent = pct >= 0 ? `-${pct.toFixed(1)}%` : "0%";
+          }
+          if (statSavingsBar) {
+            statSavingsBar.style.width = `${clampedBar.toFixed(1)}%`;
+          }
+          if (downloadBtn) {
+            downloadBtn.disabled = false;
+          }
+        },
+        "image/webp",
+        quality
+      );
+    }
+
+    function scheduleEncode() {
+      if (encodeTimer !== null) {
+        window.clearTimeout(encodeTimer);
+      }
+      encodeTimer = window.setTimeout(() => {
+        encodeWebP();
+      }, 65);
+    }
+
+    function loadFile(file: File) {
+      showError("");
+      if (!file.type.startsWith("image/")) {
+        showError("Будь ласка, оберіть файл зображення (JPG, PNG або WebP).");
+        return;
+      }
+
+      currentFile = file;
+      baseFileName = sanitizeBaseName(file.name);
+
+      if (sourceObjectUrl) {
+        URL.revokeObjectURL(sourceObjectUrl);
+      }
+      sourceObjectUrl = URL.createObjectURL(file);
+
+      const img = new Image();
+      img.onload = () => {
+        currentImageEl = img;
+        if (sourceImg) {
+          sourceImg.src = sourceObjectUrl!;
+        }
+        if (origFileMeta) {
+          origFileMeta.textContent = `${file.name} • ${img.naturalWidth}×${img.naturalHeight} px • ${formatKB(file.size)}`;
+        }
+
+        dropZoneSection?.classList.add("hidden");
+        workspaceSection?.classList.remove("hidden");
+        resetToolBtn?.classList.remove("hidden");
+
+        setActivePresetUI(currentPreset);
+
+        // Чекаємо наступний кадр, щоб браузер порахував розміри відображення <img>
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resetCropToMaxCentered();
+          });
+        });
+      };
+      img.onerror = () => {
+        showError("Не вдалося прочитати зображення. Спробуйте інший файл.");
+      };
+      img.src = sourceObjectUrl;
+    }
+
+    // --- Інтерактивне переміщення та масштабування рамки кропу (миша + тач) ---
+    let dragMode: "move" | "nw" | "ne" | "sw" | "se" | null = null;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let cropStart = { x: 0, y: 0, w: 0, h: 0 };
+
+    cropBox.addEventListener("pointerdown", (e) => {
+      if (!currentImageEl) return;
+      const target = e.target as HTMLElement;
+      const handle = target.dataset.handle as "nw" | "ne" | "sw" | "se" | undefined;
+      dragMode = handle || "move";
+      pointerStartX = e.clientX;
+      pointerStartY = e.clientY;
+      cropStart = { ...crop };
+      cropBox.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+
+    cropBox.addEventListener("pointermove", (e) => {
+      if (!dragMode || !currentImageEl) return;
+      const scale = getDisplayScale();
+      if (!scale) return;
+
+      const dx = (e.clientX - pointerStartX) / scale;
+      const dy = (e.clientY - pointerStartY) / scale;
+      const imgW = currentImageEl.naturalWidth;
+      const imgH = currentImageEl.naturalHeight;
+      const R = currentPreset.ratio;
+      const minW = Math.min(80, Math.min(imgW, imgH * R) * 0.25);
+
+      if (dragMode === "move") {
+        crop.x = clamp(cropStart.x + dx, 0, imgW - cropStart.w);
+        crop.y = clamp(cropStart.y + dy, 0, imgH - cropStart.h);
+      } else if (dragMode === "se") {
+        const anchorX = cropStart.x;
+        const anchorY = cropStart.y;
+        const maxW = Math.min(imgW - anchorX, (imgH - anchorY) * R);
+        const deltaW = Math.abs(dx) >= Math.abs(dy * R) ? dx : dy * R;
+        const newW = clamp(cropStart.w + deltaW, minW, maxW);
+        crop.w = newW;
+        crop.h = newW / R;
+        crop.x = anchorX;
+        crop.y = anchorY;
+      } else if (dragMode === "sw") {
+        const anchorX = cropStart.x + cropStart.w;
+        const anchorY = cropStart.y;
+        const maxW = Math.min(anchorX, (imgH - anchorY) * R);
+        const deltaW = Math.abs(dx) >= Math.abs(dy * R) ? -dx : dy * R;
+        const newW = clamp(cropStart.w + deltaW, minW, maxW);
+        crop.w = newW;
+        crop.h = newW / R;
+        crop.x = anchorX - newW;
+        crop.y = anchorY;
+      } else if (dragMode === "ne") {
+        const anchorX = cropStart.x;
+        const anchorY = cropStart.y + cropStart.h;
+        const maxW = Math.min(imgW - anchorX, anchorY * R);
+        const deltaW = Math.abs(dx) >= Math.abs(dy * R) ? dx : -dy * R;
+        const newW = clamp(cropStart.w + deltaW, minW, maxW);
+        const newH = newW / R;
+        crop.w = newW;
+        crop.h = newH;
+        crop.x = anchorX;
+        crop.y = anchorY - newH;
+      } else if (dragMode === "nw") {
+        const anchorX = cropStart.x + cropStart.w;
+        const anchorY = cropStart.y + cropStart.h;
+        const maxW = Math.min(anchorX, anchorY * R);
+        const deltaW = Math.abs(dx) >= Math.abs(dy * R) ? -dx : -dy * R;
+        const newW = clamp(cropStart.w + deltaW, minW, maxW);
+        const newH = newW / R;
+        crop.w = newW;
+        crop.h = newH;
+        crop.x = anchorX - newW;
+        crop.y = anchorY - newH;
+      }
+
+      syncCropOverlay();
+      scheduleEncode();
+    });
+
+    const endDrag = () => {
+      if (!dragMode) return;
+      dragMode = null;
+      encodeWebP();
+    };
+    cropBox.addEventListener("pointerup", endDrag);
+    cropBox.addEventListener("pointercancel", endDrag);
+
+    // Перерахунок позиції рамки при зміні розміру вікна
+    window.addEventListener("resize", () => {
+      if (currentImageEl) syncCropOverlay();
+    });
+
+    // --- Події вибору файлу та Drag & Drop ---
+    dropZone.addEventListener("click", () => fileInput.click());
+    dropZone.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        fileInput.click();
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      const f = fileInput.files?.[0];
+      if (f) loadFile(f);
+    });
+
+    ["dragenter", "dragover"].forEach((ev) => {
+      dropZone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.add("border-blue-500", "bg-sky-100/70", "scale-[1.01]");
+      });
+    });
+
+    ["dragleave", "drop"].forEach((ev) => {
+      dropZone.addEventListener(ev, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.classList.remove("border-blue-500", "bg-sky-100/70", "scale-[1.01]");
+      });
+    });
+
+    dropZone.addEventListener("drop", (e) => {
+      const f = (e as DragEvent).dataTransfer?.files?.[0];
+      if (f) loadFile(f);
+    });
+
+    // Підтримка Ctrl+V вставки зображення з буфера
+    document.addEventListener("paste", (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const blob = item.getAsFile();
+          if (blob) {
+            loadFile(blob);
+            break;
+          }
+        }
+      }
+    });
+
+    // --- Пресети та налаштування ---
+    presetButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.dataset.preset as PresetKey;
+        if (!PRESETS[key]) return;
+        currentPreset = PRESETS[key];
+        setActivePresetUI(currentPreset);
+        resetCropToMaxCentered();
+      });
+    });
+
+    btnFitMax?.addEventListener("click", resetCropToMaxCentered);
+    btnCenterCrop?.addEventListener("click", centerCurrentCrop);
+
+    qualityRange?.addEventListener("input", () => {
+      if (qualityValue) qualityValue.textContent = `${qualityRange.value}%`;
+      scheduleEncode();
+    });
+
+    maxWidthSelect?.addEventListener("change", () => {
+      encodeWebP();
+    });
+
+    resetToolBtn?.addEventListener("click", () => {
+      fileInput.value = "";
+      currentFile = null;
+      currentImageEl = null;
+      currentWebpBlob = null;
+      if (downloadBtn) downloadBtn.disabled = true;
+      workspaceSection?.classList.add("hidden");
+      resetToolBtn.classList.add("hidden");
+      dropZoneSection?.classList.remove("hidden");
+      showError("");
+    });
+
+    downloadBtn?.addEventListener("click", () => {
+      if (!currentWebpBlob) return;
+      const rawName = (outputFilename?.value || `${baseFileName}-${currentPreset.suffix}`).trim();
+      const safeName = rawName.replace(/\.webp$/i, "").replace(/[\\/:*?"<>|]+/g, "-") || "photo";
+      const url = URL.createObjectURL(currentWebpBlob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${safeName}.webp`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      if (typeof (window as any).showGlobalToast === "function") {
+        (window as any).showGlobalToast(`Збережено ${safeName}.webp`);
+      }
+    });
+
+    setActivePresetUI(currentPreset);
+  }
+
+  initPhotoPrepTool();
+  document.addEventListener("astro:after-swap", initPhotoPrepTool);
+</script>

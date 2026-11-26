@@ -9,7 +9,7 @@ import "@fontsource-variable/inter/index.css";
 import "@fontsource-variable/bricolage-grotesque/index.css";
 import "../styles/global.css";
 
-const { title, description, hideSubNav = false } = Astro.props;
+const { title, description, hideSubNav = false, noindex = false } = Astro.props;
 const makeTitle = title
   ? `${title} | ${siteSettings.clinicShortName}`
   : `${siteSettings.departmentName} | ${siteSettings.clinicShortName}`;
@@ -25,7 +25,7 @@ const makeDesc =
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{makeTitle}</title>
-    <SEO title={makeTitle} description={makeDesc} />
+    <SEO title={makeTitle} description={makeDesc} noindex={noindex} nofollow={noindex} />
 
     {/* Миттєве відновлення теми та налаштувань доступності до рендеру сторінки (без миготіння) */}
     <script is:inline>

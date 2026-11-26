@@ -15,6 +15,15 @@ const services = defineCollection({
     heroTitle: z.string().optional().default(''),
     description: z.string().optional().default(''),
     heroText: z.string().optional().default(''),
+    gallery: z
+      .array(
+        z.object({
+          image: z.string().nullable().optional(),
+          caption: z.string().optional().default(''),
+        })
+      )
+      .optional()
+      .default([]),
     image: z.string().optional().default('/hero/main_page2.jpg'),
     icon: z.string().optional().default('🏥'),
     searchKeywords: z.array(z.string()).optional().default([]),
@@ -35,7 +44,7 @@ const news = defineCollection({
       tags: z.array(z.string()).optional().default([]),
       isPinned: z.boolean().optional().default(false),
       description: z.string().optional().default(''),
-      image: image().optional(),
+      image: z.union([image(), z.string()]).nullable().optional(),
     }),
 });
 
@@ -50,7 +59,7 @@ const staff = defineCollection({
     role: z.string().optional().default('Лікар з радіаційної онкології'),
     department: z.string().optional().default('Мегавольтна терапія'),
     bio: z.string().optional().default(''),
-    image: z.string().optional().default('/hero/raddepartment.jpg'),
+    image: z.string().nullable().optional().default(''),
     experience: z.string().optional().default(''),
     specializations: z.array(z.string()).optional().default([]),
     education: z.string().optional().default('-'),

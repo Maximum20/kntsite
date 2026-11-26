@@ -1,5 +1,6 @@
 ---
 import type { Doctor } from "../types";
+import ImagePlaceholder from "./ImagePlaceholder.astro";
 
 interface Props {
   doctor: Doctor;
@@ -11,7 +12,11 @@ const safeSurname = doctor?.surname || "";
 const safeRole = doctor?.role || "Фахівець відділення";
 const safeDept = doctor?.department || "Променева терапія";
 const safeColor = doctor?.color || "from-slate-600 to-slate-700";
-const safeImage = doctor?.image || "/hero/raddepartment.jpg";
+const safeImage = (doctor?.image || "").trim();
+const hasPhoto = Boolean(safeImage);
+const safeInitials =
+  doctor?.initials ||
+  `${safeName.charAt(0)}${safeSurname.charAt(0)}`.toUpperCase();
 const safeSpecs = Array.isArray(doctor?.specializations) ? doctor.specializations : [];
 
 const isLongName = safeName.length > 10 || safeSurname.length > 10;
@@ -20,23 +25,39 @@ const expandedTitleClass = isLongName ? "text-xl md:text-2xl" : "text-2xl md:tex
 ---
 
 <div
-  class="doctor-card group relative h-[550px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border border-white/20 bg-slate-200 transition-all duration-500 hover:-translate-y-2"
+  class={`doctor-card ${!hasPhoto ? "doctor-card--placeholder" : ""} group relative h-[550px] rounded-[2.5rem] overflow-hidden cursor-pointer shadow-xl border ${hasPhoto ? "border-white/20 bg-slate-200" : "border-sky-200/80 bg-sky-50"} transition-all duration-500 hover:-translate-y-2`}
   data-name={`${safeName} ${safeSurname}`}
   data-role={safeRole}
   data-dept={safeDept}
 >
-  <div class="absolute inset-0 overflow-hidden bg-slate-200">
-    <img
-      src={safeImage}
-      alt={`${safeName} ${safeSurname}`}
-      width="450"
-      height="550"
-      loading="lazy"
-      decoding="async"
-      class="card-image w-full h-full object-cover transition-transform duration-700 pointer-events-none group-[.is-expanded]:scale-110"
-      referrerpolicy="no-referrer"
-    />
-    <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent opacity-100 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
+  <div class={`absolute inset-0 overflow-hidden ${hasPhoto ? "bg-slate-200" : "bg-sky-50"}`}>
+    {hasPhoto ? (
+      <>
+        <img
+          src={safeImage}
+          alt={`${safeName} ${safeSurname}`}
+          width="450"
+          height="550"
+          loading="lazy"
+          decoding="async"
+          class="card-image w-full h-full object-cover transition-transform duration-700 pointer-events-none group-[.is-expanded]:scale-110"
+          referrerpolicy="no-referrer"
+        />
+        <div class="card-overlay absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent opacity-100 group-[.is-expanded]:opacity-30 transition-opacity duration-500"></div>
+      </>
+    ) : (
+      <>
+        <ImagePlaceholder
+          variant="staff"
+          initials={safeInitials}
+          title={`${safeName} ${safeSurname}`}
+          subtitle={safeDept}
+          size="lg"
+          class="pb-44"
+        />
+        <div class="card-overlay absolute inset-x-0 bottom-0 h-[52%] bg-gradient-to-t from-white via-sky-50/92 to-transparent pointer-events-none"></div>
+      </>
+    )}
   </div>
 
   <div class="card-closed absolute inset-0 p-8 flex flex-col justify-end transition-all duration-500 group-[.is-expanded]:opacity-0 group-[.is-expanded]:pointer-events-none">
@@ -50,7 +71,7 @@ const expandedTitleClass = isLongName ? "text-xl md:text-2xl" : "text-2xl md:tex
           </div>
 
           <div class="h-[38px] flex items-center">
-            <div class="inline-block bg-white/95 backdrop-blur-sm text-[9px] font-black text-[#1a365d] px-4 py-1.5 rounded-xl tracking-widest uppercase shadow-lg border border-white/50 leading-tight max-w-[240px]">
+            <div class="inline-block bg-white/95 backdrop-blur-sm text-[9px] font-black text-[#1a365d] px-4 py-1.5 rounded-xl tracking-widest uppercase shadow-lg border border-sky-200/70 leading-tight max-w-[240px]">
               {doctor.badge}
             </div>
           </div>
@@ -64,11 +85,11 @@ const expandedTitleClass = isLongName ? "text-xl md:text-2xl" : "text-2xl md:tex
       </div>
     )}
 
-    <h3 class={`font-serif ${closedTitleClass} font-bold text-white leading-[1.1] mb-4`}>
+    <h3 class={`font-serif ${closedTitleClass} font-bold ${hasPhoto ? "text-white" : "text-[#1a365d]"} leading-[1.1] mb-4`}>
       {safeName}<br />{safeSurname}
     </h3>
 
-    <div class="flex items-center gap-2 text-white/80">
+    <div class={`flex items-center gap-2 ${hasPhoto ? "text-white/80" : "text-blue-700"}`}>
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       <span class="text-[10px] font-bold tracking-widest uppercase">Детальна анкета</span>
     </div>
@@ -81,17 +102,26 @@ const expandedTitleClass = isLongName ? "text-xl md:text-2xl" : "text-2xl md:tex
 
     <div class="flex-1 overflow-y-auto px-6 md:px-8 py-6 custom-scrollbar text-[#1a2b3b]">
       <div class="flex items-center gap-4 md:gap-6 mb-8">
-        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-4 border-[#f8fafc] shadow-2xl flex-shrink-0 bg-slate-100">
-          <img
-            src={safeImage}
-            alt={safeName}
-            width="96"
-            height="96"
-            loading="lazy"
-            decoding="async"
-            class="w-full h-full object-cover"
-            referrerpolicy="no-referrer"
-          />
+        <div class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-4 border-[#f8fafc] shadow-2xl flex-shrink-0 bg-sky-50">
+          {hasPhoto ? (
+            <img
+              src={safeImage}
+              alt={safeName}
+              width="96"
+              height="96"
+              loading="lazy"
+              decoding="async"
+              class="w-full h-full object-cover"
+              referrerpolicy="no-referrer"
+            />
+          ) : (
+            <ImagePlaceholder
+              variant="staff"
+              initials={safeInitials}
+              title={`${safeName} ${safeSurname}`}
+              size="avatar"
+            />
+          )}
         </div>
         <div class="min-w-0">
           <h4 class={`${expandedTitleClass} font-serif font-bold leading-tight text-[#1a365d]`}>

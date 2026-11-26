@@ -3,5 +3,6 @@ Allow: /
 Disallow: /keystatic
 Disallow: /keystatic/
 Disallow: /api/
+Disallow: /tools/
 
 Sitemap: https://kntsite.vercel.app/sitemap-index.xml

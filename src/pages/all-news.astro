@@ -5,6 +5,9 @@ import { getCollection } from "astro:content";
 import { Icon } from "astro-icon/components";
 import { Image } from "astro:assets";
 import Layout from "../layouts/Layout.astro";
+import ImagePlaceholder from "../components/ImagePlaceholder.astro";
+import { siteSettings } from "../data";
+import { resolvePhotoUrl } from "../utils/photos";
 
 const allNews = (await getCollection("news")) || [];
 const sortedNews = allNews.sort((a, b) => {
@@ -69,22 +72,49 @@ const newsData = sortedNews.map((item) => ({
 
       <!-- News Feed -->
       <div id="newsGrid" class="grid gap-16 max-w-5xl mx-auto">
-        {sortedNews.map((item) => (
+        {sortedNews.map((item) => {
+          const rawImg = item.data.image;
+          const isStringImg = typeof rawImg === "string";
+          const resolvedStringImg = isStringImg
+            ? resolvePhotoUrl(rawImg, null, siteSettings.hideLegacyPhotos)
+            : null;
+          const hasAssetImg = Boolean(rawImg && !isStringImg);
+          return (
           <article
             class="news-card group relative grid md:grid-cols-[1fr_1.5fr] gap-8 items-center border-b border-slate-100 pb-16 last:border-0"
             data-title={(item.data.title || "").toLowerCase()}
             data-desc={(item.data.description || "").toLowerCase()}
           >
             <!-- Image Side -->
-            <div class="relative aspect-[4/3] overflow-hidden rounded-[2.5rem] bg-slate-100">
-              {item.data.image && (
-                <Image
-                  src={item.data.image}
-                  alt={item.data.title}
-                  class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+            <div class="relative aspect-[16/10] overflow-hidden rounded-[2.5rem] bg-sky-50">
+              {hasAssetImg ? (
+                <>
+                  <Image
+                    src={rawImg as any}
+                    alt={item.data.title}
+                    class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </>
+              ) : resolvedStringImg ? (
+                <>
+                  <img
+                    src={resolvedStringImg}
+                    alt={item.data.title}
+                    loading="lazy"
+                    decoding="async"
+                    class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                </>
+              ) : (
+                <ImagePlaceholder
+                  variant="news"
+                  title={item.data.title}
+                  subtitle={item.data.category || "Новина"}
+                  size="md"
                 />
               )}
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             </div>
 
             <!-- Content Side -->
@@ -133,7 +163,8 @@ const newsData = sortedNews.map((item) => ({
               </div>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
 
       <!-- No Results State -->

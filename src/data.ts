@@ -2,6 +2,9 @@ import type { Doctor } from './types';
 import rawSettings from './content/singletons/settings.json';
 import rawEquipment from './content/singletons/equipment.json';
 import rawPatientRoute from './content/singletons/patient-route.json';
+import { resolvePhotoUrl } from './utils/photos';
+
+const hideLegacyPhotosFlag = Boolean((rawSettings as any)?.hideLegacyPhotos);
 
 // Читаємо всі файли персоналу з Keystatic колекції src/content/staff/*.json
 const staffModules = import.meta.glob<Record<string, any>>('./content/staff/*.json', {
@@ -19,6 +22,7 @@ function buildStaffList(): Doctor[] {
     const name = (raw.name || '').trim() || 'Фахівець';
     const surname = (raw.surname || '').trim() || 'Відділення';
     const initials = `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
+    const resolvedImage = resolvePhotoUrl(raw.image, null, hideLegacyPhotosFlag) || '';
 
     loaded.push({
       id,
@@ -31,7 +35,7 @@ function buildStaffList(): Doctor[] {
       department: raw.department || 'Мегавольтна терапія',
       initials,
       bio: raw.bio || 'Висококваліфікований фахівець радіологічного відділення КНТ «ДОКОД» ДОР.',
-      image: raw.image || '/hero/raddepartment.jpg',
+      image: resolvedImage,
       experience: raw.experience || '10 років',
       specializations:
         Array.isArray(raw.specializations) && raw.specializations.length > 0
@@ -52,6 +56,9 @@ export const doctors: Doctor[] = buildStaffList();
 
 const rawHomeSections = (rawSettings as any)?.homeSections || {};
 const rawAnnouncement = (rawSettings as any)?.announcement || {};
+const rawHeroGallery = Array.isArray((rawSettings as any)?.heroGallery)
+  ? (rawSettings as any).heroGallery
+  : [];
 
 // Безпечні налаштування сайту, головної сторінки, оголошень та контактів із дефолтними значеннями
 export const siteSettings = {
@@ -70,6 +77,8 @@ export const siteSettings = {
     'Ми створили цей простір, щоб зробити складні технології зрозумілими. Тут ви знайдете повну інформацію про наше обладнання, методи лікування та кожен крок вашого шляху до одужання.',
   statsYears: rawSettings?.statsYears || '15+',
   statsPatients: rawSettings?.statsPatients || '1500+',
+  heroGallery: rawHeroGallery as Array<{ image?: string | null; alt?: string }>,
+  hideLegacyPhotos: hideLegacyPhotosFlag,
   homeSections: {
     showDepartments: rawHomeSections.showDepartments !== false,
     showAdvantages: rawHomeSections.showAdvantages !== false,
