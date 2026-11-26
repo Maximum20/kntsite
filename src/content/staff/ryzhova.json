@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Рижова Лариса",
   "badge": "",
   "isHead": false,
-  "role": "Лікар з радіаційної онкології",
+  "role": "likar-z-radiatsiinoi-onkolohii",
   "department": "Гамма-терапія",
   "bio": "Досвідчений фахівець із дистанційної гамма-терапії та комплексного супроводу онкологічних пацієнтів.",
   "image": "/hero/doctors/ryzhova.jpg",
@@ -18,5 +18,6 @@
   "achievements": "Багаторічний досвід успішного лікування пацієнтів",
   "color": "from-slate-600 to-slate-700",
   "order": 6,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

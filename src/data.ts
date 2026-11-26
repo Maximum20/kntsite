@@ -1,4 +1,4 @@
-import type { Doctor } from './types';
+import type { Doctor, ShowBackCardMode, StaffRole, StaffRoleGroup } from './types';
 import rawSettings from './content/singletons/settings.json';
 import rawEquipment from './content/singletons/equipment.json';
 import rawPatientRoute from './content/singletons/patient-route.json';
@@ -6,53 +6,222 @@ import { resolvePhotoUrl } from './utils/photos';
 
 const hideLegacyPhotosFlag = Boolean((rawSettings as any)?.hideLegacyPhotos);
 
+// Читаємо колекцію посад персоналу з src/content/staff-roles/*.json
+const staffRoleModules = import.meta.glob<Record<string, any>>(
+  './content/staff-roles/*.json',
+  { eager: true }
+);
+
 // Читаємо всі файли персоналу з Keystatic колекції src/content/staff/*.json
 const staffModules = import.meta.glob<Record<string, any>>('./content/staff/*.json', {
   eager: true,
 });
+
+export function hasMeaningfulText(val?: string | null): boolean {
+  if (!val || typeof val !== 'string') return false;
+  const cleaned = val.trim();
+  if (!cleaned) return false;
+  if (/^[-—–_.]+$/.test(cleaned)) return false;
+  return true;
+}
+
+export function hasBackCardContent(staff: {
+  experience?: string;
+  education?: string;
+  achievements?: string;
+  bio?: string;
+}): boolean {
+  return (
+    hasMeaningfulText(staff.experience) ||
+    hasMeaningfulText(staff.education) ||
+    hasMeaningfulText(staff.achievements) ||
+    hasMeaningfulText(staff.bio)
+  );
+}
+
+export function shouldShowBackCard(
+  showBackCard: ShowBackCardMode | undefined,
+  roleDefaultShowBackCard: boolean,
+  hasContent: boolean
+): boolean {
+  if (showBackCard === 'show') return true;
+  if (showBackCard === 'hide') return false;
+  return Boolean(roleDefaultShowBackCard) && Boolean(hasContent);
+}
+
+function normalizeShowBackCard(val: unknown): ShowBackCardMode {
+  if (val === 'show' || val === 'hide' || val === 'auto') return val;
+  return 'auto';
+}
+
+function normalizeRoleGroup(val: unknown): StaffRoleGroup {
+  return val === 'specialists' ? 'specialists' : 'doctors';
+}
+
+function buildStaffRolesList(): StaffRole[] {
+  const loaded: StaffRole[] = [];
+
+  for (const [path, mod] of Object.entries(staffRoleModules)) {
+    const raw = mod.default || mod;
+    if (!raw) continue;
+    const slug = path.split('/').pop()?.replace('.json', '') || '';
+    if (!slug) continue;
+
+    loaded.push({
+      slug,
+      title: String(raw.title || slug).trim(),
+      group: normalizeRoleGroup(raw.group),
+      order: typeof raw.order === 'number' ? raw.order : 10,
+      defaultShowBackCard: raw.defaultShowBackCard !== false,
+    });
+  }
+
+  return loaded.sort(
+    (a, b) => a.order - b.order || a.title.localeCompare(b.title, 'uk', { sensitivity: 'base' })
+  );
+}
+
+export const staffRoles: StaffRole[] = buildStaffRolesList();
+
+const rolesBySlug = new Map<string, StaffRole>(staffRoles.map((r) => [r.slug, r]));
+const rolesByLowerTitle = new Map<string, StaffRole>(
+  staffRoles.map((r) => [r.title.toLowerCase(), r])
+);
+
+function resolveStaffRole(rawRole: unknown): StaffRole {
+  const key = typeof rawRole === 'string' ? rawRole.trim() : '';
+  if (key) {
+    const bySlug = rolesBySlug.get(key);
+    if (bySlug) return bySlug;
+
+    const byTitle = rolesByLowerTitle.get(key.toLowerCase());
+    if (byTitle) return byTitle;
+
+    return {
+      slug: key,
+      title: key,
+      group: 'doctors',
+      order: 999,
+      defaultShowBackCard: true,
+    };
+  }
+
+  return {
+    slug: '',
+    title: 'Фахівець відділення',
+    group: 'doctors',
+    order: 999,
+    defaultShowBackCard: true,
+  };
+}
+
+function compareStaff(a: Doctor, b: Doctor): number {
+  const orderDiff = (a.order ?? 100) - (b.order ?? 100);
+  if (orderDiff !== 0) return orderDiff;
+
+  const nameA = `${a.surname} ${a.name}`.trim();
+  const nameB = `${b.surname} ${b.name}`.trim();
+  return nameA.localeCompare(nameB, 'uk', { sensitivity: 'base' });
+}
 
 function buildStaffList(): Doctor[] {
   const loaded: Doctor[] = [];
 
   for (const [path, mod] of Object.entries(staffModules)) {
     const raw = mod.default || mod;
-    if (!raw || raw.isVisible === false) continue;
+    if (!raw || raw.isActive !== true) continue;
 
     const id = path.split('/').pop()?.replace('.json', '') || '';
-    const name = (raw.name || '').trim() || 'Фахівець';
-    const surname = (raw.surname || '').trim() || 'Відділення';
+    const name = String(raw.name || '').trim() || 'Фахівець';
+    const surname = String(raw.surname || '').trim() || 'Відділення';
     const initials = `${name.charAt(0)}${surname.charAt(0)}`.toUpperCase();
     const resolvedImage = resolvePhotoUrl(raw.image, null, hideLegacyPhotosFlag) || '';
+    const resolvedRole = resolveStaffRole(raw.role);
+    const showBackCard = normalizeShowBackCard(raw.showBackCard);
+
+    const bio = typeof raw.bio === 'string' ? raw.bio.trim() : '';
+    const experience = typeof raw.experience === 'string' ? raw.experience.trim() : '';
+    const education = typeof raw.education === 'string' ? raw.education.trim() : '';
+    const achievements = typeof raw.achievements === 'string' ? raw.achievements.trim() : '';
+    const specializations = Array.isArray(raw.specializations)
+      ? raw.specializations.map((s: unknown) => String(s || '').trim()).filter(Boolean)
+      : [];
+
+    const canFlip = shouldShowBackCard(
+      showBackCard,
+      resolvedRole.defaultShowBackCard,
+      hasBackCardContent({ experience, education, achievements, bio })
+    );
 
     loaded.push({
       id,
       name,
       surname,
-      fullNamePatronymic: raw.fullNamePatronymic || `${surname} ${name}`,
-      badge: raw.badge || undefined,
+      fullNamePatronymic:
+        (typeof raw.fullNamePatronymic === 'string' && raw.fullNamePatronymic.trim()) ||
+        `${surname} ${name}`.trim(),
+      badge: (typeof raw.badge === 'string' && raw.badge.trim()) || undefined,
       isHead: Boolean(raw.isHead),
-      role: raw.role || 'Лікар з радіаційної онкології',
-      department: raw.department || 'Мегавольтна терапія',
+      role: resolvedRole.title,
+      roleSlug: resolvedRole.slug,
+      roleGroup: resolvedRole.group,
+      roleOrder: resolvedRole.order,
+      roleDefaultShowBackCard: resolvedRole.defaultShowBackCard,
+      department:
+        (typeof raw.department === 'string' && raw.department.trim()) ||
+        'Мегавольтна терапія',
       initials,
-      bio: raw.bio || 'Висококваліфікований фахівець радіологічного відділення КНТ «ДОКОД» ДОР.',
+      bio,
       image: resolvedImage,
-      experience: raw.experience || '10 років',
-      specializations:
-        Array.isArray(raw.specializations) && raw.specializations.length > 0
-          ? raw.specializations.filter(Boolean)
-          : ['Променева терапія'],
-      education: raw.education || '-',
-      achievements: raw.achievements || '',
-      color: raw.color || 'from-slate-600 to-slate-700',
-      order: typeof raw.order === 'number' ? raw.order : 99,
-      isVisible: raw.isVisible !== false,
+      experience,
+      specializations,
+      education,
+      achievements,
+      color:
+        (typeof raw.color === 'string' && raw.color.trim()) ||
+        'from-slate-600 to-slate-700',
+      order: typeof raw.order === 'number' ? raw.order : 100,
+      isActive: true,
+      showBackCard,
+      canFlip,
     });
   }
 
-  return loaded.sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
+  return loaded.sort(compareStaff);
 }
 
 export const doctors: Doctor[] = buildStaffList();
+
+// Посади, у яких зараз є хоча б 1 активний працівник (у порядку staffRoles)
+function buildActiveStaffRoles(): StaffRole[] {
+  const activeCounts = new Map<string, number>();
+  for (const doc of doctors) {
+    const key = doc.roleSlug || doc.role;
+    if (!key) continue;
+    activeCounts.set(key, (activeCounts.get(key) || 0) + 1);
+  }
+
+  const knownActive = staffRoles.filter((role) => (activeCounts.get(role.slug) || 0) > 0);
+  const knownSlugs = new Set(knownActive.map((r) => r.slug));
+
+  const extra: StaffRole[] = [];
+  for (const doc of doctors) {
+    const key = doc.roleSlug || doc.role;
+    if (!key || knownSlugs.has(key)) continue;
+    knownSlugs.add(key);
+    extra.push({
+      slug: key,
+      title: doc.role,
+      group: doc.roleGroup,
+      order: doc.roleOrder,
+      defaultShowBackCard: doc.roleDefaultShowBackCard,
+    });
+  }
+
+  return [...knownActive, ...extra];
+}
+
+export const activeStaffRoles: StaffRole[] = buildActiveStaffRoles();
 
 const rawHomeSections = (rawSettings as any)?.homeSections || {};
 const rawAnnouncement = (rawSettings as any)?.announcement || {};

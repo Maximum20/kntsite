@@ -33,7 +33,10 @@ let matchedDoctors = doctors.filter((doc) => {
 
   const deptMatch =
     !departmentFilter || departmentFilter === "Усі" || doc.department === departmentFilter;
-  const roleMatch = !roleNeedle || (doc.role || "").toLowerCase().includes(roleNeedle);
+  const roleMatch =
+    !roleNeedle ||
+    (doc.role || "").toLowerCase().includes(roleNeedle) ||
+    (doc.roleSlug || "").toLowerCase().includes(roleNeedle);
   return deptMatch && roleMatch;
 });
 
@@ -89,7 +92,7 @@ if (matchedDoctors.length === 0 && departmentFilter && departmentFilter !== "man
 
 <script>
   function initDepartmentStaffCards() {
-    const cards = document.querySelectorAll(".doctor-card");
+    const cards = document.querySelectorAll('.doctor-card[data-flippable="true"]');
     cards.forEach((card) => {
       if (card.hasAttribute("data-card-bound")) return;
       card.setAttribute("data-card-bound", "true");

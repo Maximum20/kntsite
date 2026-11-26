@@ -43,7 +43,7 @@ const previewDoctors = head
 
 <script>
   function initHomeTeamCards() {
-    const cards = document.querySelectorAll("#team-preview .doctor-card");
+    const cards = document.querySelectorAll('#team-preview .doctor-card[data-flippable="true"]');
     cards.forEach((card) => {
       if (card.hasAttribute("data-card-bound")) return;
       card.setAttribute("data-card-bound", "true");

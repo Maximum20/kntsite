@@ -6,6 +6,62 @@ import {
 
 const isLocal = import.meta.env.DEV;
 
+const UA_TRANSLIT_MAP: Record<string, string> = {
+  а: 'a',
+  б: 'b',
+  в: 'v',
+  г: 'h',
+  ґ: 'g',
+  д: 'd',
+  е: 'e',
+  є: 'ye',
+  ж: 'zh',
+  з: 'z',
+  и: 'y',
+  і: 'i',
+  ї: 'i',
+  й: 'i',
+  к: 'k',
+  л: 'l',
+  м: 'm',
+  н: 'n',
+  о: 'o',
+  п: 'p',
+  р: 'r',
+  с: 's',
+  т: 't',
+  у: 'u',
+  ф: 'f',
+  х: 'kh',
+  ц: 'ts',
+  ч: 'ch',
+  ш: 'sh',
+  щ: 'shch',
+  ь: '',
+  ю: 'yu',
+  я: 'ya',
+  ё: 'yo',
+  ъ: '',
+  ы: 'y',
+  э: 'e',
+};
+
+function transliterateUaToSlug(input: string): string {
+  const lowered = String(input || '')
+    .toLowerCase()
+    .replace(/['ʼ’`]/g, '');
+  let out = '';
+  for (const ch of lowered) {
+    out += ch in UA_TRANSLIT_MAP ? UA_TRANSLIT_MAP[ch] : ch;
+  }
+  return out
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, ' ')
+    .trim()
+    .replace(/[\s-]+/g, '-');
+}
+
 export default config({
   ui: {
     brand: {
@@ -358,19 +414,75 @@ export default config({
       },
     }),
 
-    // 2. КОЛЕКЦІЯ ПЕРСОНАЛУ (Лікарі, медичні фізики, інженери-радіологи, медсестри)
+    // 2. КОЛЕКЦІЯ ПОСАД ПЕРСОНАЛУ (Довідник посад для адмінки та фільтрів на сайті)
+    staffRoles: collection({
+      label: 'Посади персоналу',
+      slugField: 'title',
+      path: 'src/content/staff-roles/*',
+      format: { data: 'json' },
+      columns: ['title', 'group', 'order', 'defaultShowBackCard'],
+      schema: {
+        title: fields.slug({
+          name: {
+            label: 'Назва посади',
+            validation: { isRequired: true },
+          },
+          slug: {
+            label: 'Системний код (формується автоматично)',
+            generate: transliterateUaToSlug,
+          },
+        }),
+        group: fields.select({
+          label: 'Група на сайті',
+          options: [
+            { label: 'Лікарі', value: 'doctors' },
+            {
+              label: 'Медичні фізики, інженери та середній медперсонал',
+              value: 'specialists',
+            },
+          ],
+          defaultValue: 'doctors',
+        }),
+        order: fields.integer({
+          label: 'Порядок відображення',
+          defaultValue: 10,
+        }),
+        defaultShowBackCard: fields.checkbox({
+          label: 'Показувати зворотну анкету за замовчуванням',
+          defaultValue: true,
+        }),
+      },
+    }),
+
+    // 3. КОЛЕКЦІЯ ПЕРСОНАЛУ (Лікарі, медичні фізики, інженери-радіологи, медсестри)
     staff: collection({
       label: 'Персонал відділення',
       slugField: 'surname',
       path: 'src/content/staff/*',
       format: { data: 'json' },
+      columns: ['fullNamePatronymic', 'role', 'isActive', 'order'],
       schema: {
-        surname: fields.slug({ name: { label: 'Прізвище' } }),
+        surname: fields.slug({
+          name: {
+            label: 'Прізвище',
+            validation: { isRequired: true },
+          },
+          slug: {
+            label: 'Імʼя файлу (латиницею)',
+            generate: transliterateUaToSlug,
+          },
+        }),
         name: fields.text({ label: "Ім'я (та по батькові за потреби)" }),
-        fullNamePatronymic: fields.text({ label: 'Повне ПІБ (для офіційних блоків)' }),
-        role: fields.text({
-          label: 'Посада (напр., Лікар з радіаційної онкології, Медичний фізик, Лікар-рентгенолог)',
-          defaultValue: 'Лікар з радіаційної онкології',
+        fullNamePatronymic: fields.text({
+          label: 'ПІБ українською',
+          description: 'Повне ПІБ (показується у списку персоналу в адмінці та в офіційних блоках).',
+          validation: { isRequired: true },
+        }),
+        role: fields.relationship({
+          label: 'Посада',
+          description: 'Оберіть посаду зі списку (редагується у розділі «Посади персоналу»).',
+          collection: 'staffRoles',
+          validation: { isRequired: true },
         }),
         department: fields.select({
           label: 'Відділення / підрозділ',
@@ -385,31 +497,32 @@ export default config({
           ],
           defaultValue: 'Мегавольтна терапія',
         }),
+        isActive: fields.checkbox({
+          label: 'Показувати на сайті',
+          description: 'Вимкніть, щоб приховати картку з сайту та пошуку без видалення працівника.',
+          defaultValue: true,
+        }),
+        order: fields.integer({
+          label: 'Порядок у списку',
+          description: 'Менше число — вище у списку. За однакового числа діє сортування за алфавітом.',
+          defaultValue: 100,
+        }),
+        showBackCard: fields.select({
+          label: 'Зворотна сторона картки',
+          description: 'Керує тим, чи перевертається картка для перегляду детальної анкети.',
+          options: [
+            { label: 'Авто (за посадою і наявністю інформації)', value: 'auto' },
+            { label: 'Завжди показувати', value: 'show' },
+            { label: 'Не показувати', value: 'hide' },
+          ],
+          defaultValue: 'auto',
+        }),
         badge: fields.text({
           label: 'Особлива відзнака / керівна посада (необовʼязково)',
         }),
         isHead: fields.checkbox({
           label: 'Керівник відділення (відображати у виділеному блоці очільника)',
           defaultValue: false,
-        }),
-        experience: fields.text({
-          label: 'Стаж роботи / кваліфікаційна категорія',
-          defaultValue: '10 років',
-        }),
-        specializations: fields.array(fields.text({ label: 'Спеціалізація / методика' }), {
-          label: 'Спеціалізації та ключові напрямки',
-          itemLabel: (props) => props.value || 'Напрямок',
-        }),
-        bio: fields.text({
-          label: 'Короткий опис / біографія',
-          multiline: true,
-        }),
-        education: fields.text({
-          label: 'Освіта та кваліфікація',
-          defaultValue: '-',
-        }),
-        achievements: fields.text({
-          label: 'Досягнення та стажування',
         }),
         image: optimizedImageField({
           label: 'Фото працівника',
@@ -420,17 +533,26 @@ export default config({
           maxWidth: 800,
           quality: 0.8,
         }),
+        experience: fields.text({
+          label: 'Стаж роботи / кваліфікаційна категорія',
+        }),
+        specializations: fields.array(fields.text({ label: 'Спеціалізація / методика' }), {
+          label: 'Спеціалізації та ключові напрямки',
+          itemLabel: (props) => props.value || 'Напрямок',
+        }),
+        bio: fields.text({
+          label: 'Цитата / короткий опис (біографія)',
+          multiline: true,
+        }),
+        education: fields.text({
+          label: 'Освіта та кваліфікація',
+        }),
+        achievements: fields.text({
+          label: 'Досягнення та стажування',
+        }),
         color: fields.text({
           label: 'Кольоровий градієнт бейджа (Tailwind)',
           defaultValue: 'from-slate-600 to-slate-700',
-        }),
-        order: fields.integer({
-          label: 'Порядок сортування (1 — перший)',
-          defaultValue: 10,
-        }),
-        isVisible: fields.checkbox({
-          label: 'Відображати на сайті',
-          defaultValue: true,
         }),
       },
     }),

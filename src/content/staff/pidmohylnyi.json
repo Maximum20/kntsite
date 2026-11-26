@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Підмогильний Євгеній",
   "badge": "",
   "isHead": false,
-  "role": "Лікар з радіаційної онкології",
+  "role": "likar-z-radiatsiinoi-onkolohii",
   "department": "Мегавольтна терапія",
   "bio": "Фахівець із сучасної мегавольтної променевої терапії на лінійних прискорювачах Elekta та персоналізованого 3D/4D-планування опромінення у системах RayStation і Monaco.",
   "image": "/hero/doctors/pidmohylnyi.jpg",
@@ -19,5 +19,6 @@
   "achievements": "Міжнародне стажування у головному офісі RaySearch Laboratories (м. Стокгольм, Швеція, 2026 р.) із високоточного планування променевої терапії в системі RayStation",
   "color": "from-slate-600 to-slate-700",
   "order": 5,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

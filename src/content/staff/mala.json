@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Мала Ольга Володимирівна",
   "badge": "",
   "isHead": false,
-  "role": "Лікар з радіаційної онкології",
+  "role": "likar-z-radiatsiinoi-onkolohii",
   "department": "Мегавольтна терапія",
   "bio": "Спеціалізується на сучасних методиках дистанційної променевої терапії та радіохірургії.",
   "image": "/hero/doctors/mala.jpg",
@@ -18,5 +18,6 @@
   "achievements": "Сотні успішно проведених курсів високоенергетичної терапії",
   "color": "from-slate-700 to-slate-800",
   "order": 3,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

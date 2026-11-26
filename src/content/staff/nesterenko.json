@@ -2,7 +2,7 @@
   "surname": "Нестеренко",
   "name": "Ольга",
   "fullNamePatronymic": "Нестеренко Ольга",
-  "role": "Старша медична сестра",
+  "role": "starsha-medychna-sestra",
   "department": "Мегавольтна терапія",
   "isHead": false,
   "experience": "18 років",
@@ -17,5 +17,6 @@
   "image": "/hero/doctors/nesterenko/image.jpg",
   "color": "from-slate-600 to-slate-800",
   "order": 12,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

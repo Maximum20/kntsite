@@ -5,9 +5,11 @@ import DoctorCard from './DoctorCard.astro';
 import { Icon } from "astro-icon/components";
 
 // Фільтруємо фахівців: Мегавольтна терапія + Лікар з радіаційної онкології
-const linacDoctors = doctors.filter(d => 
-  d.department === "Мегавольтна терапія" && 
-  d.role === "Лікар з радіаційної онкології"
+const linacDoctors = doctors.filter(
+  (d) =>
+    d.department === "Мегавольтна терапія" &&
+    (d.roleSlug === "likar-z-radiatsiinoi-onkolohii" ||
+      d.role === "Лікар з радіаційної онкології")
 );
 ---
 
@@ -80,10 +82,12 @@ const linacDoctors = doctors.filter(d =>
 
 <script>
   function initLinacStaff() {
-    // Логіка інтерактивності карток
-    const cards = document.querySelectorAll('.doctor-card');
-    
+    // Логіка інтерактивності лише для карток із дозволеним переворотом
+    const cards = document.querySelectorAll('.doctor-card[data-flippable="true"]');
+
     cards.forEach(card => {
+      if (card.hasAttribute('data-card-bound')) return;
+      card.setAttribute('data-card-bound', 'true');
       card.addEventListener('click', () => {
         if (card.classList.contains('is-expanded')) {
           card.classList.remove('is-expanded');

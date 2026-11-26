@@ -355,12 +355,17 @@ function normalizePhoneDigits(phone: string): string[] {
 }
 
 export async function buildSiteSearchData(): Promise<SiteSearchPayload> {
-  const [rawServices, rawStaff, rawNews, rawVacancies] = await Promise.all([
+  const [rawServices, rawStaff, rawStaffRoles, rawNews, rawVacancies] = await Promise.all([
     getCollection("services").catch(() => []),
     getCollection("staff").catch(() => []),
+    getCollection("staffRoles").catch(() => []),
     getCollection("news").catch(() => []),
     getCollection("vacancies").catch(() => []),
   ]);
+
+  const staffRoleTitleBySlug = new Map<string, string>(
+    rawStaffRoles.map((r) => [r.id, String(r.data?.title || r.id).trim()])
+  );
 
   const visibleServices = [...rawServices]
     .filter((s) => s.data?.isVisible !== false)
@@ -368,8 +373,14 @@ export async function buildSiteSearchData(): Promise<SiteSearchPayload> {
   const visibleServiceIds = new Set(visibleServices.map((s) => s.id));
 
   const visibleStaff = [...rawStaff]
-    .filter((s) => s.data?.isVisible !== false)
-    .sort((a, b) => (a.data?.order ?? 99) - (b.data?.order ?? 99));
+    .filter((s) => s.data?.isActive === true)
+    .sort((a, b) => {
+      const orderDiff = (a.data?.order ?? 100) - (b.data?.order ?? 100);
+      if (orderDiff !== 0) return orderDiff;
+      const nameA = `${a.data?.surname || ""} ${a.data?.name || ""}`.trim();
+      const nameB = `${b.data?.surname || ""} ${b.data?.name || ""}`.trim();
+      return nameA.localeCompare(nameB, "uk", { sensitivity: "base" });
+    });
 
   const sortedNews = [...rawNews].sort((a, b) => {
     const da = a.data?.date ? new Date(a.data.date).getTime() : 0;
@@ -932,7 +943,12 @@ export async function buildSiteSearchData(): Promise<SiteSearchPayload> {
     const surname = (d.surname || "").trim();
     const name = (d.name || "").trim();
     if (!surname && !name) continue;
-    const role = (d.role || "Лікар з радіаційної онкології").trim();
+    const rawRoleSlug = String(d.role || "").trim();
+    const role = (
+      staffRoleTitleBySlug.get(rawRoleSlug) ||
+      rawRoleSlug ||
+      "Фахівець відділення"
+    ).trim();
     const department = (d.department || "").trim();
     const roleLower = role.toLowerCase();
     const url = `/doctors?doctor=${encodeURIComponent(surname || name)}`;

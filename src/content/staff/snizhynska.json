@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Сніжинська Валерія Іванівна",
   "badge": "В.о. завідувачки відділенням променевої терапії №1",
   "isHead": true,
-  "role": "Лікар з радіаційної онкології",
+  "role": "likar-z-radiatsiinoi-onkolohii",
   "department": "Мегавольтна терапія",
   "bio": "Експерт у галузі сучасної променевої терапії з досвідом лікування складних онкологічних патологій.",
   "image": "/hero/doctors/snizhynska.jpg",
@@ -18,5 +18,6 @@
   "achievements": "Понад 500 успішних курсів лікування",
   "color": "from-slate-600 to-slate-700",
   "order": 1,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

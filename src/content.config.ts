@@ -48,6 +48,16 @@ const news = defineCollection({
     }),
 });
 
+const staffRoles = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/staff-roles' }),
+  schema: z.object({
+    title: z.string().default('Фахівець відділення'),
+    group: z.enum(['doctors', 'specialists']).optional().default('doctors'),
+    order: z.number().optional().default(10),
+    defaultShowBackCard: z.boolean().optional().default(true),
+  }),
+});
+
 const staff = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/staff' }),
   schema: z.object({
@@ -56,17 +66,18 @@ const staff = defineCollection({
     fullNamePatronymic: z.string().optional().default(''),
     badge: z.string().optional().default(''),
     isHead: z.boolean().optional().default(false),
-    role: z.string().optional().default('Лікар з радіаційної онкології'),
+    role: z.string().nullable().optional().default('likar-z-radiatsiinoi-onkolohii'),
     department: z.string().optional().default('Мегавольтна терапія'),
     bio: z.string().optional().default(''),
     image: z.string().nullable().optional().default(''),
     experience: z.string().optional().default(''),
     specializations: z.array(z.string()).optional().default([]),
-    education: z.string().optional().default('-'),
+    education: z.string().optional().default(''),
     achievements: z.string().optional().default(''),
     color: z.string().optional().default('from-slate-600 to-slate-700'),
-    order: z.number().optional().default(10),
-    isVisible: z.boolean().optional().default(true),
+    order: z.number().optional().default(100),
+    isActive: z.boolean().optional().default(true),
+    showBackCard: z.enum(['auto', 'show', 'hide']).optional().default('auto'),
   }),
 });
 
@@ -102,6 +113,7 @@ const vacancies = defineCollection({
 export const collections = {
   services,
   news,
+  staffRoles,
   staff,
   vacancies,
 };

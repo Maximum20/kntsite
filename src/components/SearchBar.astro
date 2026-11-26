@@ -1,5 +1,5 @@
 ---
-import { doctors } from "../data";
+import { doctors, activeStaffRoles } from "../data";
 
 const departments = Array.from(
   new Set([
@@ -10,16 +10,6 @@ const departments = Array.from(
     "КТ-розмітка",
     "Реабілітація",
     ...doctors.map((d) => d.department).filter(Boolean),
-  ])
-);
-
-const roles = Array.from(
-  new Set([
-    "Лікар з радіаційної онкології",
-    "Лікар-рентгенолог",
-    "Медичний фізик",
-    "Старша медична сестра",
-    ...doctors.map((d) => d.role).filter(Boolean),
   ])
 );
 
@@ -92,17 +82,19 @@ const activeChip =
             ))}
           </div>
         </div>
-        <div>
-          <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">
-            Посада
-          </label>
-          <div class="flex flex-wrap gap-2" id="roleFilter">
-            <button type="button" class={activeChip} data-value="all">Всі</button>
-            {roles.map((role) => (
-              <button type="button" class={baseChip} data-value={role}>{role}</button>
-            ))}
+        {activeStaffRoles.length > 0 && (
+          <div>
+            <label class="block text-[9px] md:text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 ml-1">
+              Посада
+            </label>
+            <div class="flex flex-wrap gap-2" id="roleFilter">
+              <button type="button" class={activeChip} data-value="all">Всі</button>
+              {activeStaffRoles.map((role) => (
+                <button type="button" class={baseChip} data-value={role.slug}>{role.title}</button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   </div>
@@ -128,9 +120,9 @@ const activeChip =
     const chevron = document.getElementById("chevron");
     const deptButtons = document.querySelectorAll("#deptFilter .filter-chip");
     const roleButtons = document.querySelectorAll("#roleFilter .filter-chip");
-    const loadMoreContainer = document.getElementById("loadMoreContainer");
 
-    if (!searchInput) return;
+    if (!searchInput || searchInput.hasAttribute("data-filters-bound")) return;
+    searchInput.setAttribute("data-filters-bound", "true");
 
     let activeDept = "all";
     let activeRole = "all";
@@ -147,96 +139,80 @@ const activeChip =
       activeBtn.classList.remove(...baseClasses.split(" "));
     }
 
+    function matchesCard(card, query) {
+      const name = (card.dataset.name || "").toLowerCase();
+      const role = card.dataset.role || "";
+      const roleSlug = card.dataset.roleSlug || role;
+      const dept = card.dataset.dept || "";
+
+      const matchesSearch =
+        !query || name.includes(query) || role.toLowerCase().includes(query);
+      const matchesDept = activeDept === "all" || dept === activeDept;
+      const matchesRole =
+        activeRole === "all" || roleSlug === activeRole || role === activeRole;
+
+      return matchesSearch && matchesDept && matchesRole;
+    }
+
     function applyFilters() {
       const query = searchInput.value.toLowerCase().trim();
       const isSearchActive = query.length > 0 || activeDept !== "all" || activeRole !== "all";
 
       if (clearBtn) clearBtn.classList.toggle("hidden", !isSearchActive);
 
-      const cards = document.querySelectorAll(".doctor-card");
       const noResults = document.getElementById("noResults");
       const headSection = document.getElementById("headSection");
-      const specialistsTitle = document.getElementById("specialistsTitle");
+      const staffSections = document.querySelectorAll("[data-staff-section]");
 
       let hasMatches = false;
 
-      if (specialistsTitle) {
-        specialistsTitle.style.display = isSearchActive ? "none" : "block";
-      }
-
       if (headSection) {
         const bossCard = headSection.querySelector(".doctor-card");
-        const bossName = (bossCard?.dataset.name || "").toLowerCase();
-        const bossRole = bossCard?.dataset.role || "";
-        const bossDept = bossCard?.dataset.dept || "";
-
-        const matchesSearch =
-          bossName.includes(query) || bossRole.toLowerCase().includes(query);
-        const matchesDept = activeDept === "all" || bossDept === activeDept;
-        const matchesRole = activeRole === "all" || bossRole === activeRole;
-
         if (!isSearchActive) {
           headSection.style.display = "flex";
-        } else if (matchesSearch && matchesDept && matchesRole) {
+          hasMatches = true;
+        } else if (bossCard && matchesCard(bossCard, query)) {
           headSection.style.display = "flex";
           hasMatches = true;
         } else {
           headSection.style.display = "none";
+          bossCard?.classList.remove("is-expanded");
         }
       }
 
-      cards.forEach((card) => {
-        if (card.closest("#headSection")) return;
-        const wrapper = card.closest(".doctor-wrapper");
+      staffSections.forEach((section) => {
+        const sectionCards = section.querySelectorAll(".doctor-card");
+        let visibleInSection = 0;
 
-        const name = (card.dataset.name || "").toLowerCase();
-        const role = card.dataset.role || "";
-        const dept = card.dataset.dept || "";
+        sectionCards.forEach((card) => {
+          const wrapper = card.closest(".doctor-wrapper");
+          const isMatch = !isSearchActive || matchesCard(card, query);
 
-        const matchesSearch =
-          name.includes(query) || role.toLowerCase().includes(query);
-        const matchesDept = activeDept === "all" || dept === activeDept;
-        const matchesRole = activeRole === "all" || role === activeRole;
-
-        if (!isSearchActive) {
-          // Відновлюємо стан пагінації, якщо фільтр скинутий
-          const wasPaged = wrapper?.getAttribute("data-initial-paged") === "true";
-          if (wrapper) {
-            if (wasPaged) {
+          if (isMatch) {
+            if (wrapper) {
+              wrapper.classList.remove("hidden");
+              if (isSearchActive) {
+                wrapper.classList.add("is-visible");
+              } else {
+                wrapper.classList.remove("is-visible");
+              }
+            }
+            card.style.display = "block";
+            visibleInSection++;
+            hasMatches = true;
+          } else {
+            if (wrapper) {
               wrapper.classList.add("hidden");
               wrapper.classList.remove("is-visible");
-            } else {
-              wrapper.classList.remove("hidden");
-              wrapper.classList.add("is-visible");
             }
+            card.style.display = "none";
+            card.classList.remove("is-expanded");
           }
-          card.style.display = "block";
-          hasMatches = true;
-        } else if (matchesSearch && matchesDept && matchesRole) {
-          if (wrapper) {
-            wrapper.classList.remove("hidden");
-            wrapper.classList.add("is-visible");
-          }
-          card.style.display = "block";
-          hasMatches = true;
-        } else {
-          if (wrapper) {
-            wrapper.classList.add("hidden");
-            wrapper.classList.remove("is-visible");
-          }
-          card.style.display = "none";
-          card.classList.remove("is-expanded");
-        }
-      });
+        });
 
-      if (loadMoreContainer) {
-        const remainingHidden = document.querySelectorAll('#doctorsGrid .doctor-wrapper[data-initial-paged="true"]');
-        if (isSearchActive || remainingHidden.length === 0) {
-          loadMoreContainer.classList.add("hidden");
-        } else {
-          loadMoreContainer.classList.remove("hidden");
-        }
-      }
+        // Повністю приховуємо заголовок і секцію, якщо в ній 0 видимих працівників
+        section.classList.toggle("hidden", visibleInSection === 0);
+      });
 
       if (noResults) noResults.classList.toggle("hidden", hasMatches || !isSearchActive);
     }
@@ -255,12 +231,18 @@ const activeChip =
           wrapper.classList.remove("hidden");
           wrapper.classList.add("is-visible");
         }
+        const section = targetCard.closest("[data-staff-section]");
+        if (section) {
+          section.classList.remove("hidden");
+        }
         targetCard.scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(() => {
-          if (!targetCard.classList.contains("is-expanded")) {
-            targetCard.click();
-          }
-        }, 180);
+        if (targetCard.getAttribute("data-flippable") === "true") {
+          setTimeout(() => {
+            if (!targetCard.classList.contains("is-expanded")) {
+              targetCard.click();
+            }
+          }, 180);
+        }
       }
     }
 
@@ -271,7 +253,10 @@ const activeChip =
           `${doc.name} ${doc.surname}`.toLowerCase().includes(query) ||
           doc.role.toLowerCase().includes(query);
         const deptMatch = activeDept === "all" || doc.department === activeDept;
-        const roleMatch = activeRole === "all" || doc.role === activeRole;
+        const roleMatch =
+          activeRole === "all" ||
+          doc.roleSlug === activeRole ||
+          doc.role === activeRole;
         return nameMatch && deptMatch && roleMatch;
       });
 

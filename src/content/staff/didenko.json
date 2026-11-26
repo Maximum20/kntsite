@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Діденко Аліна",
   "badge": "",
   "isHead": false,
-  "role": "Лікар-рентгенолог",
+  "role": "likar-renthenoloh",
   "department": "КТ-розмітка",
   "bio": "Спеціаліст з КТ-топометрії та прецизійної візуалізації мішеней для максимально точної підготовки до променевої терапії.",
   "image": "/hero/doctors/didenko2.jpg",
@@ -20,5 +20,6 @@
   "achievements": "Понад 2000 успішно проведених КТ-топометрій",
   "color": "from-slate-700 to-slate-800",
   "order": 11,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }

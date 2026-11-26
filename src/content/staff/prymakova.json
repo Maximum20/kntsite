@@ -4,7 +4,7 @@
   "fullNamePatronymic": "Примакова Євгенія",
   "badge": "",
   "isHead": false,
-  "role": "Лікар з радіаційної онкології",
+  "role": "likar-z-radiatsiinoi-onkolohii",
   "department": "Мегавольтна терапія",
   "bio": "Фахівець із сучасної променевої терапії та прецизійного планування опромінення на лінійних прискорювачах.",
   "image": "/hero/doctors/prymakova.jpg",
@@ -18,5 +18,6 @@
   "achievements": "Супровід та лікування пацієнтів за міжнародними протоколами",
   "color": "from-slate-600 to-slate-700",
   "order": 8,
-  "isVisible": true
+  "isActive": true,
+  "showBackCard": "auto"
 }
