@@ -4,5 +4,7 @@ Disallow: /keystatic
 Disallow: /keystatic/
 Disallow: /api/
 Disallow: /tools/
+Disallow: /anketa-personalu
+Disallow: /anketa-personalu/
 
 Sitemap: https://kntsite.vercel.app/sitemap-index.xml

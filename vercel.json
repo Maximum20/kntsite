@@ -62,6 +62,19 @@
           "value": "no-store, max-age=0"
         }
       ]
+    },
+    {
+      "source": "/(anketa-personalu|api/submit-staff|api/submit-feedback)(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
     }
   ]
 }

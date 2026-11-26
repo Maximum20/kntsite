@@ -8,6 +8,7 @@ import HomeDepartments from "../components/HomeDepartments.astro";
 import HeroAbout from "../components/HeroAbout.astro";
 import PatientJourney from "../components/PatientJourney.astro";
 import HomeTeam from "../components/HomeTeam.astro";
+import FeedbackSection from "../components/FeedbackSection.astro";
 import Contacts from "../components/contacts.astro";
 import News from "../components/news.astro";
 import { siteSettings } from "../data";
@@ -39,6 +40,8 @@ const sections = siteSettings.homeSections;
     )}
 
     {sections.showTeam && <HomeTeam />}
+
+    {sections.showFeedback && <FeedbackSection />}
 
     {sections.showContacts && <Contacts />}
 

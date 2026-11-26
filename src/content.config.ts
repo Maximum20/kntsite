@@ -110,10 +110,27 @@ const vacancies = defineCollection({
     }),
 });
 
+const feedback = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/feedback' }),
+  schema: z.object({
+    authorName: z.string().default('Анонімний пацієнт'),
+    type: z.enum(['review', 'question']).optional().default('review'),
+    rating: z.number().int().min(1).max(5).nullable().optional(),
+    staffMember: z.string().nullable().optional(),
+    department: z.string().nullable().optional().default(''),
+    highlights: z.array(z.string()).optional().default([]),
+    message: z.string().default(''),
+    createdAt: z.union([z.string(), z.date()]).nullable().optional().default(''),
+    isPublished: z.boolean().optional().default(false),
+    adminReply: z.string().nullable().optional().default(''),
+  }),
+});
+
 export const collections = {
   services,
   news,
   staffRoles,
   staff,
   vacancies,
+  feedback,
 };

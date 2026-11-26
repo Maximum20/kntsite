@@ -179,6 +179,10 @@ export default config({
               label: 'Секція «Команда / Лікарі»',
               defaultValue: true,
             }),
+            showFeedback: fields.checkbox({
+              label: 'Секція «Відгуки та питання»',
+              defaultValue: true,
+            }),
             showContacts: fields.checkbox({
               label: 'Секція «Контакти»',
               defaultValue: true,
@@ -1091,6 +1095,73 @@ export default config({
               publicPath: '/src/assets/vacancies/inline/',
             },
           },
+        }),
+      },
+    }),
+
+    // 5. КОЛЕКЦІЯ ВІДГУКІВ ТА ПИТАНЬ ПАЦІЄНТІВ (З МОДЕРАЦІЄЮ)
+    feedback: collection({
+      label: 'Відгуки та питання',
+      slugField: 'authorName',
+      path: 'src/content/feedback/*',
+      format: { data: 'json' },
+      columns: ['authorName', 'type', 'rating', 'isPublished', 'createdAt'],
+      schema: {
+        authorName: fields.slug({
+          name: {
+            label: "Ім'я",
+            description: 'Імʼя автора або «Анонімний пацієнт», якщо обрано анонімну публікацію.',
+            defaultValue: 'Анонімний пацієнт',
+            validation: { isRequired: true },
+          },
+          slug: {
+            label: 'Системне імʼя файлу (латиницею)',
+            generate: transliterateUaToSlug,
+          },
+        }),
+        type: fields.select({
+          label: 'Тип звернення',
+          options: [
+            { label: 'Відгук', value: 'review' },
+            { label: 'Питання', value: 'question' },
+          ],
+          defaultValue: 'review',
+        }),
+        rating: fields.integer({
+          label: 'Оцінка (зірочки)',
+          description: 'Від 1 до 5 (заповнюється лише для відгуків; для питань залиште порожнім).',
+          validation: { min: 1, max: 5 },
+        }),
+        staffMember: fields.relationship({
+          label: 'Спеціаліст / лікар',
+          description: 'Оберіть працівника, якщо відгук стосується конкретного спеціаліста (необовʼязково).',
+          collection: 'staff',
+        }),
+        department: fields.text({
+          label: 'Відділення / напрямок',
+          description: 'Назва відділення або тема питання (необовʼязково).',
+        }),
+        highlights: fields.array(fields.text({ label: 'Тег' }), {
+          label: 'Що сподобалось (теги)',
+          itemLabel: (props) => props.value || 'Тег',
+        }),
+        message: fields.text({
+          label: 'Текст',
+          multiline: true,
+          validation: { isRequired: true },
+        }),
+        createdAt: fields.date({
+          label: 'Дата',
+        }),
+        isPublished: fields.checkbox({
+          label: 'Опублікувати на сайті',
+          description: 'Увімкніть після перевірки, щоб показати звернення на головній сторінці.',
+          defaultValue: false,
+        }),
+        adminReply: fields.text({
+          label: 'Відповідь відділення',
+          description: 'Офіційна відповідь команди відділення (необовʼязково).',
+          multiline: true,
         }),
       },
     }),

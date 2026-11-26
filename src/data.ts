@@ -255,6 +255,7 @@ export const siteSettings = {
     showEquipment: rawHomeSections.showEquipment !== false,
     showFaq: rawHomeSections.showFaq !== false,
     showTeam: rawHomeSections.showTeam !== false,
+    showFeedback: rawHomeSections.showFeedback !== false,
     showContacts: rawHomeSections.showContacts !== false,
     showNews: rawHomeSections.showNews !== false,
   },

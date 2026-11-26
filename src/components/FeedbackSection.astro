@@ -1,0 +1,1387 @@
+---
+import { getCollection } from "astro:content";
+import { Icon } from "astro-icon/components";
+import { doctors, siteSettings, staffRoles } from "../data";
+import { getGitHubConfig, getServerEnv } from "../lib/githubSubmit";
+
+// Завантажуємо всі звернення та залишаємо лише схвалені модератором (isPublished === true)
+const rawFeedback = await getCollection("feedback").catch(() => []);
+const allStaffCollection = await getCollection("staff").catch(() => []);
+
+const roleTitleBySlug = new Map<string, string>(
+  staffRoles.map((r) => [r.slug, r.title])
+);
+
+// Довідник персоналу для відображення ПІБ у вже опублікованих відгуках
+const staffInfoById = new Map<string, { fullName: string; roleTitle: string }>();
+for (const entry of allStaffCollection) {
+  const fullName =
+    (entry.data?.fullNamePatronymic || "").trim() ||
+    `${entry.data?.surname || ""} ${entry.data?.name || ""}`.trim();
+  const roleKey = (entry.data?.role || "").trim();
+  const roleTitle = roleTitleBySlug.get(roleKey) || roleKey;
+  if (fullName) {
+    staffInfoById.set(entry.id, { fullName, roleTitle });
+  }
+}
+for (const doc of doctors) {
+  if (doc.id && !staffInfoById.has(doc.id)) {
+    staffInfoById.set(doc.id, {
+      fullName: doc.fullNamePatronymic || `${doc.surname} ${doc.name}`.trim(),
+      roleTitle: doc.role,
+    });
+  }
+}
+
+function normalizeDateString(val: unknown): string {
+  if (!val) return "";
+  if (val instanceof Date && !Number.isNaN(val.getTime())) {
+    return val.toISOString().slice(0, 10);
+  }
+  return String(val).trim();
+}
+
+function formatUkDate(isoDate: string): string {
+  if (!isoDate) return "";
+  const parsed = new Date(isoDate);
+  if (Number.isNaN(parsed.getTime())) return isoDate;
+  return new Intl.DateTimeFormat("uk-UA", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(parsed);
+}
+
+function formatReviewsBaseWord(count: number): string {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+  if (mod10 === 1 && mod100 !== 11) return "відгуку";
+  return "відгуків";
+}
+
+interface PublishedFeedbackItem {
+  id: string;
+  authorName: string;
+  type: "review" | "question";
+  rating: number | null;
+  staffMemberId: string;
+  staffLabel: string;
+  staffRole: string;
+  department: string;
+  highlights: string[];
+  message: string;
+  createdAtRaw: string;
+  createdAtFormatted: string;
+  adminReply: string;
+}
+
+const publishedItems: PublishedFeedbackItem[] = rawFeedback
+  .filter((item) => item.data?.isPublished === true)
+  .map((item) => {
+    const type: "review" | "question" =
+      item.data?.type === "question" ? "question" : "review";
+    const rawRating = item.data?.rating;
+    const rating =
+      type === "review" &&
+      typeof rawRating === "number" &&
+      rawRating >= 1 &&
+      rawRating <= 5
+        ? Math.round(rawRating)
+        : null;
+    const staffMemberId = (item.data?.staffMember || "").trim();
+    const staffInfo = staffMemberId ? staffInfoById.get(staffMemberId) : undefined;
+    const createdAtRaw = normalizeDateString(item.data?.createdAt);
+
+    return {
+      id: item.id,
+      authorName: (item.data?.authorName || "").trim() || "Анонімний пацієнт",
+      type,
+      rating,
+      staffMemberId,
+      staffLabel: staffInfo?.fullName || "",
+      staffRole: staffInfo?.roleTitle || "",
+      department: (item.data?.department || "").trim(),
+      highlights: Array.isArray(item.data?.highlights)
+        ? item.data.highlights.map((h) => String(h || "").trim()).filter(Boolean)
+        : [],
+      message: (item.data?.message || "").trim(),
+      createdAtRaw,
+      createdAtFormatted: formatUkDate(createdAtRaw),
+      adminReply: (item.data?.adminReply || "").trim(),
+    };
+  })
+  .filter((item) => Boolean(item.message))
+  .sort((a, b) => {
+    const cmp = b.createdAtRaw.localeCompare(a.createdAtRaw);
+    if (cmp !== 0) return cmp;
+    return b.id.localeCompare(a.id);
+  });
+
+const reviewsCount = publishedItems.filter((i) => i.type === "review").length;
+const questionsCount = publishedItems.filter((i) => i.type === "question").length;
+
+const ratedReviews = publishedItems.filter(
+  (i) => i.type === "review" && typeof i.rating === "number"
+);
+const averageRating =
+  ratedReviews.length > 0
+    ? (
+        ratedReviews.reduce((sum, item) => sum + (item.rating || 0), 0) /
+        ratedReviews.length
+      ).toFixed(1)
+    : null;
+
+// Список спеціалістів, для яких є опубліковані звернення (для фільтра по лікарю)
+const doctorsWithFeedbackMap = new Map<string, string>();
+for (const item of publishedItems) {
+  if (item.staffMemberId && item.staffLabel && !doctorsWithFeedbackMap.has(item.staffMemberId)) {
+    doctorsWithFeedbackMap.set(item.staffMemberId, item.staffLabel);
+  }
+}
+const doctorsWithFeedback = Array.from(doctorsWithFeedbackMap.entries())
+  .map(([id, label]) => ({ id, label }))
+  .sort((a, b) => a.label.localeCompare(b.label, "uk", { sensitivity: "base" }));
+
+// Активні спеціалісти (isActive: true) для випадаючого списку форми
+const activeDoctorsGroup = doctors.filter((d) => d.roleGroup === "doctors");
+const activeSpecialistsGroup = doctors.filter((d) => d.roleGroup !== "doctors");
+
+const departmentOptions = [
+  "Мегавольтна терапія",
+  "Гамма-терапія",
+  "Брахітерапія",
+  "Близький фокус",
+  "КТ-розмітка",
+  "Реабілітація",
+  "Інженерно-фізична група",
+];
+
+const questionTopics = [
+  "Запис на прийом / електронне направлення НСЗУ",
+  "Підготовка до КТ-розмітки та опромінення",
+  "Променева терапія (лінійні прискорювачі)",
+  "Гамма-терапія / Брахітерапія / Близький фокус",
+  "Реабілітація та супровід під час курсу",
+  "Організаційні питання",
+];
+
+const highlightTags = [
+  "Уважний лікар",
+  "Зрозуміле пояснення",
+  "Сучасне обладнання",
+  "Комфортні умови",
+  "Чітка організація",
+];
+
+// Перевіряємо на етапі збірки, чи активований серверний захист Turnstile + GitHub
+const turnstileSiteKey = getServerEnv("PUBLIC_TURNSTILE_SITE_KEY");
+const isTurnstileSecretSet = Boolean(getServerEnv("TURNSTILE_SECRET_KEY"));
+const isGitHubConfigured = Boolean(getGitHubConfig());
+const isDirectSubmitEnabled = Boolean(
+  turnstileSiteKey && isTurnstileSecretSet && isGitHubConfigured
+);
+
+const fallbackEmail = siteSettings.email || "linac_olt1@ukr.net";
+---
+
+<section
+  id="feedback"
+  class="max-w-7xl mx-auto px-5 sm:px-6 py-16 md:py-24 scroll-mt-28 font-sans relative"
+  data-turnstile-site-key={isDirectSubmitEnabled ? turnstileSiteKey : ""}
+  data-direct-submit-enabled={isDirectSubmitEnabled ? "true" : "false"}
+  data-fallback-email={fallbackEmail}
+>
+  {/* Заголовок секції + бейдж середнього рейтингу */}
+  <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+    <div>
+      <span class="inline-block text-blue-600 font-black uppercase tracking-[0.25em] text-xs mb-3">
+        Зворотний звʼязок пацієнтів
+      </span>
+      <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+        Відгуки та <span class="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">питання</span>
+      </h2>
+      <p class="text-slate-600 text-base md:text-lg mt-3 max-w-2xl">
+        Діліться досвідом лікування або ставте запитання нашій команді. Усі звернення проходять перевірку модератором перед публікацією.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3 self-start lg:self-auto">
+      {averageRating && (
+        <div
+          class="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-amber-50 border border-amber-200/90 shadow-xs"
+          aria-label={`Середній рейтинг ${averageRating} з 5 на основі ${ratedReviews.length} ${formatReviewsBaseWord(ratedReviews.length)}`}
+        >
+          <span class="text-amber-500 text-lg leading-none" aria-hidden="true">★</span>
+          <span class="text-base font-black text-slate-900">{averageRating}</span>
+          <span class="text-xs font-bold text-slate-600">
+            • на основі {ratedReviews.length} {formatReviewsBaseWord(ratedReviews.length)}
+          </span>
+        </div>
+      )}
+
+      <button
+        id="openFeedbackFormBtn"
+        type="button"
+        aria-expanded="false"
+        aria-controls="feedbackFormWrapper"
+        class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-lg shadow-blue-600/20 active:scale-95 transition-all cursor-pointer"
+      >
+        <Icon name="bx:message-square-edit" class="w-5 h-5" />
+        <span id="openFeedbackFormBtnText">Залишити відгук або питання</span>
+      </button>
+    </div>
+  </div>
+
+  {/* Інтерактивна розкривна форма звернення */}
+  <div id="feedbackFormWrapper" class="hidden mb-12">
+    <div class="bg-white/95 backdrop-blur-xl border-2 border-blue-200/80 rounded-[2.2rem] p-5 sm:p-8 shadow-xl shadow-blue-950/5 relative">
+      {/* Шапка форми + кнопка згортання */}
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-6 border-b border-slate-200/80">
+        {/* Перемикач режиму: Залишити відгук / Поставити питання */}
+        <div
+          class="inline-flex p-1 rounded-2xl bg-slate-100 border border-slate-200/80 self-start"
+          role="tablist"
+          aria-label="Тип звернення"
+        >
+          <button
+            type="button"
+            role="tab"
+            id="fbModeReviewBtn"
+            data-fb-mode="review"
+            aria-selected="true"
+            class="fb-mode-btn is-active px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2"
+          >
+            <span aria-hidden="true">★</span>
+            <span>Залишити відгук</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            id="fbModeQuestionBtn"
+            data-fb-mode="question"
+            aria-selected="false"
+            class="fb-mode-btn px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2"
+          >
+            <span aria-hidden="true">?</span>
+            <span>Поставити питання</span>
+          </button>
+        </div>
+
+        <button
+          id="closeFeedbackFormBtn"
+          type="button"
+          class="self-end sm:self-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition-colors cursor-pointer"
+          aria-label="Згорнути форму"
+        >
+          <span>Згорнути</span>
+          <span aria-hidden="true">✕</span>
+        </button>
+      </div>
+
+      {/* Стан підтвердження після успішної відправки (без перезавантаження) */}
+      <div
+        id="feedbackSuccessBox"
+        role="status"
+        aria-live="polite"
+        class="hidden py-8 px-4 text-center"
+      >
+        <div class="w-16 h-16 mx-auto mb-4 rounded-3xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+          <Icon name="bx:check-circle" class="w-9 h-9" />
+        </div>
+        <h3 class="text-2xl font-black text-slate-900 mb-2">Звернення прийнято</h3>
+        <p id="feedbackSuccessMessage" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-6">
+          Дякуємо! Ваше звернення надіслано на перевірку і з'явиться на сайті після модерації.
+        </p>
+        <button
+          id="feedbackSendAnotherBtn"
+          type="button"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+        >
+          Надіслати ще одне звернення
+        </button>
+      </div>
+
+      {/* Сама форма */}
+      <form id="patientFeedbackForm" class="space-y-6" novalidate>
+        {/* Приховане honeypot-поле */}
+        <div class="sr-only" aria-hidden="true">
+          <label for="fbWebsiteTrap">Вебсайт</label>
+          <input
+            id="fbWebsiteTrap"
+            name="website"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+
+        {/* Блок оцінки зірочками (тільки для режиму "Відгук") */}
+        <div id="fbReviewOnlyTop" class="space-y-6">
+          <div class="p-4 sm:p-5 rounded-2xl bg-amber-50/60 border border-amber-200/70">
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2.5">
+              Ваша оцінка <span class="text-red-500">*</span>
+            </label>
+            <div class="flex flex-wrap items-center gap-4">
+              <div
+                id="fbStarGroup"
+                class="inline-flex items-center gap-1.5"
+                role="radiogroup"
+                aria-label="Оцінка від 1 до 5 зірочок"
+              >
+                {[1, 2, 3, 4, 5].map((starVal) => (
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked="false"
+                    aria-label={`${starVal} з 5`}
+                    data-star-value={starVal}
+                    class="fb-star-btn p-1 rounded-xl text-slate-300 transition-transform duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 cursor-pointer"
+                  >
+                    <svg class="w-9 h-9 sm:w-10 sm:h-10 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 2.4l2.92 5.91 6.53.95-4.72 4.6 1.11 6.5L12 17.3l-5.84 3.06 1.11-6.5-4.72-4.6 6.53-.95L12 2.4z" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
+              <span
+                id="fbRatingHint"
+                class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/90 border border-amber-200 text-xs sm:text-sm font-extrabold text-amber-700 min-h-[34px]"
+              >
+                Оберіть оцінку від 1 до 5
+              </span>
+            </div>
+          </div>
+
+          {/* Про кого або про що відгук + опціональне відділення */}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label for="fbStaffSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Про кого або про що відгук?
+              </label>
+              <select
+                id="fbStaffSelect"
+                name="staffMember"
+                class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 font-semibold text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+              >
+                <option value="">Відділення загалом</option>
+                {activeDoctorsGroup.length > 0 && (
+                  <optgroup label="Лікарі відділення">
+                    {activeDoctorsGroup.map((doc) => (
+                      <option value={doc.id}>
+                        {doc.fullNamePatronymic || `${doc.surname} ${doc.name}`} — {doc.role}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+                {activeSpecialistsGroup.length > 0 && (
+                  <optgroup label="Медичні фізики, інженери та медперсонал">
+                    {activeSpecialistsGroup.map((doc) => (
+                      <option value={doc.id}>
+                        {doc.fullNamePatronymic || `${doc.surname} ${doc.name}`} — {doc.role}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+              </select>
+            </div>
+
+            <div>
+              <label for="fbReviewDeptSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                Відділення / напрямок (необовʼязково)
+              </label>
+              <select
+                id="fbReviewDeptSelect"
+                name="reviewDepartment"
+                class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 font-semibold text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+              >
+                <option value="">Не вказувати</option>
+                {departmentOptions.map((dept) => (
+                  <option value={dept}>{dept}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Клікабельні швидкі теги-чіпи */}
+          <div>
+            <span class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+              Що сподобалось найбільше? (можна обрати кілька)
+            </span>
+            <div id="fbHighlightChips" class="flex flex-wrap gap-2">
+              {highlightTags.map((tag) => (
+                <button
+                  type="button"
+                  data-highlight-tag={tag}
+                  aria-pressed="false"
+                  class="fb-chip-btn inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-slate-200 bg-slate-50 hover:border-blue-400 hover:bg-blue-50/70 text-slate-700 font-bold text-xs sm:text-sm transition-all cursor-pointer"
+                >
+                  <span class="fb-chip-check hidden text-white" aria-hidden="true">✓</span>
+                  <span>{tag}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Блок вибору теми/відділення (тільки для режиму "Питання") */}
+        <div id="fbQuestionOnlyTop" class="hidden">
+          <label for="fbQuestionTopicSelect" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+            Відділення або тема питання
+          </label>
+          <select
+            id="fbQuestionTopicSelect"
+            name="questionDepartment"
+            class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 font-semibold text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
+          >
+            <option value="">Загальне питання</option>
+            <optgroup label="Теми звернень">
+              {questionTopics.map((topic) => (
+                <option value={topic}>{topic}</option>
+              ))}
+            </optgroup>
+            <optgroup label="Підрозділи відділення">
+              {departmentOptions.map((dept) => (
+                <option value={dept}>{dept}</option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
+
+        {/* Імʼя + перемикач анонімності */}
+        <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-end">
+          <div>
+            <label for="fbAuthorName" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+              Ваше імʼя <span id="fbNameRequiredStar" class="text-red-500">*</span>
+            </label>
+            <input
+              id="fbAuthorName"
+              name="authorName"
+              type="text"
+              maxlength="80"
+              placeholder="Наприклад: Олена К."
+              class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 font-semibold text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:opacity-60 transition-all"
+            />
+          </div>
+
+          <label class="inline-flex items-center gap-3 px-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 cursor-pointer select-none h-[46px]">
+            <input
+              id="fbAnonymousToggle"
+              type="checkbox"
+              class="w-4 h-4 rounded border-slate-300 accent-blue-600 cursor-pointer"
+            />
+            <span class="text-xs sm:text-sm font-bold text-slate-700 whitespace-nowrap">
+              Опублікувати анонімно
+            </span>
+          </label>
+        </div>
+
+        {/* Текст звернення з живим лічильником символів */}
+        <div>
+          <div class="flex items-center justify-between mb-1.5">
+            <label id="fbMessageLabel" for="fbMessage" class="block text-xs font-bold uppercase tracking-wider text-slate-600">
+              Ваш відгук <span class="text-red-500">*</span>
+            </label>
+            <span id="fbCharCounter" class="text-xs font-bold text-slate-400">0 / 1000</span>
+          </div>
+          <textarea
+            id="fbMessage"
+            name="message"
+            rows="4"
+            maxlength="1000"
+            required
+            placeholder="Поділіться враженнями від лікування, ставлення персоналу або умов у відділенні..."
+            class="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y"
+          ></textarea>
+        </div>
+
+        {/* Повідомлення про помилку */}
+        <div
+          id="fbErrorBox"
+          role="alert"
+          class="hidden p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm font-bold"
+        ></div>
+
+        {/* Блок відправки: або Turnstile + кнопка API, або безпечний email-fallback */}
+        {isDirectSubmitEnabled ? (
+          <div id="fbDirectSubmitBlock" class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+              <div>
+                <div id="feedbackTurnstileContainer" class="min-h-[65px]"></div>
+                <p id="fbTurnstileStatus" class="text-[11px] text-slate-500 mt-1">
+                  Захищено Cloudflare Turnstile • Публікація лише після модерації
+                </p>
+              </div>
+
+              <button
+                id="fbSubmitBtn"
+                type="submit"
+                class="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-extrabold text-sm shadow-lg shadow-blue-600/20 active:scale-[0.99] transition-all cursor-pointer shrink-0"
+              >
+                <span id="fbSubmitSpinner" class="hidden w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></span>
+                <span id="fbSubmitLabel">Надіслати на модерацію</span>
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Безпечний fallback-блок (показується одразу, якщо TURNSTILE_SECRET_KEY не задано, або при 503) */}
+        <div
+          id="fbFallbackPanel"
+          class={`${isDirectSubmitEnabled ? "hidden" : ""} p-4 sm:p-5 rounded-2xl bg-sky-50/80 border border-sky-200/90 space-y-3`}
+        >
+          <div class="flex items-start gap-3">
+            <Icon name="bx:shield-quarter" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+            <div class="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <strong class="text-slate-900">Безпечний режим звернення:</strong>{" "}
+              пряма онлайн-відправка активується після налаштування захисту Cloudflare Turnstile на сервері. Зараз ви можете надіслати заповнене звернення одним кліком на офіційну пошту відділення{" "}
+              <code class="font-bold text-blue-700">{fallbackEmail}</code>.
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <a
+              id="fbFallbackMailtoBtn"
+              href={`mailto:${fallbackEmail}`}
+              class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md shadow-blue-600/15 transition-all"
+            >
+              <Icon name="bx:envelope" class="w-4 h-4" />
+              <span>Надіслати на email відділення</span>
+            </a>
+            <button
+              id="fbFallbackCopyBtn"
+              type="button"
+              class="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm transition-all cursor-pointer"
+            >
+              <Icon name="bx:copy" class="w-4 h-4" />
+              <span>Скопіювати текст звернення</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {/* Відображення опублікованих відгуків і питань (лише isPublished === true) */}
+  {publishedItems.length > 0 ? (
+    <div>
+      {/* Панель вкладок-фільтрів + фільтр по лікарю */}
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div class="flex flex-wrap items-center gap-2" role="tablist" aria-label="Фільтр звернень">
+          <button
+            type="button"
+            data-fb-filter="all"
+            aria-selected="true"
+            class="fb-filter-tab filter-chip active px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 font-bold text-xs sm:text-sm transition-all cursor-pointer"
+          >
+            Усі ({publishedItems.length})
+          </button>
+          <button
+            type="button"
+            data-fb-filter="review"
+            aria-selected="false"
+            class="fb-filter-tab filter-chip px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 font-bold text-xs sm:text-sm transition-all cursor-pointer"
+          >
+            Відгуки ({reviewsCount})
+          </button>
+          <button
+            type="button"
+            data-fb-filter="question"
+            aria-selected="false"
+            class="fb-filter-tab filter-chip px-4 py-2 rounded-full border border-slate-200 bg-white text-slate-700 font-bold text-xs sm:text-sm transition-all cursor-pointer"
+          >
+            Питання ({questionsCount})
+          </button>
+        </div>
+
+        {doctorsWithFeedback.length > 0 && (
+          <div class="flex items-center gap-2.5">
+            <label for="fbDoctorFilter" class="text-xs font-bold uppercase tracking-wider text-slate-500 shrink-0">
+              Спеціаліст:
+            </label>
+            <select
+              id="fbDoctorFilter"
+              class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-800 font-bold text-xs sm:text-sm focus:outline-none focus:border-blue-500"
+            >
+              <option value="all">Усі спеціалісти</option>
+              {doctorsWithFeedback.map((doc) => (
+                <option value={doc.id}>{doc.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Сітка опублікованих карток */}
+      <div id="fbCardsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {publishedItems.map((item) => {
+          const initial = item.authorName.charAt(0).toUpperCase() || "П";
+          return (
+            <article
+              class="fb-card bg-white/90 backdrop-blur-xl border border-slate-200/80 rounded-[2rem] p-6 shadow-md hover:shadow-lg transition-all flex flex-col gap-4"
+              data-fb-type={item.type}
+              data-fb-staff={item.staffMemberId || ""}
+            >
+              {/* Верхній рядок: автор, тип, дата */}
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div
+                    class={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-base shrink-0 ${
+                      item.type === "review"
+                        ? "bg-blue-50 text-blue-700 border border-blue-200"
+                        : "bg-cyan-50 text-cyan-700 border border-cyan-200"
+                    }`}
+                    aria-hidden="true"
+                  >
+                    {initial}
+                  </div>
+                  <div class="min-w-0">
+                    <h3 class="font-extrabold text-slate-900 text-base leading-tight truncate">
+                      {item.authorName}
+                    </h3>
+                    {item.createdAtFormatted && (
+                      <time
+                        datetime={item.createdAtRaw}
+                        class="block text-xs font-semibold text-slate-500 mt-0.5"
+                      >
+                        {item.createdAtFormatted}
+                      </time>
+                    )}
+                  </div>
+                </div>
+
+                <span
+                  class={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider shrink-0 ${
+                    item.type === "review"
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-sky-50 text-sky-700 border border-sky-200"
+                  }`}
+                >
+                  {item.type === "review" ? "Відгук" : "Питання"}
+                </span>
+              </div>
+
+              {/* Зірочки (для відгуків) */}
+              {item.type === "review" && item.rating !== null && (
+                <div class="flex items-center gap-2" aria-label={`Оцінка ${item.rating} з 5`}>
+                  <div class="inline-flex items-center gap-0.5 text-amber-400">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <svg
+                        class={`w-5 h-5 fill-current ${
+                          star <= (item.rating || 0) ? "text-amber-400" : "text-slate-200"
+                        }`}
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="M12 2.4l2.92 5.91 6.53.95-4.72 4.6 1.11 6.5L12 17.3l-5.84 3.06 1.11-6.5-4.72-4.6 6.53-.95L12 2.4z" />
+                      </svg>
+                    ))}
+                  </div>
+                  <span class="text-xs font-extrabold text-slate-600">{item.rating}.0</span>
+                </div>
+              )}
+
+              {/* Бейджі лікаря та/або відділення */}
+              {(item.staffLabel || item.department) && (
+                <div class="flex flex-wrap gap-2">
+                  {item.staffLabel && (
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-800 text-xs font-bold">
+                      <Icon name="bx:user-check" class="w-4 h-4 shrink-0" />
+                      <span>
+                        {item.staffLabel}
+                        {item.staffRole ? ` • ${item.staffRole}` : ""}
+                      </span>
+                    </span>
+                  )}
+                  {item.department && (
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
+                      <Icon name="bx:clinic" class="w-4 h-4 shrink-0" />
+                      <span>{item.department}</span>
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {/* Теги вражень */}
+              {item.highlights.length > 0 && (
+                <div class="flex flex-wrap gap-1.5">
+                  {item.highlights.map((tag) => (
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50/80 border border-emerald-200/70 text-emerald-800 text-[11px] font-bold">
+                      <span aria-hidden="true">✓</span>
+                      <span>{tag}</span>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Основний текст звернення */}
+              <p class="text-slate-700 text-sm sm:text-base leading-relaxed whitespace-pre-line">
+                {item.message}
+              </p>
+
+              {/* Блок "Відповідь відділення" */}
+              {item.adminReply && (
+                <div class="mt-auto p-4 rounded-2xl bg-blue-50/70 border border-blue-200/70 space-y-1.5">
+                  <div class="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-700">
+                    <Icon name="bx:badge-check" class="w-4 h-4 shrink-0" />
+                    <span>Відповідь відділення</span>
+                  </div>
+                  <p class="text-slate-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                    {item.adminReply}
+                  </p>
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+
+      {/* Порожній стан після фільтрації */}
+      <div
+        id="fbFilteredEmpty"
+        class="hidden text-center py-10 px-6 rounded-[2rem] bg-white/80 border border-slate-200 text-slate-500 text-sm font-bold"
+      >
+        За обраним фільтром поки немає звернень. Спробуйте скинути фільтр або залиште власне звернення.
+      </div>
+    </div>
+  ) : (
+    /* Чистий охайний стан, коли опублікованих записів поки 0 */
+    <div
+      id="fbZeroEmptyState"
+      class="bg-white/85 backdrop-blur-xl border border-slate-200/90 rounded-[2.2rem] p-8 sm:p-12 text-center shadow-md"
+    >
+      <div class="w-16 h-16 mx-auto mb-4 rounded-3xl bg-blue-50 border border-blue-200/80 text-blue-600 flex items-center justify-center">
+        <Icon name="bx:message-rounded-dots" class="w-8 h-8" />
+      </div>
+      <h3 class="text-xl sm:text-2xl font-black text-slate-900 mb-2">
+        Поки що немає опублікованих відгуків чи запитань
+      </h3>
+      <p class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed mb-6">
+        Ваш відгук допомагає іншим пацієнтам почуватися спокійніше перед початком лікування, а запитання допомагають нам робити інформацію на сайті ще кориснішою.
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        <button
+          id="fbEmptyLeaveReviewBtn"
+          type="button"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-lg shadow-blue-600/20 active:scale-95 transition-all cursor-pointer"
+        >
+          <Icon name="bx:star" class="w-5 h-5" />
+          <span>Залишити перший відгук</span>
+        </button>
+        <button
+          id="fbEmptyAskQuestionBtn"
+          type="button"
+          class="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-white hover:bg-sky-50 border-2 border-slate-200 hover:border-blue-300 text-slate-800 font-bold text-sm active:scale-95 transition-all cursor-pointer"
+        >
+          <Icon name="bx:help-circle" class="w-5 h-5 text-blue-600" />
+          <span>Поставити питання</span>
+        </button>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  .fb-mode-btn {
+    color: #475569;
+    background: transparent;
+  }
+
+  .fb-mode-btn:hover {
+    color: #1d4ed8;
+  }
+
+  .fb-mode-btn.is-active {
+    background: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
+  }
+
+  .fb-star-btn.is-lit {
+    color: #f59e0b;
+  }
+
+  .fb-star-btn:hover {
+    transform: scale(1.14);
+  }
+
+  @keyframes fbStarPop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.28); }
+    100% { transform: scale(1); }
+  }
+
+  .fb-star-btn.is-pop {
+    animation: fbStarPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .fb-chip-btn.is-selected {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+  }
+
+  .fb-chip-btn.is-selected .fb-chip-check {
+    display: inline;
+  }
+
+  .fb-filter-tab.active {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+  }
+
+  :global(html[data-theme="dark"]:not([data-a11y-contrast])) .fb-mode-btn.is-active,
+  :global(html[data-theme="dark"]:not([data-a11y-contrast])) .fb-chip-btn.is-selected,
+  :global(html[data-theme="dark"]:not([data-a11y-contrast])) .fb-filter-tab.active {
+    background-color: #2563eb !important;
+    border-color: #3b82f6 !important;
+    color: #ffffff !important;
+  }
+
+  :global(html[data-theme="dark"]:not([data-a11y-contrast])) .fb-star-btn.is-lit {
+    color: #fbbf24 !important;
+  }
+</style>
+
+<script>
+  declare global {
+    interface Window {
+      turnstile?: {
+        render: (
+          container: HTMLElement | string,
+          options: Record<string, unknown>
+        ) => string;
+        reset: (widgetId?: string) => void;
+      };
+      showGlobalToast?: (message: string) => void;
+    }
+  }
+
+  const RATING_LABELS: Record<number, string> = {
+    1: "1 — Потребує покращення",
+    2: "2 — Задовільно",
+    3: "3 — Добре",
+    4: "4 — Дуже добре",
+    5: "5 — Відмінно",
+  };
+
+  function initFeedbackSection() {
+    const section = document.getElementById("feedback");
+    if (!section || section.dataset.bound === "true") return;
+    section.dataset.bound = "true";
+
+    const turnstileSiteKey = section.dataset.turnstileSiteKey || "";
+    const directSubmitEnabled = section.dataset.directSubmitEnabled === "true";
+    const fallbackEmail = section.dataset.fallbackEmail || "linac_olt1@ukr.net";
+
+    const formWrapper = document.getElementById("feedbackFormWrapper");
+    const openBtn = document.getElementById("openFeedbackFormBtn");
+    const openBtnText = document.getElementById("openFeedbackFormBtnText");
+    const closeBtn = document.getElementById("closeFeedbackFormBtn");
+    const emptyReviewBtn = document.getElementById("fbEmptyLeaveReviewBtn");
+    const emptyQuestionBtn = document.getElementById("fbEmptyAskQuestionBtn");
+
+    const form = document.getElementById("patientFeedbackForm") as HTMLFormElement | null;
+    const successBox = document.getElementById("feedbackSuccessBox");
+    const successMsg = document.getElementById("feedbackSuccessMessage");
+    const sendAnotherBtn = document.getElementById("feedbackSendAnotherBtn");
+    const errorBox = document.getElementById("fbErrorBox");
+
+    const modeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".fb-mode-btn"));
+    const reviewOnlyTop = document.getElementById("fbReviewOnlyTop");
+    const questionOnlyTop = document.getElementById("fbQuestionOnlyTop");
+    const messageLabel = document.getElementById("fbMessageLabel");
+    const messageInput = document.getElementById("fbMessage") as HTMLTextAreaElement | null;
+    const charCounter = document.getElementById("fbCharCounter");
+
+    const starBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".fb-star-btn"));
+    const ratingHint = document.getElementById("fbRatingHint");
+    const chipBtns = Array.from(document.querySelectorAll<HTMLButtonElement>(".fb-chip-btn"));
+
+    const staffSelect = document.getElementById("fbStaffSelect") as HTMLSelectElement | null;
+    const reviewDeptSelect = document.getElementById("fbReviewDeptSelect") as HTMLSelectElement | null;
+    const questionTopicSelect = document.getElementById("fbQuestionTopicSelect") as HTMLSelectElement | null;
+    const authorInput = document.getElementById("fbAuthorName") as HTMLInputElement | null;
+    const nameRequiredStar = document.getElementById("fbNameRequiredStar");
+    const anonToggle = document.getElementById("fbAnonymousToggle") as HTMLInputElement | null;
+    const honeypotInput = document.getElementById("fbWebsiteTrap") as HTMLInputElement | null;
+
+    const submitBtn = document.getElementById("fbSubmitBtn") as HTMLButtonElement | null;
+    const submitSpinner = document.getElementById("fbSubmitSpinner");
+    const submitLabel = document.getElementById("fbSubmitLabel");
+    const directSubmitBlock = document.getElementById("fbDirectSubmitBlock");
+    const turnstileContainer = document.getElementById("feedbackTurnstileContainer");
+    const fallbackPanel = document.getElementById("fbFallbackPanel");
+    const fallbackMailtoBtn = document.getElementById("fbFallbackMailtoBtn") as HTMLAnchorElement | null;
+    const fallbackCopyBtn = document.getElementById("fbFallbackCopyBtn");
+
+    // Фільтри опублікованих карток
+    const filterTabs = Array.from(document.querySelectorAll<HTMLButtonElement>(".fb-filter-tab"));
+    const doctorFilter = document.getElementById("fbDoctorFilter") as HTMLSelectElement | null;
+    const cards = Array.from(document.querySelectorAll<HTMLElement>(".fb-card"));
+    const filteredEmpty = document.getElementById("fbFilteredEmpty");
+
+    let currentMode: "review" | "question" = "review";
+    let selectedRating = 0;
+    let hoveredRating = 0;
+    const selectedHighlights = new Set<string>();
+    let formOpenedPerfNow = performance.now();
+    let turnstileToken = "";
+    let turnstileWidgetId: string | null = null;
+    let isSubmitting = false;
+
+    function showError(msg: string) {
+      if (!errorBox) return;
+      if (!msg) {
+        errorBox.classList.add("hidden");
+        errorBox.textContent = "";
+      } else {
+        errorBox.textContent = msg;
+        errorBox.classList.remove("hidden");
+      }
+    }
+
+    // --- ЛОГІКА ФІЛЬТРІВ ОПУБЛІКОВАНИХ ВІДГУКІВ ---
+    let activeTypeFilter: "all" | "review" | "question" = "all";
+    let activeDoctorFilter = "all";
+
+    function applyPublishedFilters() {
+      if (!cards.length) return;
+      let visibleCount = 0;
+      cards.forEach((card) => {
+        const cardType = card.dataset.fbType || "review";
+        const cardStaff = card.dataset.fbStaff || "";
+        const matchType = activeTypeFilter === "all" || cardType === activeTypeFilter;
+        const matchDoctor =
+          activeDoctorFilter === "all" || cardStaff === activeDoctorFilter;
+        const shouldShow = matchType && matchDoctor;
+        card.classList.toggle("hidden", !shouldShow);
+        if (shouldShow) visibleCount++;
+      });
+
+      filteredEmpty?.classList.toggle("hidden", visibleCount > 0);
+    }
+
+    filterTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const val = (tab.dataset.fbFilter || "all") as "all" | "review" | "question";
+        activeTypeFilter = val;
+        filterTabs.forEach((t) => {
+          const active = t === tab;
+          t.classList.toggle("active", active);
+          t.setAttribute("aria-selected", active ? "true" : "false");
+        });
+        applyPublishedFilters();
+      });
+    });
+
+    doctorFilter?.addEventListener("change", () => {
+      activeDoctorFilter = doctorFilter.value || "all";
+      applyPublishedFilters();
+    });
+
+    // --- TURNSTILE LAZY LOAD (лише при відкритті форми, коли активовано) ---
+    function mountTurnstileIfReady() {
+      if (!directSubmitEnabled || !turnstileSiteKey || !turnstileContainer) return;
+      if (turnstileWidgetId !== null) return;
+
+      const renderWidget = () => {
+        if (!window.turnstile || !turnstileContainer || turnstileWidgetId !== null) return;
+        turnstileWidgetId = window.turnstile.render(turnstileContainer, {
+          sitekey: turnstileSiteKey,
+          theme: document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light",
+          language: "uk",
+          callback: (token: string) => {
+            turnstileToken = token || "";
+            showError("");
+          },
+          "expired-callback": () => {
+            turnstileToken = "";
+          },
+          "error-callback": () => {
+            turnstileToken = "";
+          },
+        });
+      };
+
+      if (window.turnstile) {
+        renderWidget();
+        return;
+      }
+
+      const existingScript = document.getElementById("cf-turnstile-script") as HTMLScriptElement | null;
+      if (existingScript) {
+        existingScript.addEventListener("load", renderWidget, { once: true });
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.id = "cf-turnstile-script";
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.addEventListener("load", renderWidget, { once: true });
+      document.head.appendChild(script);
+    }
+
+    // --- ВІДКРИТТЯ / ЗГОРТАННЯ ФОРМИ ---
+    function setFormOpen(open: boolean, mode?: "review" | "question") {
+      if (!formWrapper) return;
+      if (mode) {
+        setMode(mode);
+      }
+      formWrapper.classList.toggle("hidden", !open);
+      openBtn?.setAttribute("aria-expanded", open ? "true" : "false");
+      if (openBtnText) {
+        openBtnText.textContent = open ? "Згорнути форму" : "Залишити відгук або питання";
+      }
+      if (open) {
+        formOpenedPerfNow = performance.now();
+        mountTurnstileIfReady();
+        updateFallbackMailto();
+        formWrapper.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
+    openBtn?.addEventListener("click", () => {
+      const isHidden = formWrapper?.classList.contains("hidden");
+      setFormOpen(Boolean(isHidden));
+    });
+    closeBtn?.addEventListener("click", () => setFormOpen(false));
+    emptyReviewBtn?.addEventListener("click", () => setFormOpen(true, "review"));
+    emptyQuestionBtn?.addEventListener("click", () => setFormOpen(true, "question"));
+
+    // --- ПЕРЕМИКАЧ РЕЖИМУ ("Відгук" / "Питання") ---
+    function setMode(mode: "review" | "question") {
+      currentMode = mode;
+      showError("");
+
+      modeBtns.forEach((btn) => {
+        const isActive = btn.dataset.fbMode === mode;
+        btn.classList.toggle("is-active", isActive);
+        btn.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      reviewOnlyTop?.classList.toggle("hidden", mode !== "review");
+      questionOnlyTop?.classList.toggle("hidden", mode !== "question");
+
+      if (messageLabel) {
+        messageLabel.innerHTML =
+          mode === "review"
+            ? 'Ваш відгук <span class="text-red-500">*</span>'
+            : 'Ваше питання <span class="text-red-500">*</span>';
+      }
+      if (messageInput) {
+        messageInput.placeholder =
+          mode === "review"
+            ? "Поділіться враженнями від лікування, ставлення персоналу або умов у відділенні..."
+            : "Напишіть ваше запитання щодо променевої терапії, підготовки чи запису на прийом...";
+      }
+
+      updateFallbackMailto();
+    }
+
+    modeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const mode = btn.dataset.fbMode === "question" ? "question" : "review";
+        setMode(mode);
+      });
+    });
+
+    // --- ІНТЕРАКТИВНІ 5 ЗІРОЧОК ---
+    function paintStars(activeCount: number) {
+      starBtns.forEach((btn) => {
+        const val = Number(btn.dataset.starValue || 0);
+        const lit = val <= activeCount;
+        btn.classList.toggle("is-lit", lit);
+        btn.setAttribute("aria-checked", val === selectedRating ? "true" : "false");
+      });
+
+      if (ratingHint) {
+        ratingHint.textContent =
+          activeCount >= 1 && activeCount <= 5
+            ? RATING_LABELS[activeCount]
+            : "Оберіть оцінку від 1 до 5";
+      }
+    }
+
+    starBtns.forEach((btn) => {
+      const val = Number(btn.dataset.starValue || 0);
+
+      btn.addEventListener("mouseenter", () => {
+        hoveredRating = val;
+        paintStars(hoveredRating);
+      });
+
+      btn.addEventListener("mouseleave", () => {
+        hoveredRating = 0;
+        paintStars(selectedRating);
+      });
+
+      btn.addEventListener("focus", () => {
+        paintStars(val);
+      });
+
+      btn.addEventListener("blur", () => {
+        paintStars(selectedRating);
+      });
+
+      btn.addEventListener("click", () => {
+        selectedRating = val;
+        paintStars(selectedRating);
+        btn.classList.remove("is-pop");
+        void btn.offsetWidth;
+        btn.classList.add("is-pop");
+        updateFallbackMailto();
+      });
+    });
+
+    // --- ТЕГИ ВРАЖЕНЬ ---
+    chipBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tag = btn.dataset.highlightTag || "";
+        if (!tag) return;
+        if (selectedHighlights.has(tag)) {
+          selectedHighlights.delete(tag);
+          btn.classList.remove("is-selected");
+          btn.setAttribute("aria-pressed", "false");
+        } else {
+          selectedHighlights.add(tag);
+          btn.classList.add("is-selected");
+          btn.setAttribute("aria-pressed", "true");
+        }
+        updateFallbackMailto();
+      });
+    });
+
+    // --- ПЕРЕМИКАЧ АНОНІМНОСТІ ---
+    function syncAnonymousState() {
+      const isAnon = Boolean(anonToggle?.checked);
+      if (authorInput) {
+        authorInput.disabled = isAnon;
+        authorInput.placeholder = isAnon
+          ? "Анонімний пацієнт"
+          : "Наприклад: Олена К.";
+        if (isAnon) {
+          authorInput.value = "";
+        }
+      }
+      nameRequiredStar?.classList.toggle("hidden", isAnon);
+      updateFallbackMailto();
+    }
+
+    anonToggle?.addEventListener("change", syncAnonymousState);
+
+    // --- ЛІЧИЛЬНИК СИМВОЛІВ (0 / 1000) ---
+    function syncCharCounter() {
+      if (!messageInput || !charCounter) return;
+      const len = messageInput.value.length;
+      charCounter.textContent = `${len} / 1000`;
+      charCounter.classList.toggle("text-amber-600", len >= 900);
+      updateFallbackMailto();
+    }
+
+    messageInput?.addEventListener("input", syncCharCounter);
+    authorInput?.addEventListener("input", updateFallbackMailto);
+    staffSelect?.addEventListener("change", updateFallbackMailto);
+    reviewDeptSelect?.addEventListener("change", updateFallbackMailto);
+    questionTopicSelect?.addEventListener("change", updateFallbackMailto);
+
+    // --- ГЕНЕРАЦІЯ FALLBACK EMAIL-ТЕКСТУ ---
+    function buildPlainSummary(): { subject: string; body: string } {
+      const isAnon = Boolean(anonToggle?.checked);
+      const author = isAnon
+        ? "Анонімний пацієнт"
+        : authorInput?.value.trim() || "Не вказано";
+      const msg = messageInput?.value.trim() || "";
+
+      if (currentMode === "review") {
+        const staffText =
+          staffSelect && staffSelect.selectedIndex > 0
+            ? staffSelect.options[staffSelect.selectedIndex].text
+            : "Відділення загалом";
+        const dept = reviewDeptSelect?.value || "Не вказано";
+        const tags = Array.from(selectedHighlights).join(", ") || "Не обрано";
+        const ratingLine =
+          selectedRating > 0 ? RATING_LABELS[selectedRating] : "Не вказано";
+
+        return {
+          subject: "Відгук пацієнта з сайту відділення променевої терапії",
+          body: [
+            "Тип звернення: Відгук",
+            `Ім'я: ${author}`,
+            `Оцінка: ${ratingLine}`,
+            `Спеціаліст: ${staffText}`,
+            `Відділення: ${dept}`,
+            `Що сподобалось: ${tags}`,
+            "",
+            "Текст відгуку:",
+            msg,
+          ].join("\n"),
+        };
+      }
+
+      const topic = questionTopicSelect?.value || "Загальне питання";
+      return {
+        subject: "Питання пацієнта з сайту відділення променевої терапії",
+        body: [
+          "Тип звернення: Питання",
+          `Ім'я: ${author}`,
+          `Відділення / тема: ${topic}`,
+          "",
+          "Текст питання:",
+          msg,
+        ].join("\n"),
+      };
+    }
+
+    function updateFallbackMailto() {
+      if (!fallbackMailtoBtn) return;
+      const { subject, body } = buildPlainSummary();
+      fallbackMailtoBtn.href = `mailto:${fallbackEmail}?subject=${encodeURIComponent(
+        subject
+      )}&body=${encodeURIComponent(body)}`;
+    }
+
+    fallbackCopyBtn?.addEventListener("click", async () => {
+      const { body } = buildPlainSummary();
+      try {
+        await navigator.clipboard.writeText(body);
+        window.showGlobalToast?.("Текст звернення скопійовано");
+      } catch {
+        window.showGlobalToast?.(`Надішліть звернення на ${fallbackEmail}`);
+      }
+    });
+
+    // --- ВІДПРАВКА ЧЕРЕЗ /api/submit-feedback (коли активовано Turnstile) ---
+    form?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!directSubmitEnabled || isSubmitting) return;
+      showError("");
+
+      const isAnon = Boolean(anonToggle?.checked);
+      const authorName = isAnon ? "Анонімний пацієнт" : authorInput?.value.trim() || "";
+      const message = messageInput?.value.trim() || "";
+
+      if (currentMode === "review" && (selectedRating < 1 || selectedRating > 5)) {
+        showError("Будь ласка, оберіть оцінку від 1 до 5 зірочок.");
+        return;
+      }
+
+      if (!isAnon && authorName.length < 2) {
+        showError("Вкажіть ваше імʼя або увімкніть «Опублікувати анонімно».");
+        authorInput?.focus();
+        return;
+      }
+
+      if (message.length < 10) {
+        showError("Напишіть, будь ласка, трохи детальніше (мінімум 10 символів).");
+        messageInput?.focus();
+        return;
+      }
+
+      const formDurationMs = Math.round(performance.now() - formOpenedPerfNow);
+      if (formDurationMs < 3000) {
+        showError("Зачекайте пару секунд перед відправкою форми.");
+        return;
+      }
+
+      if (!turnstileToken) {
+        showError("Будь ласка, підтвердіть перевірку безпеки (Cloudflare Turnstile).");
+        return;
+      }
+
+      isSubmitting = true;
+      if (submitBtn) submitBtn.disabled = true;
+      submitSpinner?.classList.remove("hidden");
+      if (submitLabel) submitLabel.textContent = "Надсилання...";
+
+      try {
+        const resp = await fetch("/api/submit-feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: currentMode,
+            authorName,
+            isAnonymous: isAnon,
+            rating: currentMode === "review" ? selectedRating : null,
+            staffMember: currentMode === "review" ? staffSelect?.value || "" : "",
+            department:
+              currentMode === "review"
+                ? reviewDeptSelect?.value || ""
+                : questionTopicSelect?.value || "",
+            highlights: currentMode === "review" ? Array.from(selectedHighlights) : [],
+            message,
+            turnstileToken,
+            website: honeypotInput?.value || "",
+            formDurationMs,
+          }),
+        });
+
+        const data = await resp.json().catch(() => ({}));
+
+        if (resp.status === 503) {
+          // Якщо на сервері відключено Turnstile/GitHub — акуратно показуємо email fallback без втрати тексту
+          directSubmitBlock?.classList.add("hidden");
+          fallbackPanel?.classList.remove("hidden");
+          updateFallbackMailto();
+          showError(
+            data.error ||
+              "Пряма відправка тимчасово недоступна. Скористайтеся кнопкою відправки на email нижче."
+          );
+          return;
+        }
+
+        if (!resp.ok || !data.ok) {
+          showError(data.error || "Не вдалося надіслати звернення. Спробуйте ще раз.");
+          if (window.turnstile && turnstileWidgetId !== null) {
+            window.turnstile.reset(turnstileWidgetId);
+            turnstileToken = "";
+          }
+          return;
+        }
+
+        if (successMsg && data.message) {
+          successMsg.textContent = data.message;
+        }
+        form.classList.add("hidden");
+        successBox?.classList.remove("hidden");
+      } catch {
+        showError("Помилка зʼєднання. Перевірте інтернет та спробуйте ще раз.");
+      } finally {
+        isSubmitting = false;
+        if (submitBtn) submitBtn.disabled = false;
+        submitSpinner?.classList.add("hidden");
+        if (submitLabel) submitLabel.textContent = "Надіслати на модерацію";
+      }
+    });
+
+    sendAnotherBtn?.addEventListener("click", () => {
+      form?.reset();
+      selectedRating = 0;
+      hoveredRating = 0;
+      selectedHighlights.clear();
+      paintStars(0);
+      chipBtns.forEach((b) => {
+        b.classList.remove("is-selected");
+        b.setAttribute("aria-pressed", "false");
+      });
+      syncAnonymousState();
+      syncCharCounter();
+      setMode("review");
+      if (window.turnstile && turnstileWidgetId !== null) {
+        window.turnstile.reset(turnstileWidgetId);
+        turnstileToken = "";
+      }
+      formOpenedPerfNow = performance.now();
+      successBox?.classList.add("hidden");
+      form?.classList.remove("hidden");
+    });
+
+    updateFallbackMailto();
+  }
+
+  initFeedbackSection();
+  document.addEventListener("astro:after-swap", initFeedbackSection);
+</script>

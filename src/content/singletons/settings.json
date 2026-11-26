@@ -17,6 +17,7 @@
     "showEquipment": false,
     "showFaq": false,
     "showTeam": true,
+    "showFeedback": true,
     "showContacts": true,
     "showNews": true
   },
