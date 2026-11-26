@@ -5,6 +5,8 @@ import { siteSettings } from "../data";
 const {
   description = siteSettings.heroDescription,
   subtitle = siteSettings.heroSubtitle,
+  primaryCtaText = "Напрямки лікування",
+  primaryCtaHref = "#departments",
 } = Astro.props;
 ---
 
@@ -90,11 +92,12 @@ const {
       {/* Швидкі кнопки переходу для пацієнтів */}
       <div class="mt-8 flex flex-col sm:flex-row gap-3.5 justify-center lg:justify-start relative z-20">
         <a
-          href="#patient-checklist"
+          href={primaryCtaHref}
+          data-hero-departments-link="true"
           class="inline-flex gap-2.5 items-center justify-center px-7 py-4 rounded-2xl font-bold text-sm shadow-lg shadow-blue-600/20 bg-blue-600 hover:bg-blue-700 text-white transition-all active:scale-95"
         >
           <Icon class="w-5 h-5" name="bx:list-check" />
-          <span>Підготовка до візиту (Чекліст)</span>
+          <span>{primaryCtaText}</span>
         </a>
 
         <a
@@ -185,6 +188,34 @@ const {
     });
   }
 
+  function initHeroSmoothScroll() {
+    document
+      .querySelectorAll<HTMLAnchorElement>('[data-hero-departments-link="true"]')
+      .forEach((link) => {
+        if (link.hasAttribute("data-smooth-bound")) return;
+        link.setAttribute("data-smooth-bound", "true");
+        link.addEventListener("click", (e) => {
+          const href = link.getAttribute("href") || "";
+          if (!href.startsWith("#")) return;
+          const target = document.getElementById(href.slice(1));
+          if (!target) return;
+          e.preventDefault();
+          const reduceMotion =
+            document.documentElement.getAttribute("data-a11y-motion") === "reduce" ||
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          target.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "start",
+          });
+          history.replaceState(null, "", href);
+        });
+      });
+  }
+
   initHeroHug();
-  document.addEventListener("astro:after-swap", initHeroHug);
+  initHeroSmoothScroll();
+  document.addEventListener("astro:after-swap", () => {
+    initHeroHug();
+    initHeroSmoothScroll();
+  });
 </script>
